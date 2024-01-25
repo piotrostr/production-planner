@@ -1,5 +1,7 @@
 import { Stack } from "@mui/material"
 import { TaskSlider } from "./components/TaskSlider"
+import ScheduleTable from "./components/ScheduleTable"
+import ProductionSchedule from "./components/ScheduleTable"
 
 const tasks = [
   {
@@ -55,8 +57,9 @@ const tasks = [
 function App() {
   return (
     <>
-      <Stack width="100vw" height="100vh" pt="10rem">
+      <Stack width="100vw" height="100vh">
         <TaskSlider tasks={tasks} />
+        <ProductionSchedule />
       </Stack>
     </>
   )

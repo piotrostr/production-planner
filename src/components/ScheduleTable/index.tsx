@@ -23,7 +23,7 @@ interface WeekData {
 
 const ProductionSchedule: React.FC = () => {
   const shipyardAreas: string[] = ["Area A", "Area B", "Area C"]
-  const numberOfDays: number = 100
+  const numberOfDays: number = 20
 
   const generateDateRange = (numberOfDays: number): Date[] => {
     const currentDate = new Date()
@@ -145,7 +145,11 @@ const ProductionSchedule: React.FC = () => {
                 }}
               >
                 <Box
-                  sx={{ paddingLeft: "8px", borderBottom: "1px solid black" }}
+                  sx={{
+                    paddingLeft: "8px",
+                    borderBottom: "1px solid black",
+                    borderLeft: "1px solid black",
+                  }}
                 >
                   Week {week.weekNumber}
                 </Box>
@@ -171,20 +175,20 @@ const ProductionSchedule: React.FC = () => {
                 <TableCell
                   colSpan={24}
                   sx={{
-                    minWidth: "10rem",
                     textAlign: "left",
                     padding: 0,
                     position: "sticky",
                     left: "10rem",
                     background: "#fff",
                     zIndex: 1,
+                    borderBottom: "none", // Remove bottom border for the header
                   }}
                 >
                   <Box
                     sx={{
                       paddingLeft: "8px",
-                      borderRight: "1px solid black",
                       borderBottom: "1px solid black",
+                      borderLeft: "1px solid black",
                     }}
                   >
                     {day.date.toLocaleDateString()}
@@ -212,15 +216,21 @@ const ProductionSchedule: React.FC = () => {
                 <TableCell
                   key={`${day.date}-${hour}`}
                   sx={{
+                    background: "#fff",
+                    position: "sticky",
+                    left: "10rem",
                     minWidth: "10rem",
-                    textAlign: "center",
+                    textAlign: "left",
                     padding: 0,
+                    zIndex: 1,
+                    borderBottom: "none",
                   }}
                 >
                   <Box
                     sx={{
-                      borderRight: "1px solid black",
+                      paddingLeft: "8px",
                       borderBottom: "1px solid black",
+                      borderLeft: "1px solid black",
                     }}
                   >
                     {hour}:00

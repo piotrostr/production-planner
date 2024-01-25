@@ -127,7 +127,7 @@ const ProductionSchedule: React.FC = () => {
                 borderBottom: "none", // Remove bottom border for the header
               }}
             >
-              <Box>elo</Box>
+              <Box></Box>
             </TableCell>
             {weeksData.map((week) => (
               <TableCell
@@ -168,7 +168,7 @@ const ProductionSchedule: React.FC = () => {
                 borderBottom: "none", // Remove bottom border for the header
               }}
             >
-              <Box>elo</Box>
+              <Box></Box>
             </TableCell>
             {groupedData.map((day, index) => (
               <React.Fragment key={index}>
@@ -209,7 +209,7 @@ const ProductionSchedule: React.FC = () => {
                 borderBottom: "none", // Remove bottom border for the header
               }}
             >
-              <Box>elo</Box>
+              <Box></Box>
             </TableCell>
             {groupedData.map((day) =>
               day.groupedHours.map((hour) => (
@@ -241,7 +241,7 @@ const ProductionSchedule: React.FC = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {shipyardAreas.map((area) => (
+          {shipyardAreas.map((area, idx) => (
             <TableRow key={area}>
               <TableCell
                 style={{
@@ -255,6 +255,7 @@ const ProductionSchedule: React.FC = () => {
               >
                 <Box
                   sx={{
+                    borderTop: idx === 0 ? "1px solid black" : "none",
                     borderBottom: "1px solid black",
                     borderRight: "1px solid black",
                   }}

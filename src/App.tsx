@@ -1,7 +1,7 @@
-import { Stack } from "@mui/material"
-import { TaskSlider } from "./components/TaskSlider"
-import ScheduleTable from "./components/ScheduleTable"
-import ProductionSchedule from "./components/ScheduleTable"
+import { Stack } from "@mui/material";
+import { TaskSlider } from "./components/TaskSlider";
+import ProductionSchedule from "./components/ScheduleTable";
+import { DndContext } from "@dnd-kit/core";
 
 const tasks = [
   {
@@ -52,17 +52,19 @@ const tasks = [
     description: "Description 4",
     bgcolor: "#00A2D5",
   },
-]
+];
 
 function App() {
   return (
     <>
       <Stack width="100vw" height="100vh">
-        <TaskSlider tasks={tasks} />
-        <ProductionSchedule />
+        <DndContext>
+          <TaskSlider tasks={tasks} />
+          <ProductionSchedule />
+        </DndContext>
       </Stack>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

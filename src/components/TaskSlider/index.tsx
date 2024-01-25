@@ -1,17 +1,16 @@
-import { Task as TaskType } from "../../../types/task"
-import { Stack, Divider, Box } from "@mui/material"
-import { Task } from "../Task"
-import { Scrollbar } from "../Scrollbar"
-import { useRef, useState } from "react"
+import { Task as TaskType } from "../../../types/task";
+import { Stack, Divider } from "@mui/material";
+import { Task } from "../Task";
+import { useRef } from "react";
+import { Draggable } from "../Draggable";
 
 interface TaskSliderProps {
-  tasks: TaskType[]
+  tasks: TaskType[];
 }
 
 export function TaskSlider({ tasks }: TaskSliderProps) {
-  const [scrollPosition, setScrollPosition] = useState(0)
-  const outerRef = useRef<HTMLDivElement>(null)
-  const innerRef = useRef<HTMLDivElement>(null)
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
 
   return (
     <Stack width="100%">
@@ -41,7 +40,9 @@ export function TaskSlider({ tasks }: TaskSliderProps) {
         <Stack spacing={2} direction="row" ref={innerRef}>
           {tasks.map((task, idx) => (
             <Stack direction="row" key={task.id} spacing={2}>
-              <Task task={task} />
+              <Draggable id={task.id}>
+                <Task task={task} />
+              </Draggable>
               {idx !== tasks.length - 1 && (
                 <Divider
                   orientation="vertical"
@@ -57,5 +58,5 @@ export function TaskSlider({ tasks }: TaskSliderProps) {
         </Stack>
       </Stack>
     </Stack>
-  )
+  );
 }

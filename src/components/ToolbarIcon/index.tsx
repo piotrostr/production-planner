@@ -9,10 +9,21 @@ interface toolbarIconProps {
 
 export function ToolbarIcon({ icon, iconText, expandMore }: toolbarIconProps) {
   return (
-    <Stack direction="row" spacing={1} px="1rem">
-      {icon}
-      <Typography variant="body1">{iconText}</Typography>
-      {expandMore ? <ExpandMoreIcon /> : null}
+    <Stack
+      direction="row"
+      spacing={1}
+      px="1rem"
+      sx={{
+        cursor: "pointer",
+      }}
+    >
+      <Stack direction="row" spacing={1} onClick={() => console.log("Click!")}>
+        {icon}
+        <Typography variant="body1">{iconText}</Typography>
+      </Stack>
+      {expandMore ? (
+        <ExpandMoreIcon onClick={() => console.log("Expand more!")} />
+      ) : null}
     </Stack>
   );
 }

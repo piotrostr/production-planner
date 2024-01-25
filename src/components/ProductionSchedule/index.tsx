@@ -1,7 +1,6 @@
 import React from "react"
 import {
-  Paper,
-  Typography,
+  Stack,
   Table,
   TableContainer,
   TableHead,
@@ -10,6 +9,8 @@ import {
   TableBody,
   Box,
 } from "@mui/material"
+import { Stand } from "../Stand"
+import { Stand as StandType } from "../../../types/stand"
 
 interface GroupedData {
   date: Date
@@ -21,9 +22,12 @@ interface WeekData {
   dates: Date[]
 }
 
-const ProductionSchedule: React.FC = () => {
-  const shipyardAreas: string[] = ["Area A", "Area B", "Area C"]
-  const numberOfDays: number = 100
+interface ProductionScheduleProps {
+  stands: StandType[]
+}
+
+export function ProductionSchedule({ stands }: ProductionScheduleProps) {
+  const numberOfDays: number = 20
 
   const generateDateRange = (numberOfDays: number): Date[] => {
     const currentDate = new Date()
@@ -81,11 +85,31 @@ const ProductionSchedule: React.FC = () => {
     for (let i = 0; i < numRowsToFill; i++) {
       emptyRows.push(
         <TableRow key={`empty-row-${i}`}>
-          <TableCell></TableCell>
+          <TableCell
+            sx={{
+              padding: 0,
+              height: "4rem",
+              position: "sticky",
+              left: 1,
+              borderBottom: "1px solid black",
+            }}
+          >
+            <Box
+              sx={{
+                height: "100%",
+                borderRight: "1px solid black",
+                bgcolor: "#FFFFFF",
+              }}
+            ></Box>
+          </TableCell>
           {groupedData.map((day) =>
             day.groupedHours.map((hour) => (
               <TableCell
                 key={`empty-cell-${i}-${day.date}-${hour}`}
+                sx={{
+                  borderRight: "1px solid #D9D9D9",
+                  borderBottom: "1px solid black",
+                }}
               ></TableCell>
             ))
           )}
@@ -121,13 +145,15 @@ const ProductionSchedule: React.FC = () => {
               style={{
                 position: "sticky",
                 left: 0,
+                top: 0,
                 padding: 0,
-                zIndex: 1,
+                zIndex: 10,
                 minWidth: "10rem",
                 borderBottom: "none", // Remove bottom border for the header
+                backgroundColor: "#D9D9D9",
               }}
             >
-              <Box>elo</Box>
+              <Box></Box>
             </TableCell>
             {weeksData.map((week) => (
               <TableCell
@@ -139,16 +165,24 @@ const ProductionSchedule: React.FC = () => {
                   padding: 0,
                   position: "sticky",
                   left: "10rem",
+                  top: 0,
                   background: "#fff",
                   zIndex: 1,
                   borderBottom: "none", // Remove bottom border for the header
+                  backgroundColor: "#D9D9D9",
                 }}
               >
-                <Box
-                  sx={{ paddingLeft: "8px", borderBottom: "1px solid black" }}
+                <Stack
+                  sx={{
+                    paddingLeft: "8px",
+                    borderBottom: "1px solid black",
+                    borderLeft: "1px solid black",
+                    minHeight: "1.5rem",
+                    justifyContent: "center",
+                  }}
                 >
                   Week {week.weekNumber}
-                </Box>
+                </Stack>
               </TableCell>
             ))}
           </TableRow>
@@ -158,37 +192,43 @@ const ProductionSchedule: React.FC = () => {
                 padding: 0,
                 position: "sticky",
                 left: 0,
+                top: "calc(1.5rem + 1px)", // Add 1px to account for the border
                 background: "#fff",
-                zIndex: 1,
+                zIndex: 20,
                 minWidth: "10rem",
                 borderBottom: "none", // Remove bottom border for the header
+                backgroundColor: "#D9D9D9",
               }}
             >
-              <Box>elo</Box>
+              <Box></Box>
             </TableCell>
             {groupedData.map((day, index) => (
               <React.Fragment key={index}>
                 <TableCell
                   colSpan={24}
                   sx={{
-                    minWidth: "10rem",
                     textAlign: "left",
                     padding: 0,
                     position: "sticky",
                     left: "10rem",
+                    top: "calc(1.5rem + 1px)",
                     background: "#fff",
                     zIndex: 1,
+                    borderBottom: "none", // Remove bottom border for the header
+                    backgroundColor: "#D9D9D9",
                   }}
                 >
-                  <Box
+                  <Stack
                     sx={{
                       paddingLeft: "8px",
-                      borderRight: "1px solid black",
                       borderBottom: "1px solid black",
+                      borderLeft: "1px solid black",
+                      minHeight: "1.5rem",
+                      justifyContent: "center",
                     }}
                   >
                     {day.date.toLocaleDateString()}
-                  </Box>
+                  </Stack>
                 </TableCell>
               </React.Fragment>
             ))}
@@ -199,64 +239,88 @@ const ProductionSchedule: React.FC = () => {
                 padding: 0,
                 position: "sticky",
                 left: 0,
+                top: "calc(3rem + 2px)", // Add 1px to account for the border
                 background: "#fff",
-                zIndex: 1,
+                zIndex: 20,
                 minWidth: "10rem",
                 borderBottom: "none", // Remove bottom border for the header
+                backgroundColor: "#D9D9D9",
               }}
             >
-              <Box>elo</Box>
+              <Box
+                sx={{
+                  borderBottom: "1px solid black",
+                  color: "transparent",
+                  userSelect: "none",
+                }}
+              >
+                \
+              </Box>
             </TableCell>
             {groupedData.map((day) =>
               day.groupedHours.map((hour) => (
                 <TableCell
                   key={`${day.date}-${hour}`}
                   sx={{
+                    background: "#fff",
+                    position: "sticky",
+                    left: "10rem",
+                    top: "calc(3rem + 2px)",
                     minWidth: "10rem",
-                    textAlign: "center",
+                    textAlign: "left",
                     padding: 0,
+                    zIndex: 1,
+                    borderBottom: "none",
+                    backgroundColor: "#D9D9D9",
                   }}
                 >
-                  <Box
+                  <Stack
                     sx={{
-                      borderRight: "1px solid black",
+                      paddingLeft: "8px",
                       borderBottom: "1px solid black",
+                      borderLeft: "1px solid black",
+                      minHeight: "1.5rem",
+                      justifyContent: "center",
                     }}
                   >
                     {hour}:00
-                  </Box>
+                  </Stack>
                 </TableCell>
               ))
             )}
           </TableRow>
         </TableHead>
         <TableBody>
-          {shipyardAreas.map((area) => (
-            <TableRow key={area}>
+          {stands.map((stand, idx) => (
+            <TableRow key={stand.title}>
               <TableCell
                 style={{
                   position: "sticky",
-                  left: 0,
+                  left: 1,
                   background: "#fff",
                   zIndex: 1,
                   padding: 0,
-                  borderBottom: "none",
+                  borderBottom: "1px solid black",
                 }}
               >
                 <Box
                   sx={{
-                    borderBottom: "1px solid black",
                     borderRight: "1px solid black",
+                    height: "100%",
                   }}
                 >
-                  {area}
+                  <Stand stand={stand} />
                 </Box>
               </TableCell>
               {groupedData.map((day) =>
                 day.groupedHours.map((hour) => (
                   <TableCell
-                    key={`${area}-${day.date}-${hour}`}
-                    sx={{ padding: 0 }}
+                    key={`${stand.title}-${day.date}-${hour}`}
+                    sx={{
+                      padding: 0,
+                      borderRight: "1px solid #D9D9D9",
+                      borderBottom: "1px solid black",
+                    }}
                   >
                     {/* Your content for each cell */}
                   </TableCell>

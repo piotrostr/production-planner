@@ -1,11 +1,11 @@
-import SearchIcon from "@mui/icons-material/Search";
-import MenuIcon from "@mui/icons-material/Menu";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { Stack } from "@mui/material";
-import { ToolbarIcon } from "../ToolbarIcon";
+import SearchIcon from "@mui/icons-material/Search"
+import MenuIcon from "@mui/icons-material/Menu"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
+import FilterAltIcon from "@mui/icons-material/FilterAlt"
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
+import { Stack } from "@mui/material"
+import { ToolbarIcon } from "../ToolbarIcon"
 
 const icons = [
   {
@@ -26,7 +26,7 @@ const icons = [
     iconText: "Więcej",
     expandMore: true,
   },
-];
+]
 
 export function Toolbar() {
   return (
@@ -56,5 +56,5 @@ export function Toolbar() {
         ))}
       </Stack>
     </Stack>
-  );
+  )
 }

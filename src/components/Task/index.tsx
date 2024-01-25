@@ -1,24 +1,24 @@
-import { Task as TaskType } from "../../../types/task"
-import { Stack, Typography } from "@mui/material"
+import { Task as TaskType } from "../../../types/task";
+import { Stack, Typography } from "@mui/material";
 
 interface TaskProps {
-  task: TaskType
+  task: TaskType;
 }
 
 export function Task({ task }: TaskProps) {
   return (
     <Stack
       width="7rem"
-      height="4rem"
+      height="3rem"
       border="1px solid #000000"
       justifyContent="center"
       px={3}
       borderRadius={1}
       sx={{ bgcolor: task.bgcolor, color: "#FFFFFF" }}
     >
-      <Typography variant="body1" fontWeight={700}>
+      <Typography variant="body2" fontWeight={700}>
         {task.title}
       </Typography>
     </Stack>
-  )
+  );
 }

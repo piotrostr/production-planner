@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useRef, useState } from "react";
 import {
   Stack,
   Table,
@@ -8,80 +8,101 @@ import {
   TableCell,
   TableBody,
   Box,
-} from "@mui/material"
-import { Stand } from "../Stand"
-import { Stand as StandType } from "../../../types/stand"
+} from "@mui/material";
+import { Stand } from "../Stand";
+import { Stand as StandType } from "../../../types/stand";
+import { TimeIndicator } from "../TimeIndicator";
 
 interface GroupedData {
-  date: Date
-  groupedHours: number[]
+  date: Date;
+  groupedHours: number[];
 }
 
 interface WeekData {
-  weekNumber: number
-  dates: Date[]
+  weekNumber: number;
+  dates: Date[];
 }
 
 interface ProductionScheduleProps {
-  stands: StandType[]
+  stands: StandType[];
 }
 
 export function ProductionSchedule({ stands }: ProductionScheduleProps) {
-  const numberOfDays: number = 20
+  const [timeIndicatorHeight, setTimeIndicatorHeight] = useState(0);
+
+  const rowRef = useRef(null);
+  useEffect(() => {
+    const updateDistance = () => {
+      const windowHeight = window.innerHeight;
+      const componentRect = rowRef.current.getBoundingClientRect();
+      const distance =
+        windowHeight - componentRect.bottom - rowRef.current.offsetHeight - 4;
+      setTimeIndicatorHeight(distance);
+    };
+
+    updateDistance();
+
+    window.addEventListener("resize", updateDistance);
+    return () => {
+      window.removeEventListener("resize", updateDistance);
+    };
+  }, []);
+
+  const numberOfDays: number = 1;
 
   const generateDateRange = (numberOfDays: number): Date[] => {
-    const currentDate = new Date()
+    const currentDate = new Date();
     const dateRange = Array.from({ length: numberOfDays }, (_, index) => {
-      const date = new Date(currentDate)
-      date.setDate(currentDate.getDate() + index)
-      return date
-    })
-    return dateRange
-  }
+      const date = new Date(currentDate);
+      date.setDate(currentDate.getDate() + index);
+      return date;
+    });
+    return dateRange;
+  };
 
-  const dateRange: Date[] = generateDateRange(numberOfDays)
+  const dateRange: Date[] = generateDateRange(numberOfDays);
 
   const groupDaysAndHours = (dateRange: Date[]): GroupedData[] => {
-    const groupedData: GroupedData[] = []
+    const groupedData: GroupedData[] = [];
     dateRange.forEach((date) => {
-      const groupedHours = Array.from({ length: 24 }, (_, index) => index)
-      groupedData.push({ date, groupedHours })
-    })
-    return groupedData
-  }
+      const groupedHours = Array.from({ length: 24 }, (_, index) => index);
+      groupedData.push({ date, groupedHours });
+    });
+    return groupedData;
+  };
 
-  const groupedData: GroupedData[] = groupDaysAndHours(dateRange)
+  const groupedData: GroupedData[] = groupDaysAndHours(dateRange);
 
   const getISOWeek = (date: Date): number => {
-    const startOfYear = new Date(date.getFullYear(), 0, 1)
-    const diff = date.getTime() - startOfYear.getTime()
-    const oneWeek = 7 * 24 * 60 * 60 * 1000
-    return Math.ceil(diff / oneWeek)
-  }
+    const startOfYear = new Date(date.getFullYear(), 0, 1);
+    const diff = date.getTime() - startOfYear.getTime();
+    const oneWeek = 7 * 24 * 60 * 60 * 1000;
+    return Math.ceil(diff / oneWeek);
+  };
 
   const groupDaysByWeek = (dateRange: Date[]): WeekData[] => {
-    const groupedData: WeekData[] = []
+    const groupedData: WeekData[] = [];
     dateRange.forEach((date) => {
-      const weekNumber = getISOWeek(date)
+      const weekNumber = getISOWeek(date);
       const existingWeek = groupedData.find(
         (group) => group.weekNumber === weekNumber
-      )
+      );
 
       if (existingWeek) {
-        existingWeek.dates.push(date)
+        existingWeek.dates.push(date);
       } else {
-        groupedData.push({ weekNumber, dates: [date] })
+        groupedData.push({ weekNumber, dates: [date] });
       }
-    })
-    return groupedData
-  }
+    });
+    return groupedData;
+  };
 
-  const weeksData: WeekData[] = groupDaysByWeek(dateRange)
+  const weeksData: WeekData[] = groupDaysByWeek(dateRange);
 
-  const numRowsToFill = 30
+  const numRowsToFill = 30;
 
   const fillEmptyRows = () => {
-    const emptyRows = []
+    const emptyRows = [];
     for (let i = 0; i < numRowsToFill; i++) {
       emptyRows.push(
         <TableRow key={`empty-row-${i}`}>
@@ -114,10 +135,10 @@ export function ProductionSchedule({ stands }: ProductionScheduleProps) {
             ))
           )}
         </TableRow>
-      )
+      );
     }
-    return emptyRows
-  }
+    return emptyRows;
+  };
 
   return (
     <TableContainer
@@ -138,6 +159,7 @@ export function ProductionSchedule({ stands }: ProductionScheduleProps) {
         },
       }}
     >
+      <TimeIndicator height={timeIndicatorHeight} />
       <Table>
         <TableHead>
           <TableRow>
@@ -233,7 +255,7 @@ export function ProductionSchedule({ stands }: ProductionScheduleProps) {
               </React.Fragment>
             ))}
           </TableRow>
-          <TableRow>
+          <TableRow ref={rowRef}>
             <TableCell
               style={{
                 padding: 0,
@@ -332,7 +354,7 @@ export function ProductionSchedule({ stands }: ProductionScheduleProps) {
         {fillEmptyRows()}
       </Table>
     </TableContainer>
-  )
+  );
 }
 
-export default ProductionSchedule
+export default ProductionSchedule;

@@ -1,7 +1,7 @@
-import { Stack } from "@mui/material"
-import { TaskSlider } from "./components/TaskSlider"
-import ProductionSchedule from "./components/ProductionSchedule"
-import { Toolbar } from "./components/Toolbar"
+import { Stack } from "@mui/material";
+import { TaskSlider } from "./components/TaskSlider";
+import ProductionSchedule from "./components/ProductionSchedule";
+import { Toolbar } from "./components/Toolbar";
 
 const tasks = [
   {
@@ -52,7 +52,7 @@ const tasks = [
     description: "Description 4",
     bgcolor: "#00A2D5",
   },
-]
+];
 
 const stands = [
   {
@@ -79,7 +79,7 @@ const stands = [
     description: "Description 4",
     bgcolor: "#D5009A",
   },
-]
+];
 
 function App() {
   return (
@@ -90,7 +90,7 @@ function App() {
         <ProductionSchedule stands={stands} />
       </Stack>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

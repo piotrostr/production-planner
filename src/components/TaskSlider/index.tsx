@@ -20,7 +20,8 @@ export function TaskSlider({ tasks }: TaskSliderProps) {
         px={2}
         py={1}
         overflow="scroll"
-        border="1px solid #000000"
+        borderTop="1px solid #000000"
+        borderBottom="1px solid #000000"
         bgcolor="#EFEFEF"
         sx={{
           scrollbarWidth: "thin",

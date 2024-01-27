@@ -1,7 +1,8 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 
 import { StickyGrid } from "../StickyGrid"
 import { Stand } from "../../../types/stand"
+import { HeadCell, SideCell, DataCell } from "../Cell"
 
 interface CellProps {
   columnIndex: number
@@ -14,84 +15,80 @@ interface VirtualizedTableProps {
 }
 
 export const VirtualizedTable = ({ stands }: VirtualizedTableProps) => {
-  const Cell = ({ columnIndex, rowIndex, style }: CellProps) => {
+  const [dateRange, setDateRange] = useState<Date[]>([])
+  const [hourRange, setHourRange] = useState<number[]>([])
+  const [weekRange, setWeekRange] = useState<number[]>([])
+  const numberOfDays: number = 20
+
+  const generateDateRange = (numberOfDays: number): Date[] => {
+    const currentDate = new Date()
+    const dateRange = Array.from({ length: numberOfDays }, (_, index) => {
+      const date = new Date(currentDate)
+      date.setDate(currentDate.getDate() + index)
+      return date
+    })
+    return dateRange
+  }
+
+  const generateHourRange = (numberOfDays: number): number[] => {
+    //return an array of repeated numbers from 0 to 23
+    const hourRange = Array.from({ length: numberOfDays * 24 }, (_, index) => {
+      return index % 24
+    })
+    return hourRange
+  }
+
+  const generateWeekRange = (numberOfDays: number): number[] => {
+    const weekRange = Array.from(
+      { length: numberOfDays },
+      (_, index) => index + 1
+    )
+    return weekRange
+  }
+
+  useEffect(() => {
+    const dateRange = generateDateRange(numberOfDays)
+    const hourRange = generateHourRange(numberOfDays)
+    const weekRange = generateWeekRange(numberOfDays)
+    setDateRange(dateRange)
+    setHourRange(hourRange)
+    setWeekRange(weekRange)
+  }, [])
+
+  const renderCell = ({ columnIndex, rowIndex, style }: CellProps) => {
     //first col except first row
     if (columnIndex == 0 && rowIndex != 0) {
-      return (
-        <div
-          style={{
-            ...style,
-            backgroundColor: "white",
-            borderBottom: "1px solid black",
-            borderRight: "1px solid black",
-          }}
-        >
-          {stands[rowIndex - 1]?.title}
-        </div>
-      )
+      return <SideCell style={style} stands={stands} rowIndex={rowIndex} />
     }
     //first row except first col
     if (rowIndex == 0) {
       return (
-        <div
-          style={{
-            ...style,
-          }}
-        >
-          {columnIndex == 0 ? (
-            <div
-              style={{
-                width: "100%",
-                borderBottom: "1px solid black",
-                borderRight: "1px solid black",
-                color: "transparent",
-                backgroundColor: "white",
-                marginRight: "-1px",
-              }}
-            >
-              /
-            </div>
-          ) : (
-            <div
-              style={{
-                width: "100px",
-                backgroundColor: "white",
-                transform: "translateX(1px)",
-                borderBottom: "1px solid black",
-                borderRight: "1px solid black",
-              }}
-            >
-              header cell
-            </div>
-          )}
-        </div>
+        <HeadCell
+          style={style}
+          columnIndex={columnIndex}
+          rowIndex={rowIndex}
+          hourRange={hourRange}
+          dateRange={dateRange}
+          weekRange={weekRange}
+        />
       )
     } else {
       return (
-        <div
-          style={{
-            ...style,
-            borderBottom: "1px solid black",
-            borderRight: "1px solid black",
-            transform: `translateY(${rowIndex - 1}px)`,
-          }}
-        >
-          elo
-        </div>
+        <DataCell style={style} columnIndex={columnIndex} rowIndex={rowIndex} />
       )
     }
   }
 
   return (
     <StickyGrid
-      columnCount={1000}
+      columnCount={dateRange?.length * 24 * 4 + 1}
       columnWidth={() => 100}
       height={1000}
       rowCount={stands?.length + 1}
       rowHeight={() => 100}
       width={window.innerWidth}
     >
-      {Cell}
+      {renderCell}
     </StickyGrid>
   )
 }

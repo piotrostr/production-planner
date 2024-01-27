@@ -4,9 +4,9 @@ interface HeadCellProps {
   style: React.CSSProperties
   columnIndex: number
   rowIndex: number
-  hourRange: number[]
-  dateRange: Date[]
-  weekRange: number[]
+  hourRange: string[]
+  dateRange: string[]
+  weekRange: string[]
 }
 
 export function HeadCell({
@@ -17,31 +17,11 @@ export function HeadCell({
   dateRange,
   weekRange,
 }: HeadCellProps) {
-  const renderHour = (hourRange: number[], columnIndex: number) => {
-    const index = columnIndex % (hourRange.length * 4)
-    const hour = hourRange[Math.floor(index / 4)]
-    if ((columnIndex % 4) + -1 == 0) {
-      return <Typography>{hour + ":00"}</Typography>
-    } else {
-      return <Typography sx={{ color: "transparent" }}>/</Typography>
-    }
-  }
-
-  const renderDate = (dateRange: Date[], columnIndex: number) => {
-    const index = columnIndex % (hourRange.length * 24 * 4)
-    const date = dateRange[Math.floor(index / (24 * 4))]
-    if ((columnIndex % (24 * 4)) + -1 == 0) {
-      return <Typography>{date.toLocaleDateString()}</Typography>
-    } else {
-      return <Typography sx={{ color: "transparent" }}>/</Typography>
-    }
-  }
-
-  const renderWeek = (weekRange: number[], columnIndex: number) => {
-    const index = columnIndex % (hourRange.length * 24 * 7 * 4)
-    const week = weekRange[Math.floor(index / (24 * 7 * 4))]
-    if ((columnIndex % (24 * 7 * 4)) + -1 == 0) {
-      return <Typography>{"Week " + week}</Typography>
+  const renderLabel = (range: string[], columnIndex: number, span: number) => {
+    const index = columnIndex % (range.length * span)
+    const label = range[Math.floor(index / span)]
+    if ((columnIndex % span) - 1 == 0) {
+      return <Typography>{label}</Typography>
     } else {
       return <Typography sx={{ color: "transparent" }}>/</Typography>
     }
@@ -85,7 +65,7 @@ export function HeadCell({
                 columnIndex % (7 * 24 * 4) == 0 ? "1px solid black" : "",
             }}
           >
-            {renderWeek(weekRange, columnIndex)}
+            {renderLabel(weekRange, columnIndex, 24 * 7 * 4)}
           </Box>
           <Box
             height="100%"
@@ -96,21 +76,21 @@ export function HeadCell({
               borderRight: columnIndex % (24 * 4) == 0 ? "1px solid black" : "",
             }}
           >
-            {renderDate(dateRange, columnIndex)}
+            {renderLabel(dateRange, columnIndex, 24 * 4)}
           </Box>
           <Box
             height="100%"
             sx={{
               boxSizing: "border-box",
               //display right border every 4th column
-              borderRight: columnIndex % 4 == 0 ? "1px solid black" : "",
+              borderRight: columnIndex % 1 == 0 ? "1px solid black" : "",
               borderBottom: "1px solid black",
             }}
           >
             {
               //display hour every 4th column
             }
-            {renderHour(hourRange, columnIndex)}
+            {renderLabel(hourRange, columnIndex, 4)}
           </Box>
         </Stack>
       )}

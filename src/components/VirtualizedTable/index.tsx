@@ -15,34 +15,34 @@ interface VirtualizedTableProps {
 }
 
 export const VirtualizedTable = ({ stands }: VirtualizedTableProps) => {
-  const [dateRange, setDateRange] = useState<Date[]>([])
-  const [hourRange, setHourRange] = useState<number[]>([])
-  const [weekRange, setWeekRange] = useState<number[]>([])
+  const [dateRange, setDateRange] = useState<string[]>([])
+  const [hourRange, setHourRange] = useState<string[]>([])
+  const [weekRange, setWeekRange] = useState<string[]>([])
   const numberOfDays: number = 20
 
-  const generateDateRange = (numberOfDays: number): Date[] => {
+  const generateDateRange = (numberOfDays: number): string[] => {
     const currentDate = new Date()
     const dateRange = Array.from({ length: numberOfDays }, (_, index) => {
       const date = new Date(currentDate)
       date.setDate(currentDate.getDate() + index)
-      return date
+      return date.toLocaleDateString("en-GB")
     })
     return dateRange
   }
 
-  const generateHourRange = (numberOfDays: number): number[] => {
+  const generateHourRange = (numberOfDays: number): string[] => {
     //return an array of repeated numbers from 0 to 23
     const hourRange = Array.from({ length: numberOfDays * 24 }, (_, index) => {
-      return index % 24
+      return (index % 24) + ":00"
     })
     return hourRange
   }
 
-  const generateWeekRange = (numberOfDays: number): number[] => {
+  const generateWeekRange = (numberOfDays: number): string[] => {
     const weekRange = Array.from(
       { length: numberOfDays },
       (_, index) => index + 1
-    )
+    ).map((week) => "Week " + week)
     return weekRange
   }
 

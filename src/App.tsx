@@ -1,8 +1,9 @@
 import { Stack } from "@mui/material"
 import { TaskSlider } from "./components/TaskSlider"
-import ProductionSchedule from "./components/ProductionSchedule"
+import { ProductionSchedule } from "./components/ProductionSchedule"
 import { DndContext } from "@dnd-kit/core"
 import { Toolbar } from "./components/Toolbar"
+import { VirtualizedTable } from "./components/VirtualizedTable"
 
 const tasks = [
   {
@@ -89,7 +90,7 @@ function App() {
         <Toolbar />
         <DndContext>
           <TaskSlider tasks={tasks} />
-          <ProductionSchedule stands={stands} />
+          <VirtualizedTable stands={[...stands, ...stands]} />
         </DndContext>
       </Stack>
     </>

@@ -1,3 +1,5 @@
+import { Stand } from "../Stand";
+
 export function SideCell({ style, stands, rowIndex }) {
   return (
     <div
@@ -10,7 +12,7 @@ export function SideCell({ style, stands, rowIndex }) {
         height: 50,
       }}
     >
-      {stands[rowIndex - 1]?.title}
+      <Stand stand={stands[rowIndex - 1]} />
     </div>
-  )
+  );
 }

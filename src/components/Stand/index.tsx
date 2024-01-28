@@ -1,15 +1,14 @@
-import { Stand as StandType } from "../../../types/stand"
-import { Stack, Typography } from "@mui/material"
+import { Stand as StandType } from "../../../types/stand";
+import { Stack, Typography } from "@mui/material";
 
 interface StandProps {
-  stand: StandType
+  stand: StandType;
 }
 
 export function Stand({ stand }: StandProps) {
   return (
     <Stack
-      minWidth="7rem"
-      height="4rem"
+      height="100%"
       justifyContent="center"
       px={3}
       sx={{
@@ -22,5 +21,5 @@ export function Stand({ stand }: StandProps) {
         {stand.title}
       </Typography>
     </Stack>
-  )
+  );
 }

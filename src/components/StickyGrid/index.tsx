@@ -1,23 +1,23 @@
-import React from "react"
-import { VariableSizeGrid as Grid } from "react-window"
+import React from "react";
+import { VariableSizeGrid as Grid } from "react-window";
 
 function getCellIndicies(child) {
-  return { row: child.props.rowIndex, column: child.props.columnIndex }
+  return { row: child.props.rowIndex, column: child.props.columnIndex };
 }
 
 function getShownIndicies(children) {
-  let minRow = Infinity
-  let maxRow = -Infinity
-  let minColumn = Infinity
-  let maxColumn = -Infinity
+  let minRow = Infinity;
+  let maxRow = -Infinity;
+  let minColumn = Infinity;
+  let maxColumn = -Infinity;
 
   React.Children.forEach(children, (child) => {
-    const { row, column } = getCellIndicies(child)
-    minRow = Math.min(minRow, row)
-    maxRow = Math.max(maxRow, row)
-    minColumn = Math.min(minColumn, column)
-    maxColumn = Math.max(maxColumn, column)
-  })
+    const { row, column } = getCellIndicies(child);
+    minRow = Math.min(minRow, row);
+    maxRow = Math.max(maxRow, row);
+    minColumn = Math.min(minColumn, column);
+    maxColumn = Math.max(maxColumn, column);
+  });
 
   return {
     from: {
@@ -28,7 +28,7 @@ function getShownIndicies(children) {
       row: maxRow,
       column: maxColumn,
     },
-  }
+  };
 }
 
 function useInnerElementType(Cell, columnWidth, rowHeight) {
@@ -36,39 +36,39 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
     () =>
       React.forwardRef((props, ref) => {
         function sumRowsHeights(index) {
-          let sum = 0
+          let sum = 0;
 
           while (index > 1) {
-            sum += rowHeight(index - 1)
-            index -= 1
+            sum += rowHeight(index - 1);
+            index -= 1;
           }
 
-          return sum
+          return sum;
         }
 
         function sumColumnWidths(index) {
-          let sum = 0
+          let sum = 0;
 
           while (index > 1) {
-            sum += columnWidth(index - 1)
-            index -= 1
+            sum += columnWidth(index - 1);
+            index -= 1;
           }
 
-          return sum
+          return sum;
         }
 
-        const shownIndecies = getShownIndicies(props.children)
+        const shownIndecies = getShownIndicies(props.children);
 
         const children = React.Children.map(props.children, (child) => {
-          const { column, row } = getCellIndicies(child)
+          const { column, row } = getCellIndicies(child);
 
           // do not show non-sticky cell
           if (column === 0 || row === 0) {
-            return null
+            return null;
           }
 
-          return child
-        })
+          return child;
+        });
 
         children.push(
           React.createElement(Cell, {
@@ -77,25 +77,25 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
             columnIndex: 0,
             style: {
               display: "inline-flex",
-              width: 150,
+              width: 225,
               position: "sticky",
               top: 0,
               left: 0,
               zIndex: 4,
             },
           })
-        )
+        );
 
         const shownColumnsCount =
-          shownIndecies.to.column - shownIndecies.from.column
+          shownIndecies.to.column - shownIndecies.from.column;
 
         for (let i = 1; i <= shownColumnsCount; i += 1) {
-          const columnIndex = i + shownIndecies.from.column
-          const rowIndex = 0
-          const width = columnWidth(columnIndex)
-          const height = rowHeight(rowIndex)
+          const columnIndex = i + shownIndecies.from.column;
+          const rowIndex = 0;
+          const width = columnWidth(columnIndex);
+          const height = rowHeight(rowIndex);
 
-          const marginLeft = i === 1 ? sumColumnWidths(columnIndex) : undefined
+          const marginLeft = i === 1 ? sumColumnWidths(columnIndex) : undefined;
 
           children.push(
             React.createElement(Cell, {
@@ -113,18 +113,18 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
                 zIndex: 3,
               },
             })
-          )
+          );
         }
 
-        const shownRowsCount = shownIndecies.to.row - shownIndecies.from.row
+        const shownRowsCount = shownIndecies.to.row - shownIndecies.from.row;
 
         for (let i = 1; i <= shownRowsCount; i += 1) {
-          const columnIndex = 0
-          const rowIndex = i + shownIndecies.from.row
-          const width = columnWidth(columnIndex)
-          const height = rowHeight(rowIndex)
+          const columnIndex = 0;
+          const rowIndex = i + shownIndecies.from.row;
+          const width = columnWidth(columnIndex);
+          const height = rowHeight(rowIndex);
 
-          const marginTop = i === 1 ? sumRowsHeights(rowIndex) : undefined
+          const marginTop = i === 1 ? sumRowsHeights(rowIndex) : undefined;
 
           children.push(
             React.createElement(Cell, {
@@ -133,7 +133,7 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
               columnIndex,
               style: {
                 marginTop,
-                width: 150,
+                width: 225,
                 height,
                 position: "sticky",
                 left: 0,
@@ -141,17 +141,17 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
                 zIndex: 2,
               },
             })
-          )
+          );
         }
 
         return (
           <div ref={ref} {...props}>
             {children}
           </div>
-        )
+        );
       }),
     [Cell, columnWidth, rowHeight]
-  )
+  );
 }
 
 export function StickyGrid(props) {
@@ -164,5 +164,5 @@ export function StickyGrid(props) {
         props.rowHeight
       )}
     />
-  )
+  );
 }

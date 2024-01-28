@@ -77,7 +77,7 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
             columnIndex: 0,
             style: {
               display: "inline-flex",
-              width: 100,
+              width: 150,
               position: "sticky",
               top: 0,
               left: 0,
@@ -133,7 +133,7 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
               columnIndex,
               style: {
                 marginTop,
-                width,
+                width: 150,
                 height,
                 position: "sticky",
                 left: 0,

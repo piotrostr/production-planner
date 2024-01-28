@@ -1,16 +1,18 @@
 import { useDraggable } from "@dnd-kit/core"
-
 interface DraggableProps {
   children: React.ReactNode
-  id: number
+  id: string
   scroll: { x: number; y: number }
+  data: any
 }
 
-export function Draggable({ children, id, scroll }: DraggableProps) {
-  const { attributes, listeners, setNodeRef, transform, over } = useDraggable({
-    id: id,
-  })
-  console.log(over)
+export function Draggable({ children, id, scroll, data }: DraggableProps) {
+  const { attributes, listeners, setNodeRef, transform, over, active } =
+    useDraggable({
+      id: id,
+      data: data,
+    })
+
   const style = transform
     ? {
         position: "absolute",
@@ -25,13 +27,15 @@ export function Draggable({ children, id, scroll }: DraggableProps) {
     : undefined
 
   return (
-    <button
-      ref={setNodeRef}
-      style={{ all: "unset", cursor: "grab", ...style }}
-      {...listeners}
-      {...attributes}
-    >
-      {children}
-    </button>
+    <>
+      <button
+        ref={setNodeRef}
+        style={{ all: "unset", cursor: "grab", ...style }}
+        {...listeners}
+        {...attributes}
+      >
+        {children}
+      </button>
+    </>
   )
 }

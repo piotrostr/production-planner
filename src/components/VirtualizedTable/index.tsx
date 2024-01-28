@@ -18,11 +18,15 @@ interface VirtualizedTableProps {
       y: number
     }>
   >
+  cellStateMap: any
+  draggedTask: any
 }
 
 export const VirtualizedTable = ({
   stands,
   setScroll,
+  cellStateMap,
+  draggedTask,
 }: VirtualizedTableProps) => {
   const [dateRange, setDateRange] = useState<string[]>([])
   const [hourRange, setHourRange] = useState<string[]>([])
@@ -87,7 +91,13 @@ export const VirtualizedTable = ({
       )
     } else {
       return (
-        <DataCell style={style} columnIndex={columnIndex} rowIndex={rowIndex} />
+        <DataCell
+          style={style}
+          columnIndex={columnIndex}
+          rowIndex={rowIndex}
+          cellStateMap={cellStateMap}
+          draggedTask={draggedTask}
+        />
       )
     }
   }

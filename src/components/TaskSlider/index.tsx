@@ -42,7 +42,11 @@ export function TaskSlider({ tasks, scroll }: TaskSliderProps) {
         <Stack spacing={2} direction="row" ref={innerRef}>
           {tasks.map((task, idx) => (
             <Stack direction="row" key={task.id} spacing={2}>
-              <Draggable id={task.id} scroll={scroll}>
+              <Draggable
+                id={task?.id.toString()}
+                scroll={scroll}
+                data={{ task, source: null, state: null }}
+              >
                 <Task task={task} />
               </Draggable>
               {idx !== tasks.length - 1 && (

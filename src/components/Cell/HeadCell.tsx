@@ -44,6 +44,7 @@ export function HeadCell({
         <Stack
           height="100%"
           justifyContent="center"
+          color="#1E1E1E"
           sx={{
             borderBottom: columnIndex != 0 ? "1px solid black" : "",
             //display right border every 7 * 24 * 4th column
@@ -56,6 +57,7 @@ export function HeadCell({
         <Stack
           height="100%"
           justifyContent="center"
+          color="#1E1E1E"
           sx={{
             borderBottom: columnIndex != 0 ? "1px solid black" : "",
             //display right border every 24 * 4th column
@@ -67,6 +69,7 @@ export function HeadCell({
         <Stack
           height="100%"
           justifyContent="center"
+          color="#1E1E1E"
           sx={{
             //display right border every 4th column
             borderRight: columnIndex % 4 == 0 ? "1px solid black" : "",

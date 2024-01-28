@@ -22,7 +22,7 @@ export function Draggable({ children, id, scroll, data }: DraggableProps) {
             }px, 0)`
           : `translate3d(${transform.x}px, ${transform.y}px, 0)`,
         zIndex: 999,
-        cursor: "grabbing",
+        cursor: "none",
       }
     : undefined
 
@@ -30,7 +30,7 @@ export function Draggable({ children, id, scroll, data }: DraggableProps) {
     <>
       <button
         ref={setNodeRef}
-        style={{ all: "unset", cursor: "grab", ...style }}
+        style={{ all: "unset", cursor: active ? "none" : "grab", ...style }}
         {...listeners}
         {...attributes}
       >

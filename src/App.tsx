@@ -4,6 +4,7 @@ import { DndContext } from "@dnd-kit/core"
 import { Toolbar } from "./components/Toolbar"
 import { VirtualizedTable } from "./components/VirtualizedTable"
 import { useEffect, useState } from "react"
+import { snapCenterToCursor } from "@dnd-kit/modifiers"
 
 const tasksArr = [
   {
@@ -142,6 +143,12 @@ function App() {
   const rowCount = 50
   const columnCount = 100
 
+  const centerModifier = snapCenterToCursor({
+    activationConstraint: {
+      distance: 5,
+    },
+  })
+
   useEffect(() => {
     const initializeCellStateMap = () => {
       const stateMap = {} as any
@@ -266,13 +273,19 @@ function App() {
 
   return (
     <>
-      <Stack width="100vw" height="100vh">
+      <Stack
+        width="100vw"
+        height="100vh"
+        sx={{
+          cursor: draggedTask.draggableId && draggedTask.task ? "none" : "auto",
+        }}
+      >
         <Toolbar />
         <DndContext
-          autoScroll={false}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}
+          autoScroll={{ layoutShiftCompensation: false }}
         >
           <TaskSlider tasks={tasks} scroll={scroll} />
           <VirtualizedTable

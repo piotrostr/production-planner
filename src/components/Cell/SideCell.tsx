@@ -7,6 +7,7 @@ export function SideCell({ style, stands, rowIndex }) {
         boxSizing: "border-box",
         borderRight: "1px solid black",
         borderBottom: "1px solid black",
+        height: 50,
       }}
     >
       {stands[rowIndex - 1]?.title}

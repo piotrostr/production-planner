@@ -1,3 +1,5 @@
+import { Droppable } from "../Droppable"
+
 export function DataCell({ style, columnIndex, rowIndex }) {
   return (
     <div
@@ -7,9 +9,11 @@ export function DataCell({ style, columnIndex, rowIndex }) {
         boxSizing: "border-box",
         borderRight: "1px solid black",
         borderBottom: "1px solid black",
+        maxHeight: 50,
+        marginTop: 50,
       }}
     >
-      {rowIndex}:{columnIndex}
+      <Droppable id={`${columnIndex}-${rowIndex}`}>elo</Droppable>
     </div>
   )
 }

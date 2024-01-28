@@ -34,66 +34,48 @@ export function HeadCell({
         backgroundColor: "white",
       }}
     >
-      {columnIndex == 0 ? (
+      <Stack
+        sx={{
+          width: "100%",
+          height: 100,
+          bgcolor: "white",
+        }}
+      >
         <Box
           height="100%"
-          width="100%"
           sx={{
-            boxSizing: "border-box",
-            borderRight: "1px solid black",
-            borderBottom: "1px solid black",
-            color: "transparent",
+            borderBottom: columnIndex != 0 ? "1px solid black" : "",
+            //display right border every 7 * 24 * 4th column
+            borderRight:
+              columnIndex % (7 * 24 * 4) == 0 ? "1px solid black" : "",
           }}
         >
-          /
+          {renderLabel(weekRange, columnIndex, 24 * 7 * 4)}
         </Box>
-      ) : (
-        <Stack
+        <Box
+          height="100%"
           sx={{
-            width: "100%",
-            height: 100,
-            bgcolor: "white",
+            borderBottom: columnIndex != 0 ? "1px solid black" : "",
+            //display right border every 24 * 4th column
+            borderRight: columnIndex % (24 * 4) == 0 ? "1px solid black" : "",
           }}
         >
-          <Box
-            height="100%"
-            sx={{
-              boxSizing: "border-box",
-              borderBottom: "1px solid black",
-              //display right border every 7 * 24 * 4th column
-              borderRight:
-                columnIndex % (7 * 24 * 4) == 0 ? "1px solid black" : "",
-            }}
-          >
-            {renderLabel(weekRange, columnIndex, 24 * 7 * 4)}
-          </Box>
-          <Box
-            height="100%"
-            sx={{
-              boxSizing: "border-box",
-              borderBottom: "1px solid black",
-              //display right border every 24 * 4th column
-              borderRight: columnIndex % (24 * 4) == 0 ? "1px solid black" : "",
-            }}
-          >
-            {renderLabel(dateRange, columnIndex, 24 * 4)}
-          </Box>
-          <Box
-            height="100%"
-            sx={{
-              boxSizing: "border-box",
-              //display right border every 4th column
-              borderRight: columnIndex % 1 == 0 ? "1px solid black" : "",
-              borderBottom: "1px solid black",
-            }}
-          >
-            {
-              //display hour every 4th column
-            }
-            {renderLabel(hourRange, columnIndex, 4)}
-          </Box>
-        </Stack>
-      )}
+          {renderLabel(dateRange, columnIndex, 24 * 4)}
+        </Box>
+        <Box
+          height="100%"
+          sx={{
+            //display right border every 4th column
+            borderRight: columnIndex % 1 == 0 ? "1px solid black" : "",
+            borderBottom: "1px solid black",
+          }}
+        >
+          {
+            //display hour every 4th column
+          }
+          {renderLabel(hourRange, columnIndex, 4)}
+        </Box>
+      </Stack>
     </div>
   )
 }

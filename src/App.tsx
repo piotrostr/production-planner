@@ -4,6 +4,7 @@ import { ProductionSchedule } from "./components/ProductionSchedule"
 import { DndContext } from "@dnd-kit/core"
 import { Toolbar } from "./components/Toolbar"
 import { VirtualizedTable } from "./components/VirtualizedTable"
+import { useState } from "react"
 
 const tasks = [
   {
@@ -84,13 +85,18 @@ const stands = [
 ]
 
 function App() {
+  const [scroll, setScroll] = useState({ x: 0, y: 0 })
   return (
     <>
       <Stack width="100vw" height="100vh">
         <Toolbar />
-        <DndContext>
-          <TaskSlider tasks={tasks} />
-          <VirtualizedTable stands={[...stands, ...stands]} />
+        <DndContext autoScroll={false}>
+          <TaskSlider tasks={tasks} scroll={scroll} />
+          <VirtualizedTable
+            stands={[...stands, ...stands]}
+            scroll={scroll}
+            setScroll={setScroll}
+          />
         </DndContext>
       </Stack>
     </>

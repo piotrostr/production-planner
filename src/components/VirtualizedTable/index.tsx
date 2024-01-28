@@ -12,13 +12,26 @@ interface CellProps {
 
 interface VirtualizedTableProps {
   stands: Stand[]
+  setScroll: React.Dispatch<
+    React.SetStateAction<{
+      x: number
+      y: number
+    }>
+  >
 }
 
-export const VirtualizedTable = ({ stands }: VirtualizedTableProps) => {
+export const VirtualizedTable = ({
+  stands,
+  setScroll,
+}: VirtualizedTableProps) => {
   const [dateRange, setDateRange] = useState<string[]>([])
   const [hourRange, setHourRange] = useState<string[]>([])
   const [weekRange, setWeekRange] = useState<string[]>([])
   const numberOfDays: number = 20
+
+  const handleScroll = (props) => {
+    setScroll({ x: props.scrollLeft, y: props.scrollTop })
+  }
 
   const generateDateRange = (numberOfDays: number): string[] => {
     const currentDate = new Date()
@@ -84,9 +97,10 @@ export const VirtualizedTable = ({ stands }: VirtualizedTableProps) => {
       columnCount={dateRange?.length * 24 * 4 + 1}
       columnWidth={() => 100}
       height={1000}
-      rowCount={stands?.length + 1}
-      rowHeight={() => 100}
+      rowCount={stands?.length + 6}
+      rowHeight={() => 50}
       width={window.innerWidth}
+      onScroll={handleScroll}
     >
       {renderCell}
     </StickyGrid>

@@ -33,10 +33,11 @@ export function Toolbar() {
     <Stack
       direction="row"
       width="100vw"
-      height="2rem"
+      minHeight="2.2rem"
       bgcolor="lightgrey"
       alignItems="center"
       justifyContent="space-between"
+      borderTop="1px solid #000000"
     >
       <Stack direction="row">
         <ToolbarIcon icon={<MenuIcon />} />

@@ -17,7 +17,7 @@ export function Stand({ stand }: StandProps) {
         ml: "-1px",
       }}
     >
-      <Typography variant="body2" fontWeight={700}>
+      <Typography variant="body2" color="#1E1E1E" fontWeight={600}>
         {stand.title}
       </Typography>
     </Stack>

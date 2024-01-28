@@ -1,17 +1,16 @@
-import { Draggable } from "../Draggable";
-import { Droppable } from "../Droppable";
-import { Task } from "../Task";
-import { DroppedTask, DroppedTaskStart, DroppedTaskEnd } from "./DroppedTask";
-import { Stack } from "@mui/material";
+import { Draggable } from "../Draggable"
+import { Droppable } from "../Droppable"
+import { Task } from "../Task"
+import { DroppedTask, DroppedTaskStart, DroppedTaskEnd } from "./DroppedTask"
+import { Stack } from "@mui/material"
 
 interface DataCellProps {
-  style: any;
-  columnIndex: number;
-  rowIndex: number;
-  cellStateMap: any;
-  draggedTask: any;
+  style: any
+  columnIndex: number
+  rowIndex: number
+  cellStateMap: any
+  draggedTask: any
 }
-
 export function DataCell({
   style,
   columnIndex,
@@ -19,30 +18,33 @@ export function DataCell({
   cellStateMap,
   draggedTask,
 }: DataCellProps) {
-  const data = cellStateMap[`${rowIndex}-${columnIndex}`];
-  const { task, state } = cellStateMap[`${rowIndex}-${columnIndex}`];
+  const data = cellStateMap[`${rowIndex}-${columnIndex}`]
+  const cellKey = `${rowIndex}-${columnIndex}`
+  const { task, state } = cellStateMap?.[cellKey] || {}
 
   const renderTask = () => {
-    if (draggedTask.draggableId === `${rowIndex}-${columnIndex}`) {
-      return <Task task={task} />;
+    if (draggedTask && draggedTask.draggableId === cellKey) {
+      return <Task task={task} />
     } else if (
-      draggedTask.draggableId !== `${rowIndex}-${columnIndex}` &&
-      draggedTask?.task?.id == task?.id
+      draggedTask &&
+      draggedTask.draggableId !== cellKey &&
+      draggedTask?.task?.id === task?.id
     ) {
-      return <div style={{ color: "transparent" }}>/</div>;
+      return <div style={{ color: "transparent" }}>/</div>
     } else {
       switch (state) {
         case "occupied":
-          return <DroppedTask task={task} />;
+          return <DroppedTask task={task} />
         case "occupied-start":
-          return <DroppedTaskStart task={task} />;
+          return <DroppedTaskStart task={task} />
         case "occupied-end":
-          return <DroppedTaskEnd task={task} />;
+          return <DroppedTaskEnd task={task} />
         default:
-          return <div style={{ color: "transparent" }}>/</div>;
+          return <div style={{ color: "transparent" }}>/</div>
       }
     }
-  };
+  }
+
   return (
     <Stack
       justifyContent="center"
@@ -58,15 +60,11 @@ export function DataCell({
         background: "white",
       }}
     >
-      <Droppable id={`${rowIndex}-${columnIndex}`}>
-        <Draggable
-          id={`${rowIndex}-${columnIndex}`}
-          scroll={{ x: 0, y: 0 }}
-          data={data}
-        >
+      <Droppable id={cellKey}>
+        <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
           {renderTask()}
         </Draggable>
       </Droppable>
     </Stack>
-  );
+  )
 }

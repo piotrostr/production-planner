@@ -163,6 +163,7 @@ export function StickyGrid(props) {
         props.columnWidth,
         props.rowHeight
       )}
+      overscanColumnCount={25}
     />
   )
 }

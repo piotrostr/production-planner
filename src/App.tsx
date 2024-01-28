@@ -1,9 +1,9 @@
-import { Stack } from "@mui/material";
-import { TaskSlider } from "./components/TaskSlider";
-import { DndContext } from "@dnd-kit/core";
-import { Toolbar } from "./components/Toolbar";
-import { VirtualizedTable } from "./components/VirtualizedTable";
-import { useEffect, useState } from "react";
+import { Stack } from "@mui/material"
+import { TaskSlider } from "./components/TaskSlider"
+import { DndContext } from "@dnd-kit/core"
+import { Toolbar } from "./components/Toolbar"
+import { VirtualizedTable } from "./components/VirtualizedTable"
+import { useEffect, useState } from "react"
 
 const tasksArr = [
   {
@@ -11,49 +11,49 @@ const tasksArr = [
     title: "PP1A",
     description: "Description 1",
     bgcolor: "#D5009A",
-    time: "1:15",
+    time: "0:15",
   },
   {
     id: 2,
     title: "PP1B",
     description: "Description 2",
     bgcolor: "#D5009A",
-    time: "2:30",
+    time: "0:30",
   },
   {
     id: 3,
     title: "PP2A",
     description: "Description 3",
     bgcolor: "#00A2D5",
-    time: "3:15",
+    time: "0:45",
   },
   {
     id: 4,
     title: "PP2B",
     description: "Description 4",
     bgcolor: "#00A2D5",
-    time: "4:45",
+    time: "1:00",
   },
   {
     id: 5,
     title: "PP3A",
     description: "Description 1",
     bgcolor: "#04D500",
-    time: "2:45",
+    time: "1:15",
   },
   {
     id: 6,
     title: "PP3B",
     description: "Description 2",
     bgcolor: "#04D500",
-    time: "5:00",
+    time: "0:15",
   },
   {
     id: 7,
     title: "PP3C",
     description: "Description 3",
     bgcolor: "#04D500",
-    time: "7:15",
+    time: "0:30",
   },
   {
     id: 8,
@@ -62,7 +62,7 @@ const tasksArr = [
     bgcolor: "#9100D5",
     time: "1:15",
   },
-];
+]
 
 const stands = [
   {
@@ -107,141 +107,141 @@ const stands = [
     description: "Description 4",
     bgcolor: "#9FD1FF",
   },
-];
+]
 
 function App() {
-  const [scroll, setScroll] = useState({ x: 0, y: 0 });
-  const [cellStateMap, setCellStateMap] = useState({} as any);
-  const [tasks, setTasks] = useState(tasksArr);
+  const [scroll, setScroll] = useState({ x: 0, y: 0 })
+  const [cellStateMap, setCellStateMap] = useState({} as any)
+  const [tasks, setTasks] = useState(tasksArr)
   const [draggedTask, setDraggedTask] = useState({
     draggableId: null,
     task: null,
-  });
+  })
 
-  const rowCount = 50;
-  const columnCount = 50;
+  const rowCount = 50
+  const columnCount = 100
 
   useEffect(() => {
     const initializeCellStateMap = () => {
-      const stateMap = {} as any;
+      const stateMap = {} as any
       for (let i = 0; i < rowCount; i++) {
         for (let j = 0; j < columnCount; j++) {
           stateMap[`${j + 1}-${i + 1}`] = {
             state: "empty",
             task: null,
             source: null,
-          };
+          }
         }
       }
-      setCellStateMap(stateMap);
-    };
-    initializeCellStateMap();
-  }, []);
+      setCellStateMap(stateMap)
+    }
+    initializeCellStateMap()
+  }, [])
 
   const handleDragEnd = (event: any) => {
-    const { active, over } = event;
+    const { active, over } = event
 
     if (active.id !== over.id) {
       //if task is in the task array)
       if (active.data.current.source === null) {
-        const overId = over.id;
-        const { task } = active.data.current;
-        const [hours, minutes] = task.time.split(":");
-        const cellSpan = Number(hours) * 4 + Number(minutes) / 15;
+        const overId = over.id
+        const { task } = active.data.current
+        const [hours, minutes] = task.time.split(":")
+        const cellSpan = Number(hours) * 4 + Number(minutes) / 15
         setTasks((prev: any) => {
-          const newTasks = prev.filter((t: any) => t.id !== task.id);
-          return newTasks;
-        });
+          const newTasks = prev.filter((t: any) => t.id !== task.id)
+          return newTasks
+        })
         setCellStateMap((prev: any) => {
-          const newStateMap = { ...prev };
+          const newStateMap = { ...prev }
           newStateMap[overId] = {
             state: "occupied-start",
             source: overId,
             task,
-          };
-          const [x, y] = overId.split("-").map((n: string) => Number(n));
+          }
+          const [x, y] = overId.split("-").map((n: string) => Number(n))
           for (let i = 1; i < cellSpan; i++) {
             newStateMap[`${x}-${y + i}`] = {
               state: "occupied",
               source: overId,
               task,
-            };
+            }
           }
           newStateMap[`${x}-${y + cellSpan}`] = {
             state: "occupied-end",
             source: overId,
             task,
-          };
-          return newStateMap;
-        });
+          }
+          return newStateMap
+        })
       } else {
         //remove task from cellStateMap
-        const { task, source } = active.data.current;
-        const [hours, minutes] = task.time.split(":");
-        const cellSpan = Number(hours) * 4 + Number(minutes) / 15;
+        const { task, source } = active.data.current
+        const [hours, minutes] = task.time.split(":")
+        const cellSpan = Number(hours) * 4 + Number(minutes) / 15
         setCellStateMap((prev: any) => {
-          const newStateMap = { ...prev };
+          const newStateMap = { ...prev }
           newStateMap[source] = {
             state: "empty",
             source: null,
             task: null,
-          };
-          const [x, y] = source.split("-").map((n: string) => Number(n));
+          }
+          const [x, y] = source.split("-").map((n: string) => Number(n))
           for (let i = 1; i < cellSpan; i++) {
             newStateMap[`${x}-${y + i}`] = {
               state: "empty",
               source: null,
               task: null,
-            };
+            }
           }
           newStateMap[`${x}-${y + cellSpan}`] = {
             state: "empty",
             source: null,
             task: null,
-          };
-          return newStateMap;
-        });
+          }
+          return newStateMap
+        })
         //add task to cellStateMap
-        const overId = over.id;
+        const overId = over.id
 
         setCellStateMap((prev: any) => {
-          const newStateMap = { ...prev };
+          const newStateMap = { ...prev }
           newStateMap[overId] = {
             state: "occupied-start",
             source: overId,
             task,
-          };
-          const [x, y] = overId.split("-").map((n: string) => Number(n));
+          }
+          const [x, y] = overId.split("-").map((n: string) => Number(n))
           for (let i = 1; i < cellSpan; i++) {
             newStateMap[`${x}-${y + i}`] = {
               state: "occupied",
               source: overId,
               task,
-            };
+            }
           }
           newStateMap[`${x}-${y + cellSpan}`] = {
             state: "occupied-end",
             source: overId,
             task,
-          };
-          return newStateMap;
-        });
+          }
+          return newStateMap
+        })
       }
     }
-    setDraggedTask({ draggableId: null, task: null });
-  };
+    setDraggedTask({ draggableId: null, task: null })
+  }
   const handleDragStart = (event: any) => {
-    const { active } = event;
+    const { active } = event
     const newDraggedTask = {
       draggableId: active.id,
       task: active.data.current.task,
-    };
-    setDraggedTask(newDraggedTask);
-  };
+    }
+    setDraggedTask(newDraggedTask)
+  }
 
   const handleDragCancel = () => {
-    setDraggedTask({ draggableId: null, task: null });
-  };
+    setDraggedTask({ draggableId: null, task: null })
+  }
 
   return (
     <>
@@ -263,7 +263,7 @@ function App() {
         </DndContext>
       </Stack>
     </>
-  );
+  )
 }
 
-export default App;
+export default App

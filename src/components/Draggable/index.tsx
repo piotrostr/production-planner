@@ -30,7 +30,7 @@ export function Draggable({ children, id, scroll, data }: DraggableProps) {
     <>
       <button
         ref={setNodeRef}
-        style={{ all: "unset", cursor: active ? "none" : "grab", ...style }}
+        style={{ all: "unset", cursor: "grab", ...style }}
         {...listeners}
         {...attributes}
       >

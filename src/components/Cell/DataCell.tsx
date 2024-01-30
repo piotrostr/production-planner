@@ -23,7 +23,7 @@ export function DataCell({
   const { task, state } = cellStateMap?.[cellKey] || {}
 
   const renderTask = () => {
-    if (draggedTask && draggedTask.draggableId === cellKey) {
+    if (draggedTask.id !== null && draggedTask.draggableId === cellKey) {
       return <Task task={task} />
     } else if (
       draggedTask &&
@@ -34,13 +34,29 @@ export function DataCell({
     } else {
       switch (state) {
         case "occupied":
-          return <DroppedTask task={task} />
+          return (
+            <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
+              <DroppedTask task={task} />
+            </Draggable>
+          )
         case "occupied-start":
-          return <DroppedTaskStart task={task} />
+          return (
+            <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
+              <DroppedTaskStart
+                task={task}
+                cellStateMap={cellStateMap}
+                cellKey={cellKey}
+              />
+            </Draggable>
+          )
         case "occupied-end":
-          return <DroppedTaskEnd task={task} />
+          return (
+            <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
+              <DroppedTaskEnd task={task} />
+            </Draggable>
+          )
         default:
-          return <div style={{ color: "transparent" }}>/</div>
+          return null
       }
     }
   }
@@ -58,13 +74,10 @@ export function DataCell({
         marginTop: 50,
         marginLeft: 125,
         background: "white",
+        userSelect: "none",
       }}
     >
-      <Droppable id={cellKey}>
-        <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
-          {renderTask()}
-        </Draggable>
-      </Droppable>
+      <Droppable id={cellKey}>{renderTask()}</Droppable>
     </Stack>
   )
 }

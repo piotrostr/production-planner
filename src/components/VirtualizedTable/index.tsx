@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react"
 import { StickyGrid } from "../StickyGrid"
 import { Stand } from "../../../types/stand"
 import { HeadCell, SideCell, DataCell } from "../Cell"
+import { createSnapModifier } from "@dnd-kit/modifiers"
 
 interface CellProps {
   columnIndex: number

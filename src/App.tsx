@@ -143,12 +143,6 @@ function App() {
   const rowCount = 50
   const columnCount = 100
 
-  const centerModifier = snapCenterToCursor({
-    activationConstraint: {
-      distance: 5,
-    },
-  })
-
   useEffect(() => {
     const initializeCellStateMap = () => {
       const stateMap = {} as any
@@ -166,98 +160,125 @@ function App() {
     initializeCellStateMap()
   }, [])
 
+  const checkCanDrop = (over, active) => {
+    const overId = over.id
+    const { task } = active.data.current
+    const [hours, minutes] = task.time.split(":")
+    const cellSpan = Number(hours) * 4 + Number(minutes) / 15
+    const [x, y] = overId.split("-").map((n: string) => Number(n))
+    const droppedCells = []
+    for (let i = 0; i < cellSpan; i++) {
+      const cellId = `${x}-${y + i}`
+      droppedCells.push(cellStateMap[cellId])
+    }
+    const canDrop = !droppedCells.some(
+      (cell) => cell.state !== "empty" && task.id !== cell.task.id
+    )
+
+    return canDrop
+  }
+
+  const handleDragEndFromSlider = (over, active) => {
+    const overId = over.id
+    const { task } = active.data.current
+    const [hours, minutes] = task.time.split(":")
+    const cellSpan = Number(hours) * 4 + Number(minutes) / 15
+    const [x, y] = overId.split("-").map((n: string) => Number(n))
+    setTasks((prev: any) => {
+      const newTasks = prev.filter((t: any) => t.id !== task.id)
+      return newTasks
+    })
+    setCellStateMap((prev: any) => {
+      const newStateMap = { ...prev }
+      newStateMap[overId] = {
+        state: "occupied-start",
+        source: overId,
+        task,
+      }
+      if (cellSpan > 1) {
+        for (let i = 1; i < cellSpan - 1; i++) {
+          newStateMap[`${x}-${y + i}`] = {
+            state: "occupied",
+            source: overId,
+            task,
+          }
+        }
+        newStateMap[`${x}-${y + cellSpan - 1}`] = {
+          state: "occupied-end",
+          source: overId,
+          task,
+        }
+      }
+
+      return newStateMap
+    })
+  }
+
+  const handleDragEndBetweenCells = (over, active) => {
+    //remove task from cellStateMap
+    const { task, source } = active.data.current
+    const [hours, minutes] = task.time.split(":")
+    const cellSpan = Number(hours) * 4 + Number(minutes) / 15
+    const emptyCell = {
+      state: "empty",
+      source: null,
+      task: null,
+    }
+    setCellStateMap((prev: any) => {
+      const newStateMap = { ...prev }
+      const [x, y] = source.split("-").map((n: string) => Number(n))
+      newStateMap[source] = emptyCell
+      if (cellSpan > 1) {
+        for (let i = 1; i < cellSpan - 1; i++) {
+          newStateMap[`${x}-${y + i}`] = emptyCell
+        }
+        newStateMap[`${x}-${y + cellSpan - 1}`] = emptyCell
+      }
+      return newStateMap
+    })
+
+    //add task to cellStateMap
+    const overId = over.id
+    setCellStateMap((prev: any) => {
+      const newStateMap = { ...prev }
+      const [x, y] = overId.split("-").map((n: string) => Number(n))
+      newStateMap[overId] = {
+        state: "occupied-start",
+        source: overId,
+        task,
+      }
+      if (cellSpan > 1) {
+        for (let i = 1; i < cellSpan - 1; i++) {
+          newStateMap[`${x}-${y + i}`] = {
+            state: "occupied",
+            source: overId,
+            task,
+          }
+        }
+        newStateMap[`${x}-${y + cellSpan - 1}`] = {
+          state: "occupied-end",
+          source: overId,
+          task,
+        }
+      }
+      return newStateMap
+    })
+  }
+
   const handleDragEnd = (event: any) => {
     const { active, over } = event
-
-    if (active.id !== over.id) {
+    const canDrop = checkCanDrop(over, active)
+    if (active.id !== over.id && canDrop) {
       //if task is in the task array)
       if (active.data.current.source === null) {
-        const overId = over.id
-        const { task } = active.data.current
-        const [hours, minutes] = task.time.split(":")
-        const cellSpan = Number(hours) * 4 + Number(minutes) / 15
-        setTasks((prev: any) => {
-          const newTasks = prev.filter((t: any) => t.id !== task.id)
-          return newTasks
-        })
-        setCellStateMap((prev: any) => {
-          const newStateMap = { ...prev }
-          newStateMap[overId] = {
-            state: "occupied-start",
-            source: overId,
-            task,
-          }
-          const [x, y] = overId.split("-").map((n: string) => Number(n))
-          for (let i = 1; i < cellSpan; i++) {
-            newStateMap[`${x}-${y + i}`] = {
-              state: "occupied",
-              source: overId,
-              task,
-            }
-          }
-          newStateMap[`${x}-${y + cellSpan}`] = {
-            state: "occupied-end",
-            source: overId,
-            task,
-          }
-          return newStateMap
-        })
+        handleDragEndFromSlider(over, active)
       } else {
-        //remove task from cellStateMap
-        const { task, source } = active.data.current
-        const [hours, minutes] = task.time.split(":")
-        const cellSpan = Number(hours) * 4 + Number(minutes) / 15
-        setCellStateMap((prev: any) => {
-          const newStateMap = { ...prev }
-          newStateMap[source] = {
-            state: "empty",
-            source: null,
-            task: null,
-          }
-          const [x, y] = source.split("-").map((n: string) => Number(n))
-          for (let i = 1; i < cellSpan; i++) {
-            newStateMap[`${x}-${y + i}`] = {
-              state: "empty",
-              source: null,
-              task: null,
-            }
-          }
-          newStateMap[`${x}-${y + cellSpan}`] = {
-            state: "empty",
-            source: null,
-            task: null,
-          }
-          return newStateMap
-        })
-        //add task to cellStateMap
-        const overId = over.id
-
-        setCellStateMap((prev: any) => {
-          const newStateMap = { ...prev }
-          newStateMap[overId] = {
-            state: "occupied-start",
-            source: overId,
-            task,
-          }
-          const [x, y] = overId.split("-").map((n: string) => Number(n))
-          for (let i = 1; i < cellSpan; i++) {
-            newStateMap[`${x}-${y + i}`] = {
-              state: "occupied",
-              source: overId,
-              task,
-            }
-          }
-          newStateMap[`${x}-${y + cellSpan}`] = {
-            state: "occupied-end",
-            source: overId,
-            task,
-          }
-          return newStateMap
-        })
+        handleDragEndBetweenCells(over, active)
       }
     }
     setDraggedTask({ draggableId: null, task: null })
   }
+
   const handleDragStart = (event: any) => {
     const { active } = event
     const newDraggedTask = {

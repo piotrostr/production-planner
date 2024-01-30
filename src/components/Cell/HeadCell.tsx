@@ -39,6 +39,7 @@ export function HeadCell({
           height: 100,
           bgcolor: "#D9D9D9",
           boxSizing: "border-box",
+          userSelect: "none",
         }}
       >
         <Stack

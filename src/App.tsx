@@ -5,6 +5,7 @@ import { Toolbar } from "./components/Toolbar"
 import { VirtualizedTable } from "./components/VirtualizedTable"
 import { useEffect, useState } from "react"
 import { snapCenterToCursor } from "@dnd-kit/modifiers"
+import { DataGrid, DataGridDemo } from "./components/DataGrid"
 
 const tasksArr = [
   {
@@ -100,31 +101,31 @@ const stands = [
     bgcolor: "#FF9E9E",
   },
   {
-    id: 4,
+    id: 3,
     title: "BOP GDANSK MAL 1",
     description: "Description 4",
     bgcolor: "#C598FF",
   },
   {
-    id: 5,
+    id: 4,
     title: "BOP GDANSK MAL 2",
     description: "Description 4",
     bgcolor: "#C598FF",
   },
   {
-    id: 6,
+    id: 5,
     title: "BOP GDYNIA SPAW 1",
     description: "Description 3",
     bgcolor: "#B3FFCD",
   },
   {
-    id: 7,
+    id: 6,
     title: "BOP GDYNIA SPAW 2",
     description: "Description 4",
     bgcolor: "#B3FFCD",
   },
   {
-    id: 8,
+    id: 7,
     title: "BOP GDYNIA PREFAB 1",
     description: "Description 4",
     bgcolor: "#9FD1FF",
@@ -148,7 +149,7 @@ function App() {
       const stateMap = {} as any
       for (let i = 0; i < rowCount; i++) {
         for (let j = 0; j < columnCount; j++) {
-          stateMap[`${j + 1}-${i + 1}`] = {
+          stateMap[`${j}-${i}`] = {
             state: "empty",
             task: null,
             source: null,
@@ -162,6 +163,7 @@ function App() {
 
   const checkCanDrop = (over, active) => {
     const overId = over.id
+
     const { task } = active.data.current
     const [hours, minutes] = task.time.split(":")
     const cellSpan = Number(hours) * 4 + Number(minutes) / 15
@@ -307,13 +309,16 @@ function App() {
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}
           autoScroll={{ layoutShiftCompensation: false }}
+          onDragOver={(event) => {
+            console.log(event)
+          }}
         >
           <TaskSlider tasks={tasks} scroll={scroll} />
-          <VirtualizedTable
-            stands={[...stands]}
-            setScroll={setScroll}
+          <DataGrid
+            stands={stands}
             cellStateMap={cellStateMap}
             draggedTask={draggedTask}
+            setScroll={setScroll}
           />
         </DndContext>
       </Stack>

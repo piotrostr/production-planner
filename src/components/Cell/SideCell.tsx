@@ -1,18 +1,18 @@
-import { Stand } from "../Stand";
+import { Stand } from "../Stand"
 
-export function SideCell({ style, stands, rowIndex }) {
+export function SideCell({ stand }) {
   return (
     <div
       style={{
-        ...style,
-        backgroundColor: "white",
+        width: 225,
+        height: 50,
+        backgroundColor: stand.bgcolor,
         boxSizing: "border-box",
         borderRight: "1px solid black",
         borderBottom: "1px solid black",
-        height: 50,
       }}
     >
-      <Stand stand={stands[rowIndex - 1]} />
+      <Stand stand={stand} />
     </div>
-  );
+  )
 }

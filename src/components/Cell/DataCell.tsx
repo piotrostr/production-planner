@@ -1,22 +1,22 @@
 import { Draggable } from "../Draggable"
 import { Droppable } from "../Droppable"
 import { Task } from "../Task"
-import { DroppedTask, DroppedTaskStart, DroppedTaskEnd } from "./DroppedTask"
+import { DroppedTask, DroppedTaskStart, DroppedTaskEnd } from "../DroppedTask"
 import { Stack } from "@mui/material"
 
 interface DataCellProps {
-  style: any
   columnIndex: number
   rowIndex: number
   cellStateMap: any
   draggedTask: any
+  cellWidth: number
 }
 export function DataCell({
-  style,
   columnIndex,
   rowIndex,
   cellStateMap,
   draggedTask,
+  cellWidth,
 }: DataCellProps) {
   const data = cellStateMap[`${rowIndex}-${columnIndex}`]
   const cellKey = `${rowIndex}-${columnIndex}`
@@ -24,7 +24,11 @@ export function DataCell({
 
   const renderTask = () => {
     if (draggedTask.id !== null && draggedTask.draggableId === cellKey) {
-      return <Task task={task} />
+      return (
+        <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
+          <Task task={task} />
+        </Draggable>
+      )
     } else if (
       draggedTask &&
       draggedTask.draggableId !== cellKey &&
@@ -36,7 +40,7 @@ export function DataCell({
         case "occupied":
           return (
             <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
-              <DroppedTask task={task} />
+              <DroppedTask task={task} cellWidth={cellWidth} />
             </Draggable>
           )
         case "occupied-start":
@@ -46,33 +50,33 @@ export function DataCell({
                 task={task}
                 cellStateMap={cellStateMap}
                 cellKey={cellKey}
+                cellWidth={cellWidth}
               />
             </Draggable>
           )
         case "occupied-end":
           return (
             <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
-              <DroppedTaskEnd task={task} />
+              <DroppedTaskEnd task={task} cellWidth={cellWidth} />
             </Draggable>
           )
         default:
-          return null
+          return <div style={{ color: "transparent" }}></div>
       }
     }
   }
 
   return (
     <Stack
+      alignItems="center"
       justifyContent="center"
       style={{
-        ...style,
+        width: cellWidth,
+        height: 50,
         backgroundColor: "white",
         boxSizing: "border-box",
         borderRight: "1px solid #D9D9D9",
         borderBottom: "1px solid black",
-        maxHeight: 50,
-        marginTop: 50,
-        marginLeft: 125,
         background: "white",
         userSelect: "none",
       }}

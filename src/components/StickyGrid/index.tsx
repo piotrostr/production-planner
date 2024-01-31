@@ -1,5 +1,6 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { VariableSizeGrid as Grid } from "react-window"
+import AutoSizer from "react-virtualized-auto-sizer"
 
 function getCellIndicies(child) {
   return { row: child.props.rowIndex, column: child.props.columnIndex }
@@ -31,7 +32,7 @@ function getShownIndicies(children) {
   }
 }
 
-function useInnerElementType(Cell, columnWidth, rowHeight) {
+export function useInnerElementType(Cell, columnWidth, rowHeight, cellWidth) {
   return React.useMemo(
     () =>
       React.forwardRef((props, ref) => {
@@ -80,7 +81,7 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
               width: 225,
               height: 100,
               position: "sticky",
-              top: 0,
+              top: 600,
               left: 0,
               zIndex: 4,
             },
@@ -93,23 +94,20 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
         for (let i = 1; i <= shownColumnsCount; i += 1) {
           const columnIndex = i + shownIndecies.from.column
           const rowIndex = 0
-          const width = columnWidth(columnIndex)
-          const height = rowHeight(rowIndex)
 
           const marginLeft = i === 1 ? sumColumnWidths(columnIndex) : undefined
-
           children.push(
             React.createElement(Cell, {
               key: `${rowIndex}:${columnIndex}`,
               rowIndex,
               columnIndex,
               style: {
-                marginLeft,
+                marginLeft: 0,
                 display: "inline-flex",
-                width,
+                width: cellWidth,
                 height: 100,
                 position: "sticky",
-                left: 100,
+                left: 225,
                 zIndex: 3,
               },
             })
@@ -121,7 +119,7 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
         for (let i = 1; i <= shownRowsCount; i += 1) {
           const columnIndex = 0
           const rowIndex = i + shownIndecies.from.row
-          const width = columnWidth(columnIndex)
+
           const height = rowHeight(rowIndex)
 
           const marginTop = i === 1 ? sumRowsHeights(rowIndex) : undefined
@@ -137,7 +135,7 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
                 height,
                 position: "sticky",
                 left: 0,
-                top: 100,
+                top: 1000,
                 zIndex: 2,
               },
             })
@@ -155,15 +153,23 @@ function useInnerElementType(Cell, columnWidth, rowHeight) {
 }
 
 export function StickyGrid(props) {
+  const ref = React.useRef(null)
+  useEffect(() => {
+    ref.current.resetAfterColumnIndex(0)
+  }, [props.cellWidth])
+
   return (
     <Grid
+      ref={ref}
       {...props}
       innerElementType={useInnerElementType(
         props.children,
         props.columnWidth,
-        props.rowHeight
+        props.rowHeight,
+        props.cellWidth
       )}
-      overscanColumnCount={25}
+      columnWidth={() => props.cellWidth}
+      overscanColumnCount={100}
     />
   )
 }

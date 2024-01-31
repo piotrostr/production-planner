@@ -32,7 +32,37 @@ export const VirtualizedTable = ({
   const [dateRange, setDateRange] = useState<string[]>([])
   const [hourRange, setHourRange] = useState<string[]>([])
   const [weekRange, setWeekRange] = useState<string[]>([])
+  const [cellWidth, setCellWidth] = useState<number>(100)
   const numberOfDays: number = 20
+
+  const handleZoom = (event) => {
+    // Check if the "Ctrl" key is pressed
+    if (event.metaKey) {
+      event.preventDefault()
+      // Zoom in
+      if (event.deltaY < 0) {
+        setCellWidth((cellWidth) =>
+          cellWidth >= 200 ? cellWidth : cellWidth + 2
+        )
+      }
+      // Zoom out
+      if (event.deltaY > 0) {
+        setCellWidth((cellWidth) =>
+          cellWidth <= 50 ? cellWidth : cellWidth - 2
+        )
+      }
+    }
+  }
+
+  useEffect(() => {
+    // Add event listener to the component when it mounts
+    document.addEventListener("wheel", handleZoom, { passive: false })
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("wheel", handleZoom)
+    }
+  }, []) //
 
   const handleScroll = (props) => {
     setScroll({ x: props.scrollLeft, y: props.scrollTop })
@@ -98,6 +128,7 @@ export const VirtualizedTable = ({
           rowIndex={rowIndex}
           cellStateMap={cellStateMap}
           draggedTask={draggedTask}
+          cellWidth={cellWidth}
         />
       )
     }
@@ -112,6 +143,7 @@ export const VirtualizedTable = ({
       rowHeight={() => 50}
       width={window.innerWidth}
       onScroll={handleScroll}
+      cellWidth={cellWidth}
     >
       {renderCell}
     </StickyGrid>

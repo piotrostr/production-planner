@@ -1,10 +1,11 @@
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Stack, Typography } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import { Stack, Typography } from "@mui/material"
 
 interface toolbarIconProps {
-  icon: React.ReactNode;
-  iconText?: string;
-  expandMore?: boolean;
+  icon: React.ReactNode
+  iconText?: string
+  expandMore?: boolean
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 export function ToolbarIcon({ icon, iconText, expandMore }: toolbarIconProps) {
@@ -13,10 +14,12 @@ export function ToolbarIcon({ icon, iconText, expandMore }: toolbarIconProps) {
       direction="row"
       spacing={1}
       px="1rem"
+      height="100%"
       color="#1E1E1E"
       sx={{
         cursor: "pointer",
       }}
+      alignItems="center"
     >
       <Stack direction="row" spacing={1} onClick={() => console.log("Click!")}>
         {icon}
@@ -28,5 +31,5 @@ export function ToolbarIcon({ icon, iconText, expandMore }: toolbarIconProps) {
         <ExpandMoreIcon onClick={() => console.log("Expand more!")} />
       ) : null}
     </Stack>
-  );
+  )
 }

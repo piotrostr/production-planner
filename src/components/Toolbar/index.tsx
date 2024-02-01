@@ -6,6 +6,8 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt"
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
 import { Stack } from "@mui/material"
 import { ToolbarIcon } from "../ToolbarIcon"
+import { PopoverCreate } from "../PopoverCreate"
+import { useState } from "react"
 
 const icons = [
   {
@@ -29,6 +31,12 @@ const icons = [
 ]
 
 export function Toolbar() {
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  const handleCreateOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
   return (
     <Stack
       direction="row"
@@ -39,13 +47,16 @@ export function Toolbar() {
       justifyContent="space-between"
       borderTop="1px solid #000000"
     >
-      <Stack direction="row">
+      <Stack direction="row" height="100%">
         <ToolbarIcon icon={<MenuIcon />} />
-        <ToolbarIcon
-          icon={<AddCircleOutlineIcon />}
-          iconText="Dodaj"
-          expandMore={true}
-        />
+        <button style={{ all: "unset" }} onClick={handleCreateOpen}>
+          <ToolbarIcon
+            icon={<AddCircleOutlineIcon />}
+            iconText="Dodaj"
+            expandMore={true}
+            onClick={handleCreateOpen}
+          />
+        </button>
       </Stack>
       <Stack direction="row">
         {icons.map((icon) => (
@@ -56,6 +67,7 @@ export function Toolbar() {
           />
         ))}
       </Stack>
+      <PopoverCreate anchorEl={anchorEl} setAnchorEl={setAnchorEl} />
     </Stack>
   )
 }

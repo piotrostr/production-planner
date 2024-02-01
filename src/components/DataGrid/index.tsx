@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
-import { DataGridPro } from "@mui/x-data-grid-pro"
+import { DataGridPro, useGridApiRef } from "@mui/x-data-grid-pro"
 import { DataCell, HeadCell, SideCell } from "../Cell"
-
+import { Box, Stack } from "@mui/material"
 import { CornerCell } from "../Cell/CornerCell"
 import { Stand } from "../../../types/stand"
 
@@ -15,41 +15,33 @@ interface HeaderCell {
 
 interface DataGridProps {
   stands: Stand[]
-  setScroll: React.Dispatch<
-    React.SetStateAction<{
-      x: number
-      y: number
-    }>
-  >
   cellStateMap: any
   draggedTask: any
 }
 
-export function DataGrid({
-  stands,
-  setScroll,
-  cellStateMap,
-  draggedTask,
-}: DataGridProps) {
+export function DataGrid({ stands, cellStateMap, draggedTask }: DataGridProps) {
   const [dateRange, setDateRange] = useState<HeaderCell[]>([])
   const [weekRange, setWeekRange] = useState<string[]>([])
   const [cellWidth, setCellWidth] = useState<number>(100)
+  const apiRef = useGridApiRef()
   const numberOfDays: number = 40
 
   const handleZoom = (event) => {
     // Check if the "Ctrl" key is pressed
     if (event.metaKey) {
       event.preventDefault()
+      const minCellWidth = 50
+      const maxCellWidth = 200
       // Zoom in
       if (event.deltaY < 0) {
         setCellWidth((cellWidth) =>
-          cellWidth >= 200 ? cellWidth : cellWidth + 2
+          cellWidth >= maxCellWidth ? cellWidth : cellWidth + 2
         )
       }
       // Zoom out
       if (event.deltaY > 0) {
         setCellWidth((cellWidth) =>
-          cellWidth <= 50 ? cellWidth : cellWidth - 2
+          cellWidth <= minCellWidth ? cellWidth : cellWidth - 2
         )
       }
     }
@@ -136,6 +128,7 @@ export function DataGrid({
 
   return (
     <DataGridPro
+      apiRef={apiRef}
       rows={stands}
       columns={dateRange}
       disableColumnFilter
@@ -145,10 +138,10 @@ export function DataGrid({
       disableDensitySelector
       disableMultipleRowSelection
       hideFooter
-      autoHeight
       rowHeight={50}
-      disableColumnResize
-      pinnedRows={{ top: [{ id: 0 }] }}
+      pinnedRows={{
+        top: [{ id: 0 }],
+      }}
       initialState={{
         pinnedColumns: {
           left: ["stand"],
@@ -164,6 +157,16 @@ export function DataGrid({
       }}
       sx={{
         //disable cell outline on focus
+        "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
+          width: "100%",
+        },
+        "& .MuiDataGrid-virtualScroller::-webkit-scrollbar-track": {
+          backgroundColor: "#D9D9D9", // track color
+        },
+        "& .MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb": {
+          backgroundColor: "#5A5A5A",
+        },
+        height: "fit-content",
         border: "none",
         "& .MuiDataGrid-cell": {
           all: "unset",
@@ -175,7 +178,6 @@ export function DataGrid({
         //disable header cell outline on focus
         "& .MuiDataGrid-columnHeader": {
           all: "unset",
-
           "&:focus": {
             all: "unset",
             outline: "none",

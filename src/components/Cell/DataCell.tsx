@@ -1,7 +1,7 @@
 import { Draggable } from "../Draggable"
 import { Droppable } from "../Droppable"
 import { Task } from "../Task"
-import { DroppedTask, DroppedTaskStart, DroppedTaskEnd } from "../DroppedTask"
+import { DroppedTask } from "../DroppedTask"
 import { Stack } from "@mui/material"
 
 interface DataCellProps {
@@ -34,34 +34,22 @@ export function DataCell({
       draggedTask.draggableId !== cellKey &&
       draggedTask?.task?.id === task?.id
     ) {
-      return <div style={{ color: "transparent" }}>/</div>
+      return <div />
     } else {
-      switch (state) {
-        case "occupied":
-          return (
-            <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
-              <DroppedTask task={task} cellWidth={cellWidth} />
-            </Draggable>
-          )
-        case "occupied-start":
-          return (
-            <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
-              <DroppedTaskStart
-                task={task}
-                cellStateMap={cellStateMap}
-                cellKey={cellKey}
-                cellWidth={cellWidth}
-              />
-            </Draggable>
-          )
-        case "occupied-end":
-          return (
-            <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
-              <DroppedTaskEnd task={task} cellWidth={cellWidth} />
-            </Draggable>
-          )
-        default:
-          return <div style={{ color: "transparent" }}></div>
+      if (state === "occupied-start") {
+        const [hours, minutes] = task.time.split(":")
+        const cellSpan = Number(hours) * 4 + Number(minutes) / 15
+        return (
+          <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
+            <DroppedTask
+              task={task}
+              cellWidth={cellWidth}
+              cellSpan={cellSpan}
+            />
+          </Draggable>
+        )
+      } else {
+        return <div />
       }
     }
   }
@@ -73,6 +61,7 @@ export function DataCell({
       style={{
         width: cellWidth,
         height: 50,
+        position: "relative",
         backgroundColor: "white",
         boxSizing: "border-box",
         borderRight: "1px solid #D9D9D9",

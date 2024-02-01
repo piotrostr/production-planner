@@ -6,10 +6,9 @@ import { Draggable } from "../Draggable"
 
 interface TaskSliderProps {
   tasks: TaskType[]
-  scroll: { x: number; y: number }
 }
 
-export function TaskSlider({ tasks, scroll }: TaskSliderProps) {
+export function TaskSlider({ tasks }: TaskSliderProps) {
   const outerRef = useRef<HTMLDivElement>(null)
   const innerRef = useRef<HTMLDivElement>(null)
 
@@ -44,7 +43,6 @@ export function TaskSlider({ tasks, scroll }: TaskSliderProps) {
             <Stack direction="row" key={task.id} spacing={2}>
               <Draggable
                 id={task?.id.toString()}
-                scroll={scroll}
                 data={{ task, source: null, state: null }}
               >
                 <Task task={task} />

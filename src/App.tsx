@@ -2,10 +2,9 @@ import { Stack } from "@mui/material"
 import { TaskSlider } from "./components/TaskSlider"
 import { DndContext } from "@dnd-kit/core"
 import { Toolbar } from "./components/Toolbar"
-import { VirtualizedTable } from "./components/VirtualizedTable"
 import { useEffect, useState } from "react"
 import { snapCenterToCursor } from "@dnd-kit/modifiers"
-import { DataGrid, DataGridDemo } from "./components/DataGrid"
+import { DataGrid } from "./components/DataGrid"
 
 const tasksArr = [
   {
@@ -133,7 +132,6 @@ const stands = [
 ]
 
 function App() {
-  const [scroll, setScroll] = useState({ x: 0, y: 0 })
   const [cellStateMap, setCellStateMap] = useState({} as any)
   const [tasks, setTasks] = useState(tasksArr)
   const [draggedTask, setDraggedTask] = useState({
@@ -147,8 +145,8 @@ function App() {
   useEffect(() => {
     const initializeCellStateMap = () => {
       const stateMap = {} as any
-      for (let i = 0; i < rowCount; i++) {
-        for (let j = 0; j < columnCount; j++) {
+      for (let i = 1; i < rowCount; i++) {
+        for (let j = 1; j < columnCount; j++) {
           stateMap[`${j}-${i}`] = {
             state: "empty",
             task: null,
@@ -296,29 +294,20 @@ function App() {
 
   return (
     <>
-      <Stack
-        width="100vw"
-        height="100vh"
-        sx={{
-          cursor: draggedTask.draggableId && draggedTask.task ? "none" : "auto",
-        }}
-      >
+      <Stack width="100vw" height="100vh">
         <Toolbar />
         <DndContext
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}
           autoScroll={{ layoutShiftCompensation: false }}
-          onDragOver={(event) => {
-            console.log(event)
-          }}
+          modifiers={[snapCenterToCursor]}
         >
-          <TaskSlider tasks={tasks} scroll={scroll} />
+          <TaskSlider tasks={tasks} />
           <DataGrid
             stands={stands}
             cellStateMap={cellStateMap}
             draggedTask={draggedTask}
-            setScroll={setScroll}
           />
         </DndContext>
       </Stack>

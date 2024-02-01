@@ -13,19 +13,14 @@ interface CellProps {
 
 interface VirtualizedTableProps {
   stands: Stand[]
-  setScroll: React.Dispatch<
-    React.SetStateAction<{
-      x: number
-      y: number
-    }>
-  >
+
   cellStateMap: any
   draggedTask: any
 }
 
 export const VirtualizedTable = ({
   stands,
-  setScroll,
+
   cellStateMap,
   draggedTask,
 }: VirtualizedTableProps) => {
@@ -63,10 +58,6 @@ export const VirtualizedTable = ({
       document.removeEventListener("wheel", handleZoom)
     }
   }, []) //
-
-  const handleScroll = (props) => {
-    setScroll({ x: props.scrollLeft, y: props.scrollTop })
-  }
 
   const generateDateRange = (numberOfDays: number): string[] => {
     const currentDate = new Date()
@@ -142,7 +133,6 @@ export const VirtualizedTable = ({
       rowCount={stands?.length + 1}
       rowHeight={() => 50}
       width={window.innerWidth}
-      onScroll={handleScroll}
       cellWidth={cellWidth}
     >
       {renderCell}

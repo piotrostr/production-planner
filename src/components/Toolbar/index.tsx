@@ -8,6 +8,10 @@ import { Stack } from "@mui/material"
 import { ToolbarIcon } from "../ToolbarIcon"
 import { PopoverCreate } from "../PopoverCreate"
 import { useState } from "react"
+import { CreateTaskModal } from "../CreateTaskModal"
+import { CreateActivityModal } from "../CreateActivityModal"
+import { CreateLocationModal } from "../CreateLocationModal"
+import { CreateStandModal } from "../CreateStandModal"
 
 const icons = [
   {
@@ -31,7 +35,8 @@ const icons = [
 ]
 
 export function Toolbar() {
-  const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorEl, setAnchorEl] = useState(null as HTMLButtonElement | null)
+  const [modalopen, setModalOpen] = useState(null)
 
   const handleCreateOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -67,7 +72,25 @@ export function Toolbar() {
           />
         ))}
       </Stack>
-      <PopoverCreate anchorEl={anchorEl} setAnchorEl={setAnchorEl} />
+      <PopoverCreate
+        anchorEl={anchorEl}
+        setAnchorEl={setAnchorEl}
+        setModalOpen={
+          setModalOpen as unknown as React.Dispatch<
+            React.SetStateAction<string>
+          >
+        }
+      />
+      <CreateActivityModal
+        open={modalopen === "activity"}
+        setOpen={setModalOpen}
+      />
+      <CreateLocationModal
+        open={modalopen === "location"}
+        setOpen={setModalOpen}
+      />
+      <CreateTaskModal open={modalopen === "task"} setOpen={setModalOpen} />
+      <CreateStandModal open={modalopen === "stand"} setOpen={setModalOpen} />
     </Stack>
   )
 }

@@ -5,7 +5,7 @@ interface TextFieldProps {
   icon: React.ReactNode
 }
 
-export function TextField({ placeholder, icon }: TextFieldProps) {
+export function Dropdown({ placeholder, icon }: TextFieldProps) {
   return (
     <Stack
       direction="row"

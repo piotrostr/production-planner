@@ -1,10 +1,10 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material"
 
 interface SecondaryButtonProps {
-  width?: string | number;
-  height?: string | number;
-  px?: number;
-  py?: number;
+  width?: string | number
+  height?: string | number
+  px?: number
+  py?: number
   fontVariant?:
     | "h1"
     | "h2"
@@ -14,10 +14,10 @@ interface SecondaryButtonProps {
     | "h6"
     | "body1"
     | "body2"
-    | "button";
-  fontWeight?: number;
-  label: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+    | "button"
+  fontWeight?: number
+  label: string
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
 }
 
 export function SecondaryButton({
@@ -47,11 +47,12 @@ export function SecondaryButton({
           borderColor: "#1E1E1E",
           color: "#FFFFFF",
         },
+        borderRadius: 0,
       }}
     >
       <Typography variant={fontVariant} fontWeight={fontWeight}>
         {label}
       </Typography>
     </Button>
-  );
+  )
 }

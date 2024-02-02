@@ -67,6 +67,7 @@ export function PopoverCreate({
       sx={{
         "& .MuiPopover-paper": {
           borderRadius: 0,
+          bgcolor: "background.default",
         },
       }}
     >

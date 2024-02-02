@@ -16,7 +16,16 @@ export function TextField({ placeholder, icon }: TextFieldProps) {
         border: "1px solid black",
       }}
     >
-      <InputBase sx={{ mx: 3, flex: 1 }} placeholder={placeholder} />
+      <InputBase
+        sx={{
+          mx: 3,
+          flex: 1,
+          "&::placeholder": {
+            color: "#a1a1a1",
+          },
+        }}
+        placeholder={placeholder}
+      />
       <Stack
         bgcolor="#D9D9D9"
         width={60}

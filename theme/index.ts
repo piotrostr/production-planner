@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles"
 
 export const theme = createTheme({
   palette: {
@@ -17,7 +17,7 @@ export const theme = createTheme({
     },
     text: {
       primary: "#1E1E1E",
-      secondary: "#FFFFFF",
+      secondary: "#000000",
     },
     button: {
       primary: "#5A5A5A",
@@ -27,25 +27,25 @@ export const theme = createTheme({
       hover: "#333333",
     },
   },
-});
+})
 
 declare module "@mui/material/styles" {
   interface Palette {
     button: {
-      primary: string;
-      secondary: string;
-      primaryText: string;
-      secondaryText: string;
-      hover: string;
-    };
+      primary: string
+      secondary: string
+      primaryText: string
+      secondaryText: string
+      hover: string
+    }
   }
   interface PaletteOptions {
     button: {
-      primary: string;
-      secondary: string;
-      primaryText: string;
-      secondaryText: string;
-      hover: string;
-    };
+      primary: string
+      secondary: string
+      primaryText: string
+      secondaryText: string
+      hover: string
+    }
   }
 }

@@ -1,7 +1,10 @@
+import { UUID } from "../types"
+
 export interface Task {
-  id: number;
-  title: string;
-  description: string;
-  bgcolor: string;
-  time: string;
+  id: UUID
+  title: string
+  description: string
+  bgcolor: string
+  duration: number
+  requiredTasks: UUID[]
 }

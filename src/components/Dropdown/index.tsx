@@ -1,14 +1,15 @@
 import { Stack } from "@mui/material"
 import { Select, MenuItem } from "@mui/material"
+import { useState } from "react"
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp"
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
 
 interface TextFieldProps {
   placeholder: string
-  icon: React.ReactNode
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function Dropdown({ placeholder, icon, open, setOpen }: TextFieldProps) {
+export function Dropdown({ placeholder }: TextFieldProps) {
+  const [open, setOpen] = useState(false)
   return (
     <Stack height={45} width="fit-content" direction="row">
       <Select
@@ -82,7 +83,11 @@ export function Dropdown({ placeholder, icon, open, setOpen }: TextFieldProps) {
           }}
         >
           <Stack alignItems="cener" justifyContent="center" margin="auto">
-            {icon}
+            {open ? (
+              <KeyboardArrowUpIcon fontSize="large" />
+            ) : (
+              <KeyboardArrowDownIcon fontSize="large" />
+            )}
           </Stack>
         </Stack>
       </Stack>

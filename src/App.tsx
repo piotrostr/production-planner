@@ -1,15 +1,14 @@
-import { Stack } from "@mui/material";
-import { TaskSlider } from "./components/TaskSlider";
-import { DndContext } from "@dnd-kit/core";
-import { Toolbar } from "./components/Toolbar";
-import { useEffect, useState } from "react";
-import { snapCenterToCursor } from "@dnd-kit/modifiers";
-import { DataGrid } from "./components/DataGrid";
-import { ThemeProvider } from "@mui/material/styles";
-import { theme } from "../theme";
-import { firebaseConfig } from "../firebase.config";
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { Stack } from "@mui/material"
+import { TaskSlider } from "./components/TaskSlider"
+import { DndContext } from "@dnd-kit/core"
+import { Toolbar } from "./components/Toolbar"
+import { useEffect, useState } from "react"
+import { snapCenterToCursor } from "@dnd-kit/modifiers"
+import { DataGrid } from "./components/DataGrid"
+import { ThemeProvider } from "@mui/material/styles"
+import { theme } from "../theme"
+import { LocalizationProvider } from "@mui/x-date-pickers"
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 
 const tasksArr = [
   {
@@ -89,7 +88,7 @@ const tasksArr = [
     bgcolor: "#D5CD00",
     time: "1:45",
   },
-];
+]
 
 const stands = [
   {
@@ -134,192 +133,194 @@ const stands = [
     description: "Description 4",
     bgcolor: "#9FD1FF",
   },
-];
+]
 
 function App() {
-  const [cellStateMap, setCellStateMap] = useState({} as any);
-  const [tasks, setTasks] = useState(tasksArr);
+  const [cellStateMap, setCellStateMap] = useState({} as any)
+  const [tasks, setTasks] = useState(tasksArr)
   const [draggedTask, setDraggedTask] = useState({
     draggableId: null,
     task: null,
-  });
+  })
 
-  const rowCount = 50;
-  const columnCount = 100;
+  const rowCount = 50
+  const columnCount = 100
 
   useEffect(() => {
     const initializeCellStateMap = () => {
-      const stateMap = {} as any;
+      const stateMap = {} as any
       for (let i = 1; i < rowCount; i++) {
         for (let j = 1; j < columnCount; j++) {
           stateMap[`${j}-${i}`] = {
             state: "empty",
             task: null,
             source: null,
-          };
+          }
         }
       }
-      setCellStateMap(stateMap);
-    };
-    initializeCellStateMap();
-  }, []);
+      setCellStateMap(stateMap)
+    }
+    initializeCellStateMap()
+  }, [])
 
   const checkCanDrop = (over, active) => {
-    const overId = over.id;
+    const overId = over.id
 
-    const { task } = active.data.current;
-    const [hours, minutes] = task.time.split(":");
-    const cellSpan = Number(hours) * 4 + Number(minutes) / 15;
-    const [x, y] = overId.split("-").map((n: string) => Number(n));
-    const droppedCells = [];
+    const { task } = active.data.current
+    const [hours, minutes] = task.time.split(":")
+    const cellSpan = Number(hours) * 4 + Number(minutes) / 15
+    const [x, y] = overId.split("-").map((n: string) => Number(n))
+    const droppedCells = []
     for (let i = 0; i < cellSpan; i++) {
-      const cellId = `${x}-${y + i}`;
-      droppedCells.push(cellStateMap[cellId]);
+      const cellId = `${x}-${y + i}`
+      droppedCells.push(cellStateMap[cellId])
     }
     const canDrop = !droppedCells.some(
       (cell) => cell.state !== "empty" && task.id !== cell.task.id
-    );
+    )
 
-    return canDrop;
-  };
+    return canDrop
+  }
 
   const handleDragEndFromSlider = (over, active) => {
-    const overId = over.id;
-    const { task } = active.data.current;
-    const [hours, minutes] = task.time.split(":");
-    const cellSpan = Number(hours) * 4 + Number(minutes) / 15;
-    const [x, y] = overId.split("-").map((n: string) => Number(n));
+    const overId = over.id
+    const { task } = active.data.current
+    const [hours, minutes] = task.time.split(":")
+    const cellSpan = Number(hours) * 4 + Number(minutes) / 15
+    const [x, y] = overId.split("-").map((n: string) => Number(n))
     setTasks((prev: any) => {
-      const newTasks = prev.filter((t: any) => t.id !== task.id);
-      return newTasks;
-    });
+      const newTasks = prev.filter((t: any) => t.id !== task.id)
+      return newTasks
+    })
     setCellStateMap((prev: any) => {
-      const newStateMap = { ...prev };
+      const newStateMap = { ...prev }
       newStateMap[overId] = {
         state: "occupied-start",
         source: overId,
         task,
-      };
+      }
       if (cellSpan > 1) {
         for (let i = 1; i < cellSpan - 1; i++) {
           newStateMap[`${x}-${y + i}`] = {
             state: "occupied",
             source: overId,
             task,
-          };
+          }
         }
         newStateMap[`${x}-${y + cellSpan - 1}`] = {
           state: "occupied-end",
           source: overId,
           task,
-        };
+        }
       }
 
-      return newStateMap;
-    });
-  };
+      return newStateMap
+    })
+  }
 
   const handleDragEndBetweenCells = (over, active) => {
     //remove task from cellStateMap
-    const { task, source } = active.data.current;
-    const [hours, minutes] = task.time.split(":");
-    const cellSpan = Number(hours) * 4 + Number(minutes) / 15;
+    const { task, source } = active.data.current
+    const [hours, minutes] = task.time.split(":")
+    const cellSpan = Number(hours) * 4 + Number(minutes) / 15
     const emptyCell = {
       state: "empty",
       source: null,
       task: null,
-    };
+    }
     setCellStateMap((prev: any) => {
-      const newStateMap = { ...prev };
-      const [x, y] = source.split("-").map((n: string) => Number(n));
-      newStateMap[source] = emptyCell;
+      const newStateMap = { ...prev }
+      const [x, y] = source.split("-").map((n: string) => Number(n))
+      newStateMap[source] = emptyCell
       if (cellSpan > 1) {
         for (let i = 1; i < cellSpan - 1; i++) {
-          newStateMap[`${x}-${y + i}`] = emptyCell;
+          newStateMap[`${x}-${y + i}`] = emptyCell
         }
-        newStateMap[`${x}-${y + cellSpan - 1}`] = emptyCell;
+        newStateMap[`${x}-${y + cellSpan - 1}`] = emptyCell
       }
-      return newStateMap;
-    });
+      return newStateMap
+    })
 
     //add task to cellStateMap
-    const overId = over.id;
+    const overId = over.id
     setCellStateMap((prev: any) => {
-      const newStateMap = { ...prev };
-      const [x, y] = overId.split("-").map((n: string) => Number(n));
+      const newStateMap = { ...prev }
+      const [x, y] = overId.split("-").map((n: string) => Number(n))
       newStateMap[overId] = {
         state: "occupied-start",
         source: overId,
         task,
-      };
+      }
       if (cellSpan > 1) {
         for (let i = 1; i < cellSpan - 1; i++) {
           newStateMap[`${x}-${y + i}`] = {
             state: "occupied",
             source: overId,
             task,
-          };
+          }
         }
         newStateMap[`${x}-${y + cellSpan - 1}`] = {
           state: "occupied-end",
           source: overId,
           task,
-        };
+        }
       }
-      return newStateMap;
-    });
-  };
+      return newStateMap
+    })
+  }
 
   const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    const canDrop = checkCanDrop(over, active);
+    const { active, over } = event
+    const canDrop = checkCanDrop(over, active)
     if (active.id !== over.id && canDrop) {
       //if task is in the task array)
       if (active.data.current.source === null) {
-        handleDragEndFromSlider(over, active);
+        handleDragEndFromSlider(over, active)
       } else {
-        handleDragEndBetweenCells(over, active);
+        handleDragEndBetweenCells(over, active)
       }
     }
-    setDraggedTask({ draggableId: null, task: null });
-  };
+    setDraggedTask({ draggableId: null, task: null })
+  }
 
   const handleDragStart = (event: any) => {
-    const { active } = event;
+    const { active } = event
     const newDraggedTask = {
       draggableId: active.id,
       task: active.data.current.task,
-    };
-    setDraggedTask(newDraggedTask);
-  };
+    }
+    setDraggedTask(newDraggedTask)
+  }
 
   const handleDragCancel = () => {
-    setDraggedTask({ draggableId: null, task: null });
-  };
+    setDraggedTask({ draggableId: null, task: null })
+  }
 
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <Stack width="100vw" height="100vh">
-          <Toolbar />
-          <DndContext
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragCancel={handleDragCancel}
-            autoScroll={{ layoutShiftCompensation: false }}
-            modifiers={[snapCenterToCursor]}
-          >
-            <TaskSlider tasks={tasks} />
-            <DataGrid
-              stands={stands}
-              cellStateMap={cellStateMap}
-              draggedTask={draggedTask}
-            />
-          </DndContext>
-        </Stack>
-      </ThemeProvider>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <ThemeProvider theme={theme}>
+          <Stack width="100vw" height="100vh">
+            <Toolbar />
+            <DndContext
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragCancel={handleDragCancel}
+              autoScroll={{ layoutShiftCompensation: false }}
+              modifiers={[snapCenterToCursor]}
+            >
+              <TaskSlider tasks={tasks} />
+              <DataGrid
+                stands={stands}
+                cellStateMap={cellStateMap}
+                draggedTask={draggedTask}
+              />
+            </DndContext>
+          </Stack>
+        </ThemeProvider>
+      </LocalizationProvider>
     </>
-  );
+  )
 }
 
-export default App;
+export default App

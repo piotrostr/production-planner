@@ -7,6 +7,7 @@ import { PrimaryButton } from "../PrimaryButton"
 import { NumberField } from "../NumberField"
 import { Dropdown } from "../Dropdown"
 import { ColorField } from "../ColorField"
+import { TextArea } from "../TextArea"
 
 interface CreateStandModalProps {
   open: boolean
@@ -32,6 +33,12 @@ export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
                 Czynność
               </Typography>
               <Dropdown placeholder="Wybierz czynność" />
+            </Stack>
+            <Stack direction="row" spacing={5}>
+              <Typography variant="body1" width={100}>
+                Opis
+              </Typography>
+              <TextArea placeholder="Wybierz czynność" />
             </Stack>
             <Stack direction="row" spacing={5} alignItems="center">
               <Typography variant="body1" width={100}>

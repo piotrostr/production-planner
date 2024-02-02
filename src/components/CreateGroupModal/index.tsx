@@ -46,7 +46,7 @@ export function CreateGroupModal({ open, setOpen }: CreateGroupModal) {
               <Typography variant="body1" width={100}>
                 Grupuj
               </Typography>
-              <Dropdown placeholder="Zadanie lub stanowisko" />
+              <Dropdown placeholder="Zadania lub stanowiska" />
             </Stack>
             <Stack
               direction="row"

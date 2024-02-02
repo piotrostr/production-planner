@@ -37,12 +37,12 @@ export function PrimaryButton({
       sx={{
         px: px,
         py: py,
-        bgcolor: "#5A5A5A",
+        bgcolor: "button.primary",
         width: width,
         height: height,
         "&:hover": {
-          bgcolor: "#1E1E1E",
-          color: "#FFFFFF",
+          bgcolor: "button.hover",
+          color: "button.primaryText",
         },
         borderRadius: 0,
       }}

@@ -37,15 +37,15 @@ export function SecondaryButton({
       sx={{
         px: px,
         py: py,
-        borderColor: "#5A5A5A",
-        bgcolor: "#FFFFFF",
-        color: "#1E1E1E",
+        borderColor: "button.primary",
+        bgcolor: "button.secondary",
+        color: "button.secondaryText",
         width: width,
         height: height,
         "&:hover": {
-          bgcolor: "#1E1E1E",
-          borderColor: "#1E1E1E",
-          color: "#FFFFFF",
+          bgcolor: "button.hover",
+          borderColor: "button.hover",
+          color: "button.primaryText",
         },
         borderRadius: 0,
       }}

@@ -7,6 +7,8 @@ import { TextArea } from "../TextArea";
 import { SecondaryButton } from "../SecondaryButton";
 import { PrimaryButton } from "../PrimaryButton";
 import { useState } from "react";
+import { doc, setDoc, collection, getDoc } from "firebase/firestore";
+import { firestore } from "../../../firebase.config";
 
 interface CreateActivityModalProps {
   open: boolean;
@@ -33,9 +35,30 @@ export function CreateActivityModal({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    setOpen(null);
-    setFormData(defaultValues);
+  const handleSave = async () => {
+    try {
+      const projectId = "PgwbCyMAeN300VU1LcsY";
+      const activitiesRef = collection(
+        firestore,
+        "projects",
+        projectId,
+        "activities"
+      );
+      const activityRef = doc(activitiesRef);
+      const activityId = activityRef.id;
+      const activitySnap = await getDoc(activityRef);
+      if (!activitySnap.exists()) {
+        await setDoc(activityRef, {
+          ...formData,
+          id: activityId,
+        });
+      }
+      setOpen(null);
+      setFormData(defaultValues);
+      alert("Dodano czynność");
+    } catch (error) {
+      alert("Wystąpił błąd");
+    }
   };
 
   const handleCancel = () => {

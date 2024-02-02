@@ -1,11 +1,20 @@
-import { InputBase, Stack } from "@mui/material"
+import { InputBase, Stack } from "@mui/material";
 
 interface TextFieldProps {
-  placeholder: string
-  icon: React.ReactNode
+  placeholder: string;
+  name?: string;
+  icon: React.ReactNode;
+  value?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export function TextField({ placeholder, icon }: TextFieldProps) {
+export function TextField({
+  placeholder,
+  icon,
+  onChange,
+  value,
+  name,
+}: TextFieldProps) {
   return (
     <Stack
       direction="row"
@@ -16,7 +25,13 @@ export function TextField({ placeholder, icon }: TextFieldProps) {
         border: "1px solid black",
       }}
     >
-      <InputBase sx={{ mx: 3, flex: 1 }} placeholder={placeholder} />
+      <InputBase
+        sx={{ mx: 3, flex: 1 }}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        name={name}
+      />
       <Stack
         bgcolor="#D9D9D9"
         width={60}
@@ -28,5 +43,5 @@ export function TextField({ placeholder, icon }: TextFieldProps) {
         {icon}
       </Stack>
     </Stack>
-  )
+  );
 }

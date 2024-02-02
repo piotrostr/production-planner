@@ -1,25 +1,56 @@
-import { Stack, Typography } from "@mui/material"
-import { TextField } from "../TextField"
-import { Modal } from "../Modal"
-import { TitleBar } from "../TitleBar"
-import { TextArea } from "../TextArea"
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
-import { SecondaryButton } from "../SecondaryButton"
-import { PrimaryButton } from "../PrimaryButton"
+import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
+import { Stack, Typography } from "@mui/material";
+import { TextField } from "../TextField";
+import { Modal } from "../Modal";
+import { TitleBar } from "../TitleBar";
+import { TextArea } from "../TextArea";
+import { SecondaryButton } from "../SecondaryButton";
+import { PrimaryButton } from "../PrimaryButton";
+import { useState } from "react";
 
 interface CreateActivityModalProps {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<null>>
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<null>>;
 }
+
+interface FormData {
+  name: string;
+  description: string;
+}
+const defaultValues = {
+  name: "",
+  description: "",
+};
 
 export function CreateActivityModal({
   open,
   setOpen,
 }: CreateActivityModalProps) {
+  const [formData, setFormData] = useState<FormData>(defaultValues);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    setOpen(null);
+    setFormData(defaultValues);
+  };
+
+  const handleCancel = () => {
+    setOpen(null);
+    setFormData(defaultValues);
+  };
+
+  const handleClose = () => {
+    setOpen(null);
+    setFormData(defaultValues);
+  };
   return (
-    <Modal open={open} setOpen={setOpen}>
+    <Modal open={open} onClose={() => handleClose()}>
       <Stack alignItems="center" justifyContent="center">
-        <TitleBar setOpen={setOpen} />
+        <TitleBar onClose={() => handleClose()} />
         <Stack p={2} bgcolor="white" width="fit-content" spacing={4}>
           <Typography variant="h6">Dodaj czynność</Typography>
           <Stack spacing={2}>
@@ -33,19 +64,27 @@ export function CreateActivityModal({
               <TextField
                 placeholder="Nazwa"
                 icon={<DriveFileRenameOutlineIcon />}
+                value={formData.name}
+                onChange={handleInputChange}
+                name="name"
               />
             </Stack>
             <Stack direction="row" justifyContent="space-between" spacing={5}>
               <Typography variant="body1">Opis*</Typography>
-              <TextArea placeholder="Opis" />
+              <TextArea
+                placeholder="Opis"
+                value={formData.description}
+                onChange={handleInputChange}
+                name="description"
+              />
             </Stack>
           </Stack>
           <Stack direction="row" justifyContent="space-between" spacing={5}>
-            <SecondaryButton onClick={() => setOpen(null)} label="Anuluj" />
-            <PrimaryButton onClick={() => setOpen(null)} label="Zapisz" />
+            <SecondaryButton onClick={() => handleCancel()} label="Anuluj" />
+            <PrimaryButton onClick={() => handleSave()} label="Zapisz" />
           </Stack>
         </Stack>
       </Stack>
     </Modal>
-  )
+  );
 }

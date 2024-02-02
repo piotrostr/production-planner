@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { DataGridPro, useGridApiRef } from "@mui/x-data-grid-pro"
 import { DataCell, HeadCell, SideCell } from "../Cell"
-import { Box, Stack } from "@mui/material"
 import { CornerCell } from "../Cell/CornerCell"
 import { Stand } from "../../../types/stand"
 

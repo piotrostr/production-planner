@@ -1,22 +1,26 @@
 import { InputBase, Stack } from "@mui/material"
 
-interface TextFieldProps {
+interface NumberFieldProps {
   placeholder: string
   icon: React.ReactNode
 }
 
-export function TextField({ placeholder, icon }: TextFieldProps) {
+export function NumberField({ placeholder, icon }: NumberFieldProps) {
   return (
     <Stack
       direction="row"
       sx={{
         display: "flex",
         alignItems: "center",
-        width: 400,
+        width: 200,
         border: "1px solid black",
       }}
     >
-      <InputBase sx={{ mx: 3, flex: 1 }} placeholder={placeholder} />
+      <InputBase
+        sx={{ mx: 3, flex: 1 }}
+        placeholder={placeholder}
+        type="number"
+      />
       <Stack
         bgcolor="#D9D9D9"
         width={60}

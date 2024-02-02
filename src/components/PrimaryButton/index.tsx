@@ -1,10 +1,10 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material"
 
 interface PrimaryButtonProps {
-  width?: string;
-  height?: string;
-  px?: number;
-  py?: number;
+  width?: string
+  height?: string
+  px?: number
+  py?: number
   fontVariant?:
     | "h1"
     | "h2"
@@ -14,10 +14,10 @@ interface PrimaryButtonProps {
     | "h6"
     | "body1"
     | "body2"
-    | "button";
-  fontWeight?: number;
-  label: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+    | "button"
+  fontWeight?: number
+  label: string
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
 }
 
 export function PrimaryButton({
@@ -44,11 +44,12 @@ export function PrimaryButton({
           bgcolor: "button.hover",
           color: "button.primaryText",
         },
+        borderRadius: 0,
       }}
     >
       <Typography variant={fontVariant} fontWeight={fontWeight}>
         {label}
       </Typography>
     </Button>
-  );
+  )
 }

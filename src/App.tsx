@@ -7,6 +7,9 @@ import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import { DataGrid } from "./components/DataGrid";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "../theme";
+import { firebaseConfig } from "../firebase.config";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 
 const tasksArr = [
   {

@@ -1,11 +1,15 @@
 import { Stack, Typography } from "@mui/material"
-import { TextField } from "../TextField"
 import { Modal } from "../Modal"
 import { TitleBar } from "../TitleBar"
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp"
 import { SecondaryButton } from "../SecondaryButton"
 import { PrimaryButton } from "../PrimaryButton"
 import { NumberField } from "../NumberField"
+import { Dropdown } from "../Dropdown"
+import { useState } from "react"
+import { ColorField } from "../ColorField"
 
 interface CreateStandModalProps {
   open: boolean
@@ -13,6 +17,9 @@ interface CreateStandModalProps {
 }
 
 export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
+  const [locationDropdownOpen, setLocationDropdownOpen] = useState(false)
+  const [activityDropdownOpen, setActivityDropdownOpen] = useState(false)
+  const [groupDropdownOpen, setGroupDropdownOpen] = useState(false)
   return (
     <Modal open={open} setOpen={setOpen}>
       <Stack alignItems="center" justifyContent="center">
@@ -24,18 +31,34 @@ export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
               <Typography variant="body1" width={100}>
                 Lokalizacja
               </Typography>
-              <TextField
-                placeholder="Nazwa lokalizacji"
-                icon={<DriveFileRenameOutlineIcon />}
+              <Dropdown
+                open={locationDropdownOpen}
+                setOpen={setLocationDropdownOpen}
+                placeholder="Wybierz lokalizacje"
+                icon={
+                  locationDropdownOpen ? (
+                    <KeyboardArrowUpIcon fontSize="large" />
+                  ) : (
+                    <KeyboardArrowDownIcon fontSize="large" />
+                  )
+                }
               />
             </Stack>
             <Stack direction="row" spacing={5} alignItems="center">
               <Typography variant="body1" width={100}>
                 Czynność
               </Typography>
-              <TextField
-                placeholder="Nazwa czynności"
-                icon={<DriveFileRenameOutlineIcon />}
+              <Dropdown
+                open={activityDropdownOpen}
+                setOpen={setActivityDropdownOpen}
+                placeholder="Wybierz czynność"
+                icon={
+                  activityDropdownOpen ? (
+                    <KeyboardArrowUpIcon fontSize="large" />
+                  ) : (
+                    <KeyboardArrowDownIcon fontSize="large" />
+                  )
+                }
               />
             </Stack>
             <Stack direction="row" spacing={5} alignItems="center">
@@ -51,19 +74,24 @@ export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
               <Typography variant="body1" width={100}>
                 Grupa
               </Typography>
-              <TextField
-                placeholder="Nazwa"
-                icon={<DriveFileRenameOutlineIcon />}
+              <Dropdown
+                open={groupDropdownOpen}
+                setOpen={setGroupDropdownOpen}
+                placeholder="Wybierz grupę"
+                icon={
+                  groupDropdownOpen ? (
+                    <KeyboardArrowUpIcon fontSize="large" />
+                  ) : (
+                    <KeyboardArrowDownIcon fontSize="large" />
+                  )
+                }
               />
             </Stack>
             <Stack direction="row" spacing={5} alignItems="center">
               <Typography variant="body1" width={100}>
                 Kolor
               </Typography>
-              <TextField
-                placeholder="Nazwa"
-                icon={<DriveFileRenameOutlineIcon />}
-              />
+              <ColorField />
             </Stack>
           </Stack>
           <Stack direction="row" justifyContent="space-between" spacing={5}>

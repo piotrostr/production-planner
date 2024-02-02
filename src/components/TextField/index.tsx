@@ -26,7 +26,13 @@ export function TextField({
       }}
     >
       <InputBase
-        sx={{ mx: 3, flex: 1 }}
+        sx={{
+          mx: 3,
+          flex: 1,
+          "&::placeholder": {
+            color: "#a1a1a1",
+          },
+        }}
         placeholder={placeholder}
         value={value}
         onChange={onChange}

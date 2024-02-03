@@ -1,16 +1,16 @@
-import { Stack, Typography } from "@mui/material"
-import { TextField } from "../TextField"
-import { Modal } from "../Modal"
-import { TitleBar } from "../TitleBar"
-import { TextArea } from "../TextArea"
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
-import { SecondaryButton } from "../SecondaryButton"
-import { PrimaryButton } from "../PrimaryButton"
-import { DateField } from "../DateField"
+import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
+import { Stack, Typography } from "@mui/material";
+import { TextField } from "../TextField";
+import { Modal } from "../Modal";
+import { TitleBar } from "../TitleBar";
+import { TextArea } from "../TextArea";
+import { SecondaryButton } from "../SecondaryButton";
+import { PrimaryButton } from "../PrimaryButton";
+import { DateField } from "../DateField";
 
 interface CreateDeadlineModal {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<null>>
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<null>>;
 }
 
 export function CreateDeadlineModal({ open, setOpen }: CreateDeadlineModal) {
@@ -60,5 +60,5 @@ export function CreateDeadlineModal({ open, setOpen }: CreateDeadlineModal) {
         </Stack>
       </Stack>
     </Modal>
-  )
+  );
 }

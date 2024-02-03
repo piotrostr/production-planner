@@ -1,26 +1,18 @@
 import { Box, Stack, Typography } from "@mui/material"
 
 interface HeadCellProps {
-  date: string
   cellWidth: number
   columnIndex: number
-  weekRange: string[]
+  topData: string[]
+  bottomLabel: string
 }
 
 export function HeadCell({
-  date,
   cellWidth,
   columnIndex,
-  weekRange,
+  topData,
+  bottomLabel,
 }: HeadCellProps) {
-  const renderWeek = (range: string[], columnIndex: number) => {
-    const index = columnIndex % (range.length * 7)
-    const label = range[Math.floor(index / 7)]
-    if ((columnIndex % 7) - 1 == 0) {
-      return label
-    }
-  }
-
   return (
     <Stack
       sx={{
@@ -36,22 +28,28 @@ export function HeadCell({
         width="100%"
         sx={{
           boxSizing: "border-box",
-          borderRight: columnIndex % 7 === 0 ? "1px solid black" : "none",
+          borderRight:
+            topData[columnIndex + 1] == topData[columnIndex]
+              ? "none"
+              : "1px solid black",
           borderBottom: "1px solid black",
           pl: 1,
         }}
       >
-        <Typography variant="body2" noWrap>
-          {renderWeek(weekRange, columnIndex)}
-        </Typography>
+        {columnIndex == 1 ||
+        topData[columnIndex] !== topData[columnIndex - 1] ? (
+          <Typography variant="body2" position="absolute">
+            {topData[columnIndex]}
+          </Typography>
+        ) : null}
       </Stack>
       <Stack
         height="100%"
         justifyContent="center"
         sx={{ pl: 1, borderRight: "1px solid black" }}
       >
-        <Typography variant="body2" noWrap>
-          {date}
+        <Typography variant="body2" noWrap textOverflow="clip">
+          {bottomLabel}
         </Typography>
       </Stack>
     </Stack>

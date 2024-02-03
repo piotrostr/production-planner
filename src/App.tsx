@@ -9,6 +9,8 @@ import { ThemeProvider } from "@mui/material/styles"
 import { theme } from "../theme"
 import { LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
+import { ToggleView } from "./components/ToggleView"
+import { generateQuarterYearView } from "./generateView"
 
 const tasksArr = [
   {
@@ -138,6 +140,7 @@ const stands = [
 function App() {
   const [cellStateMap, setCellStateMap] = useState({} as any)
   const [tasks, setTasks] = useState(tasksArr)
+  const [view, setView] = useState(generateQuarterYearView(1000))
   const [draggedTask, setDraggedTask] = useState({
     draggableId: null,
     task: null,
@@ -302,6 +305,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <Stack width="100vw" height="100vh">
             <Toolbar />
+            <ToggleView view={view} setView={setView} />
             <DndContext
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
@@ -314,6 +318,7 @@ function App() {
                 stands={stands}
                 cellStateMap={cellStateMap}
                 draggedTask={draggedTask}
+                view={view}
               />
             </DndContext>
           </Stack>

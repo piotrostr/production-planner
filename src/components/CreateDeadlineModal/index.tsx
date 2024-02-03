@@ -19,13 +19,13 @@ interface CreateDeadlineModalProps {
 interface FormData {
   name: string;
   description: string;
-  date: Timestamp;
+  date: Date;
 }
 
 const initialValues = {
   name: "",
   description: "",
-  date: Timestamp.now(),
+  date: new Date(),
 };
 
 export function CreateDeadlineModal({
@@ -60,6 +60,7 @@ export function CreateDeadlineModal({
         await setDoc(deadlineRef, {
           ...values,
           id: deadlineId,
+          date: Timestamp.fromDate(values.date),
         });
       }
 

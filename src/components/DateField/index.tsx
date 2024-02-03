@@ -5,7 +5,7 @@ import { useState } from "react";
 
 interface DateFieldProps {
   placeholder: string;
-  value?: Date;
+  value: Date;
   name?: string;
   setFieldValue: (name: string, value: Date) => void;
 }
@@ -13,7 +13,8 @@ interface DateFieldProps {
 export function DateField({ name, setFieldValue, value }: DateFieldProps) {
   const [open, setOpen] = useState(false);
   const handleChange = (date: Date | null) => {
-    console.log(date, "date");
+    const formattedDate = new Date(date!);
+    setFieldValue(name!, formattedDate);
   };
 
   return (

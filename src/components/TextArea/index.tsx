@@ -15,7 +15,7 @@ export function TextArea({ placeholder }: TextAreaProps) {
       }}
     >
       <InputBase
-        sx={{ mx: 3, flex: 1 }}
+        sx={{ mx: 3, my: 1, flex: 1 }}
         placeholder={placeholder}
         multiline
         minRows={5}

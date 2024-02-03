@@ -7,13 +7,12 @@ import { Stand } from "../../../types/stand"
 interface HeaderCell {
   field: string
   headerName: string
-  width: number
   editable: boolean
   sortable: boolean
 }
 
 interface DataGridProps {
-  stands: Stand[]
+  stands: Array<{ id: number } | Stand>
   cellStateMap: any
   draggedTask: any
 }
@@ -25,7 +24,7 @@ export function DataGrid({ stands, cellStateMap, draggedTask }: DataGridProps) {
   const apiRef = useGridApiRef()
   const numberOfDays: number = 40
 
-  const handleZoom = (event) => {
+  const handleZoom = (event: WheelEvent) => {
     // Check if the "Ctrl" key is pressed
     if (event.metaKey) {
       event.preventDefault()
@@ -58,25 +57,30 @@ export function DataGrid({ stands, cellStateMap, draggedTask }: DataGridProps) {
 
   const generateDateRange = (numberOfDays: number) => {
     const currentDate = new Date()
-    const dateRange = Array.from({ length: numberOfDays }, (_, index) => {
-      const date = new Date(currentDate)
-      date.setDate(currentDate.getDate() + index)
-      const dateString = date.toLocaleDateString("en-GB")
-      return {
-        field: "date" + index,
-        headerName: dateString,
+    const dateRange = [
+      {
+        field: "stand",
+        headerName: "",
         editable: false,
         sortable: false,
-        width: cellWidth,
-      }
-    })
-    dateRange.unshift({
-      field: "stand",
-      headerName: "",
-      editable: false,
-      sortable: false,
-      width: 225,
-    })
+        width: 225,
+      },
+    ]
+    const date = new Date(currentDate)
+    dateRange.push(
+      ...Array.from({ length: numberOfDays }, (_, index) => {
+        date.setDate(currentDate.getDate() + index)
+        const dateString = date.toLocaleDateString("en-GB")
+        return {
+          field: "date" + index,
+          headerName: dateString,
+          editable: false,
+          sortable: false,
+          width: cellWidth,
+        }
+      })
+    )
+
     return dateRange
   }
 
@@ -95,7 +99,7 @@ export function DataGrid({ stands, cellStateMap, draggedTask }: DataGridProps) {
     setWeekRange(weekRange)
   }, [cellWidth])
 
-  const renderCell = (rowIndex, colIndex, params) => {
+  const renderCell = (rowIndex: number, colIndex: number, params: any) => {
     const stand = stands[rowIndex - 1]
     const date = params.column.headerName
 

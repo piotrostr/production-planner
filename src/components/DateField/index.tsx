@@ -1,4 +1,4 @@
-import { InputBase, Stack } from "@mui/material"
+import { Stack } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday"
 import { useState } from "react"

@@ -25,7 +25,7 @@ export function DataCell({
   const renderTask = () => {
     if (draggedTask.id !== null && draggedTask.draggableId === cellKey) {
       return (
-        <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
+        <Draggable id={cellKey} data={data}>
           <Task task={task} />
         </Draggable>
       )
@@ -40,7 +40,7 @@ export function DataCell({
         const [hours, minutes] = task.time.split(":")
         const cellSpan = Number(hours) * 4 + Number(minutes) / 15
         return (
-          <Draggable id={cellKey} scroll={{ x: 0, y: 0 }} data={data}>
+          <Draggable id={cellKey} data={data}>
             <DroppedTask
               task={task}
               cellWidth={cellWidth}
@@ -58,7 +58,7 @@ export function DataCell({
     <Stack
       alignItems="center"
       justifyContent="center"
-      style={{
+      sx={{
         width: cellWidth,
         height: 50,
         position: "relative",

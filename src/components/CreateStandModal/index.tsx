@@ -2,14 +2,12 @@ import { Stack, Typography } from "@mui/material"
 import { Modal } from "../Modal"
 import { TitleBar } from "../TitleBar"
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp"
 import { SecondaryButton } from "../SecondaryButton"
 import { PrimaryButton } from "../PrimaryButton"
 import { NumberField } from "../NumberField"
 import { Dropdown } from "../Dropdown"
-import { useState } from "react"
 import { ColorField } from "../ColorField"
+import { TextArea } from "../TextArea"
 
 interface CreateStandModalProps {
   open: boolean
@@ -17,9 +15,6 @@ interface CreateStandModalProps {
 }
 
 export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
-  const [locationDropdownOpen, setLocationDropdownOpen] = useState(false)
-  const [activityDropdownOpen, setActivityDropdownOpen] = useState(false)
-  const [groupDropdownOpen, setGroupDropdownOpen] = useState(false)
   return (
     <Modal open={open} setOpen={setOpen}>
       <Stack alignItems="center" justifyContent="center">
@@ -31,35 +26,19 @@ export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
               <Typography variant="body1" width={100}>
                 Lokalizacja
               </Typography>
-              <Dropdown
-                open={locationDropdownOpen}
-                setOpen={setLocationDropdownOpen}
-                placeholder="Wybierz lokalizacje"
-                icon={
-                  locationDropdownOpen ? (
-                    <KeyboardArrowUpIcon fontSize="large" />
-                  ) : (
-                    <KeyboardArrowDownIcon fontSize="large" />
-                  )
-                }
-              />
+              <Dropdown placeholder="Wybierz lokalizacje" />
             </Stack>
             <Stack direction="row" spacing={5} alignItems="center">
               <Typography variant="body1" width={100}>
                 Czynność
               </Typography>
-              <Dropdown
-                open={activityDropdownOpen}
-                setOpen={setActivityDropdownOpen}
-                placeholder="Wybierz czynność"
-                icon={
-                  activityDropdownOpen ? (
-                    <KeyboardArrowUpIcon fontSize="large" />
-                  ) : (
-                    <KeyboardArrowDownIcon fontSize="large" />
-                  )
-                }
-              />
+              <Dropdown placeholder="Wybierz czynność" />
+            </Stack>
+            <Stack direction="row" spacing={5}>
+              <Typography variant="body1" width={100}>
+                Opis
+              </Typography>
+              <TextArea placeholder="Wybierz czynność" />
             </Stack>
             <Stack direction="row" spacing={5} alignItems="center">
               <Typography variant="body1" width={100}>
@@ -74,18 +53,7 @@ export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
               <Typography variant="body1" width={100}>
                 Grupa
               </Typography>
-              <Dropdown
-                open={groupDropdownOpen}
-                setOpen={setGroupDropdownOpen}
-                placeholder="Wybierz grupę"
-                icon={
-                  groupDropdownOpen ? (
-                    <KeyboardArrowUpIcon fontSize="large" />
-                  ) : (
-                    <KeyboardArrowDownIcon fontSize="large" />
-                  )
-                }
-              />
+              <Dropdown placeholder="Brak grupy" />
             </Stack>
             <Stack direction="row" spacing={5} alignItems="center">
               <Typography variant="body1" width={100}>

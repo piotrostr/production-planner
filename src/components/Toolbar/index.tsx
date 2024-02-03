@@ -12,6 +12,8 @@ import { CreateTaskModal } from "../CreateTaskModal"
 import { CreateActivityModal } from "../CreateActivityModal"
 import { CreateLocationModal } from "../CreateLocationModal"
 import { CreateStandModal } from "../CreateStandModal"
+import { CreateDeadlineModal } from "../CreateDeadlineModal"
+import { CreateGroupModal } from "../CreateGroupModal"
 
 const icons = [
   {
@@ -91,6 +93,11 @@ export function Toolbar() {
       />
       <CreateTaskModal open={modalopen === "task"} setOpen={setModalOpen} />
       <CreateStandModal open={modalopen === "stand"} setOpen={setModalOpen} />
+      <CreateDeadlineModal
+        open={modalopen === "deadline"}
+        setOpen={setModalOpen}
+      />
+      <CreateGroupModal open={modalopen === "group"} setOpen={setModalOpen} />
     </Stack>
   )
 }

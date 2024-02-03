@@ -18,7 +18,7 @@ export function TextArea({ placeholder, name, onChange }: TextAreaProps) {
       }}
     >
       <InputBase
-        sx={{ mx: 3, flex: 1 }}
+        sx={{ mx: 3, my: 1, flex: 1 }}
         placeholder={placeholder}
         name={name}
         onChange={onChange}

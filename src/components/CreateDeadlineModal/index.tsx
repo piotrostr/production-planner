@@ -2,27 +2,24 @@ import { Stack, Typography } from "@mui/material"
 import { TextField } from "../TextField"
 import { Modal } from "../Modal"
 import { TitleBar } from "../TitleBar"
+import { TextArea } from "../TextArea"
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
-import { NumberField } from "../NumberField"
-import AccessTimeIcon from "@mui/icons-material/AccessTime"
-import { Dropdown } from "../Dropdown"
 import { SecondaryButton } from "../SecondaryButton"
 import { PrimaryButton } from "../PrimaryButton"
-import { ColorField } from "../ColorField"
-import { TextArea } from "../TextArea"
+import { DateField } from "../DateField"
 
-interface CreateTaskModal {
+interface CreateDeadlineModal {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<null>>
 }
 
-export function CreateTaskModal({ open, setOpen }: CreateTaskModal) {
+export function CreateDeadlineModal({ open, setOpen }: CreateDeadlineModal) {
   return (
     <Modal open={open} setOpen={setOpen}>
       <Stack alignItems="center" justifyContent="center">
         <TitleBar setOpen={setOpen} />
         <Stack p={2} bgcolor="white" width="fit-content" spacing={4}>
-          <Typography variant="h6">Dodaj zadanie</Typography>
+          <Typography variant="h6">Dodaj deadline</Typography>
           <Stack spacing={2}>
             <Stack
               direction="row"
@@ -34,44 +31,26 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModal) {
                 Nazwa
               </Typography>
               <TextField
-                placeholder="Nazwa zadania"
+                placeholder="Nazwa"
                 icon={<DriveFileRenameOutlineIcon />}
               />
             </Stack>
-            <Stack direction="row" spacing={5}>
+            <Stack direction="row" justifyContent="space-between" spacing={5}>
               <Typography variant="body1" width={100}>
-                Opis
+                Opis*
               </Typography>
               <TextArea placeholder="Opis" />
             </Stack>
-            <Stack direction="row" spacing={5} alignItems="center">
-              <Typography variant="body1" width={100}>
-                Czas trwania
-              </Typography>
-              <NumberField placeholder="Czas" icon={<AccessTimeIcon />} />
-            </Stack>
-            <Stack direction="row" spacing={5} alignItems="center">
-              <Typography variant="body1" width={100}>
-                Wymagane
-              </Typography>
-              <Dropdown placeholder="Brak wymaganych zadań" />
-            </Stack>
-            <Stack direction="row" spacing={5} alignItems="center">
-              <Typography variant="body1" width={100}>
-                Grupa
-              </Typography>
-              <Dropdown placeholder="Bez grupy" />
-            </Stack>
             <Stack
               direction="row"
-              justifyContent="space-between"
+              justifyContent="flex-start "
               spacing={5}
               alignItems="center"
             >
               <Typography variant="body1" width={100}>
-                Kolor
+                Data
               </Typography>
-              <ColorField />
+              <DateField placeholder="Wybierz datę" />
             </Stack>
           </Stack>
           <Stack direction="row" justifyContent="space-between" spacing={5}>

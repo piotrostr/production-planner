@@ -7,6 +7,8 @@ import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import { DataGrid } from "./components/DataGrid";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "../theme";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const tasksArr = [
   {
@@ -296,25 +298,27 @@ function App() {
 
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <Stack width="100vw" height="100vh">
-          <Toolbar />
-          <DndContext
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragCancel={handleDragCancel}
-            autoScroll={{ layoutShiftCompensation: false }}
-            modifiers={[snapCenterToCursor]}
-          >
-            <TaskSlider tasks={tasks} />
-            <DataGrid
-              stands={stands}
-              cellStateMap={cellStateMap}
-              draggedTask={draggedTask}
-            />
-          </DndContext>
-        </Stack>
-      </ThemeProvider>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <ThemeProvider theme={theme}>
+          <Stack width="100vw" height="100vh">
+            <Toolbar />
+            <DndContext
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragCancel={handleDragCancel}
+              autoScroll={{ layoutShiftCompensation: false }}
+              modifiers={[snapCenterToCursor]}
+            >
+              <TaskSlider tasks={tasks} />
+              <DataGrid
+                stands={stands}
+                cellStateMap={cellStateMap}
+                draggedTask={draggedTask}
+              />
+            </DndContext>
+          </Stack>
+        </ThemeProvider>
+      </LocalizationProvider>
     </>
   );
 }

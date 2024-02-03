@@ -7,7 +7,12 @@ interface TextAreaProps {
   onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export function TextArea({ placeholder, name, onChange }: TextAreaProps) {
+export function TextArea({
+  placeholder,
+  name,
+  onChange,
+  value,
+}: TextAreaProps) {
   return (
     <Stack
       direction="row"
@@ -21,6 +26,7 @@ export function TextArea({ placeholder, name, onChange }: TextAreaProps) {
         sx={{ mx: 3, my: 1, flex: 1 }}
         placeholder={placeholder}
         name={name}
+        value={value}
         onChange={onChange}
         multiline
         minRows={5}

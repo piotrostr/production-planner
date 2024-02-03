@@ -38,7 +38,6 @@ export function CreateDeadlineModal({
   ) => {
     const { name, value } = e.target;
     setFieldValue(name, value);
-    console.log(name, value);
   };
 
   const handleSubmit = async (

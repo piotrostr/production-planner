@@ -72,8 +72,9 @@ export function PopoverCreate({
       }}
     >
       <Stack px={2} py="10px" divider={<Divider />}>
-        {items.map((item) => (
+        {items.map((item, idx) => (
           <button
+            key={idx}
             style={{
               all: "unset",
               cursor: "pointer",

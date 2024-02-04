@@ -7,4 +7,7 @@ export interface Task {
   bgcolor: string
   duration: number
   requiredTasks: UUID[]
+  dropped: boolean
+  startDate?: string
+  endDate?: string
 }

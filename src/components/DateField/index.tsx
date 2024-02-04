@@ -1,6 +1,7 @@
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { Stack } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 import { useState } from "react";
 
 interface DateFieldProps {
@@ -30,7 +31,7 @@ export function DateField({ name, setFieldValue, value }: DateFieldProps) {
       <DatePicker
         onChange={handleChange}
         open={open}
-        value={value}
+        value={dayjs(value)}
         onClose={() => setOpen(false)}
         sx={{
           //target days header

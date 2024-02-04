@@ -109,7 +109,7 @@ export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
               <Stack alignItems="center" justifyContent="center">
                 <TitleBar onClose={() => handleClose(resetForm)} />
                 <Stack p={2} bgcolor="white" width="fit-content" spacing={4}>
-                  <Typography variant="h6">Dodaj czynność</Typography>
+                  <Typography variant="h6">Dodaj stanowisko</Typography>
                   <Stack spacing={2}>
                     <Stack
                       direction="row"

@@ -1,12 +1,6 @@
 import { Stack } from "@mui/material"
 import { TaskSlider } from "./components/TaskSlider"
-import {
-  Active,
-  DndContext,
-  DndContextDescriptor,
-  DndContextProps,
-  Over,
-} from "@dnd-kit/core"
+import { Active, DndContext, Over } from "@dnd-kit/core"
 import { Toolbar } from "./components/Toolbar"
 import { useEffect, useState } from "react"
 import { snapCenterToCursor } from "@dnd-kit/modifiers"
@@ -16,8 +10,7 @@ import { theme } from "../theme"
 import { LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { ToggleView } from "./components/ToggleView"
-import { generateMonthView, generateQuarterYearView } from "./generateView"
-import { Task } from "../types/task"
+import { generateMonthView } from "./generateView"
 
 const tasksArr = [
   {

@@ -6,7 +6,8 @@ export interface Cell {
   source: string;
 }
 
-export interface GridState {
+// TODO move to types, clean up types
+export interface GridType {
   cells: {
     [key: string]: Cell;
   };
@@ -14,44 +15,99 @@ export interface GridState {
   rowCount?: number;
 }
 
-export interface State {
-  [key: string]: Cell;
+interface GridState {
+  grid: GridType | null;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: GridState = {
-  cells: {},
+  grid: null,
+  loading: false,
+  error: null,
 };
 
-export const gridSlice = createSlice({
+const gridSlice = createSlice({
   name: "grid",
   initialState,
   reducers: {
-    // Action to add or update a cell in the grid
-    setCell: (state, action: PayloadAction<{ cellId: string; cell: Cell }>) => {
-      const { cellId, cell } = action.payload;
-      state.cells[cellId] = cell;
-    },
-
     // Action to initialize the grid with a predefined size
     initializeGrid: (
       state,
       action: PayloadAction<{ rowCount: number; columnCount: number }>
     ) => {
-      state.rowCount = action.payload.rowCount;
-      state.columnCount = action.payload.columnCount;
-      // Optionally, you can also initialize the `cells` object with default cells here
+      if (!state.grid) {
+        state.grid = {
+          cells: {},
+        };
+      }
+      state.grid.rowCount = action.payload.rowCount;
+      state.grid.columnCount = action.payload.columnCount;
     },
-
-    // Action to remove a cell from the grid (if necessary)
+    setCell: (state, action: PayloadAction<{ cellId: string; cell: Cell }>) => {
+      const { cellId, cell } = action.payload;
+      if (!state.grid) {
+        state.grid = {
+          cells: {},
+        };
+      }
+      state.grid.cells[cellId] = cell;
+    },
     removeCell: (state, action: PayloadAction<{ cellId: string }>) => {
-      delete state.cells[action.payload.cellId];
+      if (!state.grid) {
+        return;
+      }
+      delete state.grid.cells[action.payload.cellId];
     },
-
-    // More reducers can be added as needed
+    // Triggered when the grid fetch starts
+    fetchGridStart(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    // Triggered when the grid data is successfully fetched or updated
+    setGrid(state, action: PayloadAction<GridType>) {
+      state.grid = action.payload;
+      state.loading = false;
+    },
+    // Triggered when fetching or updating the grid fails
+    gridOperationFailed(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    // Triggered to start the grid update process
+    updateGridStart(state /*action: PayloadAction<GridType>*/) {
+      state.loading = true;
+      state.error = null;
+    },
   },
 });
 
-export const { setCell, initializeGrid, removeCell } = gridSlice.actions;
+export const {
+  fetchGridStart,
+  setGrid,
+  gridOperationFailed,
+  updateGridStart,
+  initializeGrid,
+  removeCell,
+  setCell,
+} = gridSlice.actions;
 
 // Default export the reducer
 export default gridSlice.reducer;
+
+/* 
+example 
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchGridStart } from './gridSlice';
+
+const MyComponent = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchGridStart());
+  }, [dispatch]);
+
+  // Render your component...
+};
+*/

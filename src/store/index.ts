@@ -1,7 +1,16 @@
+import createSagaMiddleware from "redux-saga";
 import { configureStore } from "@reduxjs/toolkit";
+import { all } from "redux-saga/effects";
+
 import gridReducer from "../slices/grid"; // Adjust the import path as necessary
 import tasksReducer from "../slices/tasks"; // Adjust the import path as necessary
 import facilitiesReducer from "../slices/facilities"; // Adjust the import path as necessary
+
+import { watchGridSagas } from "../sagas/grid";
+import { watchTasksSagas } from "../sagas/tasks";
+import { watchFacilitiesSagas } from "../sagas/facilities";
+
+const sagaMiddleware = createSagaMiddleware();
 
 export const store = configureStore({
   reducer: {
@@ -9,7 +18,16 @@ export const store = configureStore({
     tasks: tasksReducer,
     facilities: facilitiesReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(sagaMiddleware),
 });
+
+function* rootSaga() {
+  yield all([watchGridSagas(), watchTasksSagas(), watchFacilitiesSagas()]);
+}
+
+sagaMiddleware.run(rootSaga);
+
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
 

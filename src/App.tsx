@@ -1,6 +1,12 @@
 import { Stack } from "@mui/material";
 import { TaskSlider } from "./components/TaskSlider";
-import { DndContext } from "@dnd-kit/core";
+import {
+  Active,
+  DndContext,
+  DndContextDescriptor,
+  DndContextProps,
+  Over,
+} from "@dnd-kit/core";
 import { Toolbar } from "./components/Toolbar";
 import { useEffect, useState } from "react";
 import { snapCenterToCursor } from "@dnd-kit/modifiers";
@@ -9,6 +15,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "../theme";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { ToggleView } from "./components/ToggleView";
+import { generateMonthView, generateQuarterYearView } from "./generateView";
+import { Task } from "../types/task";
 
 const tasksArr = [
   {
@@ -16,77 +25,88 @@ const tasksArr = [
     title: "PP1A",
     description: "Description 1",
     bgcolor: "#D5009A",
-    time: "0:15",
+    duration: 4,
+    dropped: false,
   },
   {
     id: 2,
     title: "PP1B",
     description: "Description 2",
     bgcolor: "#D5009A",
-    time: "0:30",
+    duration: 10,
+    dropped: false,
   },
   {
     id: 3,
     title: "PP2A",
     description: "Description 3",
     bgcolor: "#00A2D5",
-    time: "0:45",
+    duration: 12,
+    dropped: false,
   },
   {
     id: 4,
     title: "PP2B",
     description: "Description 4",
     bgcolor: "#00A2D5",
-    time: "1:00",
+    duration: 7,
+    dropped: false,
   },
   {
     id: 5,
     title: "PP3A",
     description: "Description 1",
     bgcolor: "#04D500",
-    time: "1:15",
+    duration: 18,
+    dropped: false,
   },
   {
     id: 6,
     title: "PP3B",
     description: "Description 2",
     bgcolor: "#04D500",
-    time: "0:15",
+    duration: 11,
+    dropped: false,
   },
   {
     id: 7,
     title: "PP3C",
     description: "Description 3",
     bgcolor: "#04D500",
-    time: "0:30",
+    duration: 7,
+    dropped: false,
   },
   {
     id: 8,
     title: "PP4A",
     description: "Description 4",
     bgcolor: "#9100D5",
-    time: "1:15",
+    duration: 46,
+    dropped: false,
   },
   {
     id: 9,
     title: "PP5A",
     description: "Description 4",
     bgcolor: "#D5CD00",
-    time: "1:15",
+    duration: 25,
+    dropped: false,
   },
   {
     id: 10,
     title: "PP5B",
     description: "Description 4",
     bgcolor: "#D5CD00",
-    time: "0:45",
+    duration: 9,
+    dropped: false,
   },
   {
     id: 11,
     title: "PP5C",
     description: "Description 4",
     bgcolor: "#D5CD00",
-    time: "1:45",
+    duration: 4,
+    dropped: false,
   },
 ];
 
@@ -136,22 +156,22 @@ const stands = [
 ];
 
 function App() {
-  const [cellStateMap, setCellStateMap] = useState({} as any);
+  const [cellStateMap, setCellStateMap] = useState<any>(null);
   const [tasks, setTasks] = useState(tasksArr);
+  const [view, setView] = useState(generateMonthView(1000));
   const [draggedTask, setDraggedTask] = useState({
     draggableId: null,
     task: null,
   });
 
-  const rowCount = 50;
-  const columnCount = 100;
-
   useEffect(() => {
     const initializeCellStateMap = () => {
       const stateMap = {} as any;
+      const rowCount = stands.length + 1;
+      const columnCount = view.headerBottomData.length;
       for (let i = 1; i < rowCount; i++) {
         for (let j = 1; j < columnCount; j++) {
-          stateMap[`${j}-${i}`] = {
+          stateMap[`${i}-${j}`] = {
             state: "empty",
             task: null,
             source: null,
@@ -163,13 +183,11 @@ function App() {
     initializeCellStateMap();
   }, []);
 
-  const checkCanDrop = (over, active) => {
+  const checkCanDrop = (over: Over, active: Active) => {
     const overId = over.id;
-
-    const { task } = active.data.current;
-    const [hours, minutes] = task.time.split(":");
-    const cellSpan = Number(hours) * 4 + Number(minutes) / 15;
-    const [x, y] = overId.split("-").map((n: string) => Number(n));
+    const task = active.data.current?.task;
+    const cellSpan = task.duration;
+    const [x, y] = (overId as string).split("-").map((n: string) => Number(n));
     const droppedCells = [];
     for (let i = 0; i < cellSpan; i++) {
       const cellId = `${x}-${y + i}`;
@@ -182,11 +200,10 @@ function App() {
     return canDrop;
   };
 
-  const handleDragEndFromSlider = (over, active) => {
-    const overId = over.id;
-    const { task } = active.data.current;
-    const [hours, minutes] = task.time.split(":");
-    const cellSpan = Number(hours) * 4 + Number(minutes) / 15;
+  const handleDragEndFromSlider = (over: Over, active: Active) => {
+    const overId = over?.id as string;
+    const task = active.data.current?.task;
+    const cellSpan = task.duration;
     const [x, y] = overId.split("-").map((n: string) => Number(n));
     setTasks((prev: any) => {
       const newTasks = prev.filter((t: any) => t.id !== task.id);
@@ -218,11 +235,11 @@ function App() {
     });
   };
 
-  const handleDragEndBetweenCells = (over, active) => {
+  const handleDragEndBetweenCells = (over: Over, active: Active) => {
     //remove task from cellStateMap
-    const { task, source } = active.data.current;
-    const [hours, minutes] = task.time.split(":");
-    const cellSpan = Number(hours) * 4 + Number(minutes) / 15;
+    const task = active.data.current?.task;
+    const source = active.data.current?.source;
+    const cellSpan = task.duration;
     const emptyCell = {
       state: "empty",
       source: null,
@@ -242,7 +259,7 @@ function App() {
     });
 
     //add task to cellStateMap
-    const overId = over.id;
+    const overId = over.id as string;
     setCellStateMap((prev: any) => {
       const newStateMap = { ...prev };
       const [x, y] = overId.split("-").map((n: string) => Number(n));
@@ -302,6 +319,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <Stack width="100vw" height="100vh">
             <Toolbar />
+            <ToggleView view={view} setView={setView} />
             <DndContext
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
@@ -314,6 +332,7 @@ function App() {
                 stands={stands}
                 cellStateMap={cellStateMap}
                 draggedTask={draggedTask}
+                view={view}
               />
             </DndContext>
           </Stack>

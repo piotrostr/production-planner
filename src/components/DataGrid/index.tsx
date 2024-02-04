@@ -1,28 +1,23 @@
 import { useEffect, useState } from "react"
 import { DataGridPro, useGridApiRef } from "@mui/x-data-grid-pro"
-import { DataCell, HeadCell, SideCell } from "../Cell"
-import { CornerCell } from "../Cell/CornerCell"
 import { Stand } from "../../../types/stand"
-
-interface HeaderCell {
-  field: string
-  headerName: string
-  editable: boolean
-  sortable: boolean
-}
+import { Cell } from "../Cell/Cell"
 
 interface DataGridProps {
   stands: Array<{ id: number } | Stand>
   cellStateMap: any
   draggedTask: any
+  view: any
 }
 
-export function DataGrid({ stands, cellStateMap, draggedTask }: DataGridProps) {
-  const [dateRange, setDateRange] = useState<HeaderCell[]>([])
-  const [weekRange, setWeekRange] = useState<string[]>([])
+export function DataGrid({
+  stands,
+  cellStateMap,
+  draggedTask,
+  view,
+}: DataGridProps) {
   const [cellWidth, setCellWidth] = useState<number>(100)
   const apiRef = useGridApiRef()
-  const numberOfDays: number = 40
 
   const handleZoom = (event: WheelEvent) => {
     // Check if the "Ctrl" key is pressed
@@ -55,85 +50,11 @@ export function DataGrid({ stands, cellStateMap, draggedTask }: DataGridProps) {
     }
   }, []) //
 
-  const generateDateRange = (numberOfDays: number) => {
-    const currentDate = new Date()
-    const dateRange = [
-      {
-        field: "stand",
-        headerName: "",
-        editable: false,
-        sortable: false,
-        width: 225,
-      },
-    ]
-    const date = new Date(currentDate)
-    dateRange.push(
-      ...Array.from({ length: numberOfDays }, (_, index) => {
-        date.setDate(currentDate.getDate() + index)
-        const dateString = date.toLocaleDateString("en-GB")
-        return {
-          field: "date" + index,
-          headerName: dateString,
-          editable: false,
-          sortable: false,
-          width: cellWidth,
-        }
-      })
-    )
-
-    return dateRange
-  }
-
-  const generateWeekRange = (numberOfDays: number): string[] => {
-    const weekRange = Array.from(
-      { length: numberOfDays },
-      (_, index) => index + 1
-    ).map((week) => "Week " + week)
-    return weekRange
-  }
-
-  useEffect(() => {
-    const dateRange = generateDateRange(numberOfDays)
-    const weekRange = generateWeekRange(numberOfDays)
-    setDateRange(dateRange)
-    setWeekRange(weekRange)
-  }, [cellWidth])
-
-  const renderCell = (rowIndex: number, colIndex: number, params: any) => {
-    const stand = stands[rowIndex - 1]
-    const date = params.column.headerName
-
-    if (rowIndex == 0 && colIndex == 0) {
-      return <CornerCell />
-    } else if (rowIndex == 0 && colIndex != 0) {
-      return (
-        <HeadCell
-          date={date}
-          cellWidth={cellWidth}
-          columnIndex={colIndex}
-          weekRange={weekRange}
-        />
-      )
-    } else if (rowIndex != 0 && colIndex == 0) {
-      return <SideCell stand={stand} />
-    } else {
-      return (
-        <DataCell
-          columnIndex={colIndex}
-          rowIndex={rowIndex}
-          cellStateMap={cellStateMap}
-          draggedTask={draggedTask}
-          cellWidth={cellWidth}
-        />
-      )
-    }
-  }
-
   return (
     <DataGridPro
       apiRef={apiRef}
       rows={stands}
-      columns={dateRange}
+      columns={view?.headerBottomData || []}
       disableColumnFilter
       disableColumnMenu
       disableRowSelectionOnClick
@@ -142,6 +63,7 @@ export function DataGrid({ stands, cellStateMap, draggedTask }: DataGridProps) {
       disableMultipleRowSelection
       hideFooter
       rowHeight={50}
+      columnBuffer={5}
       pinnedRows={{
         top: [{ id: 0 }],
       }}
@@ -152,10 +74,14 @@ export function DataGrid({ stands, cellStateMap, draggedTask }: DataGridProps) {
       }}
       slots={{
         columnHeaders: () => null,
-        cell: (params) => {
-          const rowIndex = params.rowId
-          const colIndex = params.colIndex
-          return renderCell(rowIndex, colIndex, params)
+        cell: Cell,
+      }}
+      slotProps={{
+        cell: {
+          cellStateMap: cellStateMap,
+          draggedTask: draggedTask,
+          view: view,
+          stands: stands,
         },
       }}
       sx={{

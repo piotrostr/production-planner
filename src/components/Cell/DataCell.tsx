@@ -37,8 +37,7 @@ export function DataCell({
       return <div />
     } else {
       if (state === "occupied-start") {
-        const [hours, minutes] = task.time.split(":")
-        const cellSpan = Number(hours) * 4 + Number(minutes) / 15
+        const cellSpan = task.duration
         return (
           <Draggable id={cellKey} data={data}>
             <DroppedTask

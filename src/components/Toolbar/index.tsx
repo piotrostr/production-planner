@@ -66,8 +66,9 @@ export function Toolbar() {
         </button>
       </Stack>
       <Stack direction="row">
-        {icons.map((icon) => (
+        {icons.map((icon, idx) => (
           <ToolbarIcon
+            key={idx}
             icon={icon.icon}
             iconText={icon.iconText}
             expandMore={icon.expandMore}

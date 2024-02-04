@@ -94,20 +94,3 @@ export const {
 
 // Default export the reducer
 export default gridSlice.reducer;
-
-/* 
-example 
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { fetchGridStart } from './gridSlice';
-
-const MyComponent = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchGridStart());
-  }, [dispatch]);
-
-  // Render your component...
-};
-*/

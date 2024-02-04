@@ -5,6 +5,7 @@ export interface Facility {
   id: number;
   title: string;
   description: string;
+  bgcolor: string;
   tasks: number[]; // Array of task IDs
 }
 

@@ -19,25 +19,12 @@ import { ToggleView } from "./components/ToggleView";
 import { generateMonthView } from "./generateView";
 
 import { useDispatch } from "react-redux";
-import { fetchGridStart } from "./slices/grid";
+import { fetchGridStart, initializeGrid } from "./slices/grid";
 
 import { stands as mockStands, tasks as mockTasks } from "./mock-data";
-
-export interface Task {
-  id: number;
-  title: string;
-  description: string;
-  bgcolor: string;
-  duration: number;
-  dropped: boolean;
-}
-
-export interface Facility {
-  id: number;
-  title: string;
-  description: string;
-  bgcolor: string;
-}
+import { Task } from "./slices/tasks";
+import { Facility } from "./slices/facilities";
+import { useAppDispatch, useAppSelector } from "./hooks";
 
 export interface DraggedTask {
   draggableId: string | null;
@@ -45,25 +32,33 @@ export interface DraggedTask {
 }
 
 function App() {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchGridStart());
-  }, [dispatch]);
-
-  const [tasks, setTasks] = useState(mockTasks);
   const [view, setView] = useState(generateMonthView(1000));
   const [draggedTask, setDraggedTask] = useState<DraggedTask>({
     draggableId: null,
     task: null,
   });
-  const [cellStateMap, setCellStateMap] = useState<any>({
-    cells: {},
-    rowCount: mockStands.length + 1,
-    columnCount: view.headerBottomData.length,
-  });
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchGridStart());
+    // TODO fetch facilities state
+    // dispatch(initializeGrid(view.headerBottomData.length, ...))
+  }, [dispatch]);
+
+  const facilitiesState = useAppSelector((state) => state.facilities);
+  const gridState = useAppSelector((state) => state.grid);
+  const tasksState = useAppSelector((state) => state.tasks);
+
+  if (gridState.loading) {
+    return <div>Loading...</div>;
+  }
+
+  const cellStateMap = gridState.grid;
 
   const checkCanDrop = (over: Over, active: Active) => {
+    // move this to sagas/tasks.ts, there is a helper there to check for collisions
+    // it will be hard at first but once we migrate this, the logic will be clear
+    // in this component
     const overId = over.id;
     const task = active.data.current?.task;
     const cellSpan = task.duration;

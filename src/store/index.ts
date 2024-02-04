@@ -6,9 +6,9 @@ import gridReducer from "../slices/grid"; // Adjust the import path as necessary
 import tasksReducer from "../slices/tasks"; // Adjust the import path as necessary
 import facilitiesReducer from "../slices/facilities"; // Adjust the import path as necessary
 
-import { watchGridSagas } from "../sagas/grid";
-import { watchTasksSagas } from "../sagas/tasks";
-import { watchFacilitiesSagas } from "../sagas/facilities";
+import gridSagas from "../sagas/grid";
+// import { watchTasksSagas } from "../sagas/tasks";
+// import { watchFacilitiesSagas } from "../sagas/facilities";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -23,7 +23,7 @@ export const store = configureStore({
 });
 
 function* rootSaga() {
-  yield all([watchGridSagas(), watchTasksSagas(), watchFacilitiesSagas()]);
+  yield all([gridSagas()]); // watchTasksSagas(), watchFacilitiesSagas()]);
 }
 
 sagaMiddleware.run(rootSaga);

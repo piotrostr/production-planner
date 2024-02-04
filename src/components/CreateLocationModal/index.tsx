@@ -51,8 +51,8 @@ export function CreateLocationModal({
       );
       const locationRef = doc(locationsRef);
       const locationId = locationRef.id;
-      const activitySnap = await getDoc(locationRef);
-      if (!activitySnap.exists()) {
+      const locationSnap = await getDoc(locationRef);
+      if (!locationSnap.exists()) {
         await setDoc(locationRef, {
           ...values,
           id: locationId,
@@ -64,7 +64,7 @@ export function CreateLocationModal({
       alert("Dodano lokalizacje");
     } catch (error) {
       resetForm();
-      alert("Wystąpił błąd");
+      alert((error as Error).message);
     }
   };
 

@@ -54,8 +54,8 @@ export function CreateDeadlineModal({
       );
       const deadlineRef = doc(deadlinesRef);
       const deadlineId = deadlineRef.id;
-      const activitySnap = await getDoc(deadlineRef);
-      if (!activitySnap.exists()) {
+      const deadlineSnap = await getDoc(deadlineRef);
+      if (!deadlineSnap.exists()) {
         await setDoc(deadlineRef, {
           ...values,
           id: deadlineId,
@@ -68,7 +68,7 @@ export function CreateDeadlineModal({
       alert("Dodano deadline");
     } catch (error) {
       resetForm();
-      alert("Wystąpił błąd");
+      alert((error as Error).message);
     }
   };
 

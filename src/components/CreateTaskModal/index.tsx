@@ -80,7 +80,7 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
       alert("Dodano zadanie");
     } catch (error) {
       resetForm();
-      alert(error.message);
+      alert((error as Error).message);
     }
   };
 

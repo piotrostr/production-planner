@@ -87,7 +87,7 @@ export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
       alert("Dodano stanowisko");
     } catch (error) {
       resetForm();
-      alert(error.message);
+      alert((error as Error).message);
     }
   };
 

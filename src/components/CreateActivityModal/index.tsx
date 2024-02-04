@@ -64,7 +64,7 @@ export function CreateActivityModal({
       alert("Dodano czynność");
     } catch (error) {
       resetForm();
-      alert("Wystąpił błąd");
+      alert((error as Error).message);
     }
   };
 

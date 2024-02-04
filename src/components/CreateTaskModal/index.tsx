@@ -25,6 +25,7 @@ interface FormData {
   duration: number;
   required?: string;
   group?: string;
+  color?: string;
 }
 
 const initialValues = {
@@ -33,6 +34,7 @@ const initialValues = {
   duration: 0,
   required: "",
   group: "",
+  color: "",
 };
 
 const groups = [
@@ -65,8 +67,8 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
       const tasksRef = collection(firestore, "projects", projectId, "tasks");
       const taskRef = doc(tasksRef);
       const taskId = taskRef.id;
-      const activitySnap = await getDoc(taskRef);
-      if (!activitySnap.exists()) {
+      const taskSnap = await getDoc(taskRef);
+      if (!taskSnap.exists()) {
         await setDoc(taskRef, {
           ...values,
           id: taskId,
@@ -100,7 +102,7 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
               <Stack alignItems="center" justifyContent="center">
                 <TitleBar onClose={() => handleClose(resetForm)} />
                 <Stack p={2} bgcolor="white" width="fit-content" spacing={4}>
-                  <Typography variant="h6">Dodaj czynność</Typography>
+                  <Typography variant="h6">Dodaj zadanie</Typography>
                   <Stack spacing={2}>
                     <Stack
                       direction="row"

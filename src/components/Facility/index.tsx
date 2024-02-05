@@ -1,23 +1,23 @@
-import { Stand as StandType } from "../../../types/stand"
 import { Stack, Typography } from "@mui/material"
+import { Facility as FacilityType } from "../../slices/facilities"
 
-interface StandProps {
-  stand: StandType
+interface FacilityProps {
+  facility: FacilityType
 }
 
-export function Stand({ stand }: StandProps) {
+export function Facility({ facility }: FacilityProps) {
   return (
     <Stack
       justifyContent="center"
       height="100%"
       px={3}
       sx={{
-        bgcolor: stand.bgcolor,
+        bgcolor: facility.bgcolor,
         color: "#FFFFFF",
       }}
     >
       <Typography variant="body2" color="#1E1E1E" fontWeight={600}>
-        {stand.title}
+        {facility.title}
       </Typography>
     </Stack>
   )

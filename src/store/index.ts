@@ -7,8 +7,8 @@ import tasksReducer from "../slices/tasks" // Adjust the import path as necessar
 import facilitiesReducer from "../slices/facilities" // Adjust the import path as necessary
 
 import gridSagas from "../sagas/grid"
-// import { watchTasksSagas } from "../sagas/tasks";
-// import { watchFacilitiesSagas } from "../sagas/facilities";
+import tasksSagas from "../sagas/tasks"
+import facilitiesSagas from "../sagas/facilities"
 
 const sagaMiddleware = createSagaMiddleware()
 
@@ -19,11 +19,11 @@ export const store = configureStore({
     facilities: facilitiesReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(sagaMiddleware),
+    getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),
 })
 
 function* rootSaga() {
-  yield all([gridSagas()]) // watchTasksSagas(), watchFacilitiesSagas()]);
+  yield all([gridSagas(), tasksSagas(), facilitiesSagas()])
 }
 
 sagaMiddleware.run(rootSaga)

@@ -45,7 +45,7 @@ export const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    // Action to add or update a task
+    // update task
     upsertTask: (state, action: PayloadAction<Task>) => {
       const task = action.payload
       if (isTimeSlotAvailable(task, state.tasks)) {
@@ -107,6 +107,10 @@ export const tasksSlice = createSlice({
       state.loading = true
       state.error = null
     },
+    addTaskStart(state, action: PayloadAction<Task>) {
+      state.loading = true
+      state.error = null
+    },
     deleteTaskStart(state /*action: PayloadAction<GridType>*/) {
       state.loading = true
       state.error = null
@@ -128,6 +132,7 @@ export const {
   setTasks,
   taskOperationFailed,
   updateTasksStart,
+  addTaskStart,
   deleteTaskStart,
   syncTasksStart,
 } = tasksSlice.actions

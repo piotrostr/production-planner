@@ -18,16 +18,17 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { ToggleView } from "./components/ToggleView"
 import { generateMonthView } from "./generateView"
 
-import {
+import grid, {
   fetchGridStart,
   initializeGrid,
   removeCell,
   setCell,
 } from "./slices/grid"
 
-import { stands as mockStands, tasks as mockTasks } from "./mock-data"
-import { Task } from "./slices/tasks"
+import { stands as mockStands, tasks as mockTasks, tasks } from "./mock-data"
+import { Task, syncTasksStart } from "./slices/tasks"
 import { useAppDispatch, useAppSelector } from "./hooks"
+import { syncFacilitiesStart } from "./slices/facilities"
 
 export interface DraggedTask {
   draggableId: string | null
@@ -43,7 +44,8 @@ function App() {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    // TODO fetch facilities state
+    dispatch(syncTasksStart())
+    dispatch(syncFacilitiesStart())
     dispatch(
       initializeGrid({
         rowCount: view.headerBottomData.length,
@@ -52,10 +54,7 @@ function App() {
     )
   }, [dispatch])
 
-  const facilitiesState = useAppSelector((state) => state.facilities)
   const gridState = useAppSelector((state) => state.grid)
-  const tasksState = useAppSelector((state) => state.tasks)
-
   const cellStateMap = gridState.grid
 
   if (gridState.loading) {
@@ -88,7 +87,9 @@ function App() {
     const cellId = over?.id as string
     const task = active.data.current?.task
     const cellSpan = task.duration
-    const [x, y] = cellId.split("-").map((n: string) => Number(n))
+    const rowId = cellId.split("-")[0]
+    const colId = cellId.split("-")[1]
+    console.log(rowId, colId, cellSpan)
 
     dispatch(
       setCell({
@@ -104,7 +105,7 @@ function App() {
       for (let i = 1; i < cellSpan - 1; i++) {
         dispatch(
           setCell({
-            cellId: `${x}-${y + i}`,
+            cellId: `${rowId}-${Number(colId) + i}`,
             cell: {
               state: "occupied",
               source: cellId,
@@ -115,7 +116,7 @@ function App() {
       }
       dispatch(
         setCell({
-          cellId: `${x}-${y + cellSpan - 1}`,
+          cellId: `${rowId}-${Number(colId) + cellSpan - 1}`,
           cell: {
             state: "occupied-end",
             source: cellId,
@@ -125,7 +126,7 @@ function App() {
       )
     }
   }
-
+  console.log(cellStateMap)
   const handleDragEndBetweenCells = (over: Over, active: Active) => {
     //remove task from cellStateMap
     const startCellId = over?.id as string
@@ -230,13 +231,8 @@ function App() {
               autoScroll={{ layoutShiftCompensation: false }}
               modifiers={[snapCenterToCursor]}
             >
-              <TaskSlider tasks={mockTasks} />
-              <DataGrid
-                stands={mockStands}
-                cellStateMap={cellStateMap}
-                draggedTask={draggedTask}
-                view={view}
-              />
+              <TaskSlider />
+              <DataGrid draggedTask={draggedTask} view={view} />
             </DndContext>
           </Stack>
         </ThemeProvider>

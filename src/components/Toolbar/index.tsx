@@ -11,7 +11,7 @@ import { useState } from "react"
 import { CreateTaskModal } from "../CreateTaskModal"
 import { CreateActivityModal } from "../CreateActivityModal"
 import { CreateLocationModal } from "../CreateLocationModal"
-import { CreateStandModal } from "../CreateStandModal"
+import { CreateFacilityModal } from "../CreateFacilityModal"
 import { CreateDeadlineModal } from "../CreateDeadlineModal"
 import { CreateGroupModal } from "../CreateGroupModal"
 
@@ -93,7 +93,10 @@ export function Toolbar() {
         setOpen={setModalOpen}
       />
       <CreateTaskModal open={modalopen === "task"} setOpen={setModalOpen} />
-      <CreateStandModal open={modalopen === "stand"} setOpen={setModalOpen} />
+      <CreateFacilityModal
+        open={modalopen === "facility"}
+        setOpen={setModalOpen}
+      />
       <CreateDeadlineModal
         open={modalopen === "deadline"}
         setOpen={setModalOpen}

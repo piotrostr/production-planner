@@ -1,24 +1,11 @@
 import { Popover, Stack, Typography, Divider } from "@mui/material"
 import AssignmentIcon from "@mui/icons-material/Assignment"
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd"
 import AlarmAddIcon from "@mui/icons-material/AlarmAdd"
 import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork"
-import EngineeringIcon from "@mui/icons-material/Engineering"
-import AddLocationIcon from "@mui/icons-material/AddLocation"
 
 const items = [
   {
-    name: "activity",
-    label: "Czynność",
-    icon: <EngineeringIcon fontSize="small" />,
-  },
-  {
-    name: "location",
-    label: "Lokalizacja",
-    icon: <AddLocationIcon fontSize="small" />,
-  },
-  {
-    name: "stand",
+    name: "facility",
     label: "Stanowisko",
     icon: <AddHomeWorkIcon fontSize="small" />,
   },
@@ -31,11 +18,6 @@ const items = [
     name: "deadline",
     label: "Deadline",
     icon: <AlarmAddIcon fontSize="small" />,
-  },
-  {
-    name: "group",
-    label: "Grupa",
-    icon: <LibraryAddIcon fontSize="small" />,
   },
 ]
 

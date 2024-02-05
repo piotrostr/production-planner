@@ -1,17 +1,22 @@
-import { Stand } from "../Stand"
+import { Facility as FacilityType } from "../../slices/facilities"
+import { Facility } from "../Facility"
 
-export function SideCell({ stand }) {
+interface SideCellProps {
+  facility: FacilityType
+}
+
+export function SideCell({ facility }: SideCellProps) {
   return (
     <div
       style={{
         width: 225,
-        backgroundColor: stand.bgcolor,
+        backgroundColor: facility.bgcolor,
         boxSizing: "border-box",
         borderRight: "1px solid black",
         borderBottom: "1px solid black",
       }}
     >
-      <Stand stand={stand} />
+      <Facility facility={facility} />
     </div>
   )
 }

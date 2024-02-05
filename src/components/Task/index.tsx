@@ -1,9 +1,9 @@
-import { Task as TaskType } from "../../../types/task";
-import { Stack, Typography } from "@mui/material";
-import { Task as GridTaskType } from "../../App";
+import { Task as TaskType } from "../../../types/task"
+import { Stack, Typography } from "@mui/material"
+import { Task as GridTaskType } from "../../App"
 
 interface TaskProps {
-  task: TaskType | GridTaskType;
+  task: TaskType | GridTaskType
 }
 
 export function Task({ task }: TaskProps) {
@@ -17,9 +17,9 @@ export function Task({ task }: TaskProps) {
       borderRadius={1}
       sx={{ bgcolor: task.bgcolor, color: "#FFFFFF" }}
     >
-      <Typography variant="body1" fontWeight={700}>
+      <Typography variant="body1" fontWeight={700} noWrap>
         {task.title}
       </Typography>
     </Stack>
-  );
+  )
 }

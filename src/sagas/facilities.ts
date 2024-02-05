@@ -2,18 +2,39 @@ import { eventChannel } from "redux-saga"
 import { PayloadAction } from "@reduxjs/toolkit"
 import { call, put, take, cancelled, takeLatest, all } from "redux-saga/effects"
 import { firestore } from "../../firebase.config"
-import { Facility, removeFacility, setFacilities } from "../slices/facilities"
+import {
+  Facility,
+  addFacilityStart,
+  removeFacility,
+  setFacilities,
+  upsertFacility,
+  deleteFacilityStart,
+  syncFacilitiesStart,
+} from "../slices/facilities"
 import {
   collection,
   deleteDoc,
   doc,
   getDocs,
   onSnapshot,
+  setDoc,
 } from "firebase/firestore"
-import { deleteFacilityStart, syncFacilitiyStart } from "../slices/facilities"
+
+const addFacilityToFirestore = async (facility: Facility) => {
+  await setDoc(doc(firestore, `facilities/${facility.id}`), facility)
+}
 
 const deleteFacilityFromFirestore = async (facilityId: string) => {
   await deleteDoc(doc(firestore, `facilities/${facilityId}`))
+}
+
+export function* addFacilitySaga(action: PayloadAction<Facility>) {
+  try {
+    yield call(addFacilityToFirestore, action.payload)
+    yield put(upsertFacility(action.payload))
+  } catch (error) {
+    console.error("Error adding facility:", error)
+  }
 }
 
 export function* deleteFacilitySaga(
@@ -33,9 +54,9 @@ export function* syncFacilitiesSaga() {
     const colRef = collection(firestore, "facilities")
     const unsubscribe = onSnapshot(colRef, async () => {
       const snapshot = await getDocs(collection(firestore, "facilities"))
-      const facilities = [] as Facility[]
+      const facilities = {} as { [key: string]: Facility }
       snapshot.forEach((doc) =>
-        facilities.push({ id: doc.id, ...doc.data() } as Facility)
+        Object.assign(facilities, { [doc.id]: doc.data() as Facility })
       )
       emitter(facilities)
     })
@@ -56,14 +77,18 @@ export function* syncFacilitiesSaga() {
   }
 }
 
-function* watchDeleteFacilitySaga() {
+export function* watchAddFacility() {
+  yield takeLatest(addFacilityStart.type, addFacilitySaga)
+}
+
+function* watchDeleteFacility() {
   yield takeLatest(deleteFacilityStart.type, deleteFacilitySaga)
 }
 
-function* watchSyncFacilitiesSaga() {
-  yield takeLatest(syncFacilitiyStart.type, syncFacilitiesSaga)
+function* watchSyncFacilities() {
+  yield takeLatest(syncFacilitiesStart.type, syncFacilitiesSaga)
 }
 
-export default function* facilitiesSaga() {
-  yield all([watchDeleteFacilitySaga(), watchSyncFacilitiesSaga()])
+export default function* facilitiesSagas() {
+  yield all([watchAddFacility(), watchDeleteFacility(), watchSyncFacilities()])
 }

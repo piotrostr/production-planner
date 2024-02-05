@@ -1,15 +1,15 @@
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { Stack } from "@mui/material";
-import { Select, MenuItem } from "@mui/material";
-import { useState } from "react";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp"
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
+import { Stack } from "@mui/material"
+import { Select, MenuItem } from "@mui/material"
+import { useState } from "react"
 
 interface TextFieldProps {
-  placeholder: string;
-  options: { value: string; label: string }[];
-  name: string;
-  value?: string;
-  setFieldValue: (name: string, value: string) => void;
+  placeholder: string
+  options: { value: string; label: string }[]
+  name: string
+  value?: string
+  setFieldValue: (name: string, value: string) => void
 }
 
 export function Dropdown({
@@ -19,7 +19,7 @@ export function Dropdown({
   name,
   options,
 }: TextFieldProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <Stack height={45} width="fit-content" direction="row">
@@ -31,12 +31,12 @@ export function Dropdown({
         onOpen={() => setOpen(true)}
         fullWidth
         displayEmpty
-        renderValue={(value: string) => {
-          return value == undefined ? (
+        renderValue={(val: string) => {
+          return !val ? (
             <div style={{ color: "#a1a1a1" }}>{placeholder}</div>
           ) : (
-            <>{value}</>
-          );
+            <>{val}</>
+          )
         }}
         sx={{
           all: "unset",
@@ -57,9 +57,6 @@ export function Dropdown({
         inputProps={{
           IconComponent: () => null,
           MenuProps: {
-            PaperProps: {
-              transitionDuration: 0,
-            },
             MenuListProps: {
               sx: {
                 backgroundColor: "background.default",
@@ -107,5 +104,5 @@ export function Dropdown({
         </Stack>
       </Stack>
     </Stack>
-  );
+  )
 }

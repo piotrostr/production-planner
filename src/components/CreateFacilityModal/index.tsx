@@ -1,32 +1,33 @@
 //lokalizacja -> czynnosc -> opis -> siła robocza -> grupa -> kolor
 // sila robocza - number field, icon={<DriveFileRenameOutlineIcon />}
 //
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import { Stack, Typography } from "@mui/material";
-import { Modal } from "../Modal";
-import { TitleBar } from "../TitleBar";
-import { TextArea } from "../TextArea";
-import { SecondaryButton } from "../SecondaryButton";
-import { PrimaryButton } from "../PrimaryButton";
-import { doc, setDoc, collection, getDoc } from "firebase/firestore";
-import { firestore } from "../../../firebase.config";
-import { Form, Formik, FormikHelpers } from "formik";
-import { Dropdown } from "../Dropdown";
-import { ColorField } from "../ColorField";
-import { NumberField } from "../NumberField";
+import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
+import { Stack, Typography } from "@mui/material"
+import { Modal } from "../Modal"
+import { TitleBar } from "../TitleBar"
+import { TextArea } from "../TextArea"
+import { SecondaryButton } from "../SecondaryButton"
+import { PrimaryButton } from "../PrimaryButton"
+import { doc, collection } from "firebase/firestore"
+import { firestore } from "../../../firebase.config"
+import { Form, Formik, FormikHelpers } from "formik"
+import { Dropdown } from "../Dropdown"
+import { ColorField } from "../ColorField"
+import { NumberField } from "../NumberField"
+import { useAppDispatch } from "../../hooks"
+import { addFacilityStart } from "../../slices/facilities"
 
-interface CreateStandModalProps {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<null>>;
+interface CreateFacilityModalProps {
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<null>>
 }
 
 interface FormData {
-  location: string;
-  activity: string;
-  description: string;
-  manpower: number;
-  group?: string;
-  color?: string;
+  location: string
+  activity: string
+  description: string
+  manpower: number
+  bgcolor: string
 }
 
 const initialValues = {
@@ -34,67 +35,64 @@ const initialValues = {
   activity: "",
   description: "",
   manpower: 0,
-  group: "",
-  color: "",
-};
+  bgcolor: "",
+}
 
 const locations = [
-  { value: "lokalizacja 1", label: "Lokalizacja 1" },
-  { value: "lokalizacja 2", label: "Lokalizacja 2" },
-  { value: "lokalizacja 3", label: "Lokalizacja 3" },
-];
+  { value: "BOP_GA", label: "BOP_GA" },
+  { value: "BOP_GD", label: "BOP_GD" },
+]
 
 const activities = [
-  { value: "czynność 1", label: "Czynność 1" },
-  { value: "czynność 2", label: "Czynność 2" },
-  { value: "czynność 3", label: "Czynność 3" },
-];
+  { value: "CUTTING", label: "CUTTING" },
+  { value: "PREFABRICATION", label: "PREFABRICATION" },
+  { value: "TRANSPORT", label: "TRANSPORT" },
+  { value: "ASSEMBLY", label: "ASSEMBLY" },
+  { value: "QUALITY CONTROL", label: "QUALITY CONTROL" },
+  { value: "PAINTING", label: "PAINTING" },
+  { value: "INSTALLATION", label: "INSTALLATION" },
+]
 
-const groups = [
-  { value: "grupa 1", label: "Grupa 1" },
-  { value: "grupa 2", label: "Grupa 2" },
-  { value: "grupa 3", label: "Grupa 3" },
-];
-
-export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
+export function CreateFacilityModal({
+  open,
+  setOpen,
+}: CreateFacilityModalProps) {
+  const dispatch = useAppDispatch()
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: FormikHelpers<FormData>["setFieldValue"]
   ) => {
-    const { name, value } = e.target;
-    setFieldValue(name, value);
-  };
+    const { name, value } = e.target
+    setFieldValue(name, value)
+  }
 
   const handleSubmit = async (
     values: FormData,
     resetForm: FormikHelpers<FormData>["resetForm"]
   ) => {
     try {
-      const projectId = "PgwbCyMAeN300VU1LcsY";
-      const standsRef = collection(firestore, "projects", projectId, "stands");
-      const standRef = doc(standsRef);
-      const standId = standRef.id;
-      const standSnap = await getDoc(standRef);
-      if (!standSnap.exists()) {
-        await setDoc(standRef, {
+      const facilityId = doc(collection(firestore, "facilities")).id
+      dispatch(
+        addFacilityStart({
+          id: facilityId,
+          title: values.location + " " + values.activity,
+          tasks: [],
           ...values,
-          id: standId,
-        });
-      }
-
-      setOpen(null);
-      resetForm();
-      alert("Dodano stanowisko");
+        })
+      )
+      setOpen(null)
+      resetForm()
+      alert("Dodano stanowisko")
     } catch (error) {
-      resetForm();
-      alert((error as Error).message);
+      resetForm()
+      alert((error as Error).message)
     }
-  };
+  }
 
   const handleClose = (resetForm: FormikHelpers<FormData>["resetForm"]) => {
-    setOpen(null);
-    resetForm();
-  };
+    setOpen(null)
+    resetForm()
+  }
   return (
     <Formik
       initialValues={initialValues}
@@ -166,18 +164,6 @@ export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
                         name="manpower"
                       />
                     </Stack>
-                    <Stack direction="row" spacing={5} alignItems="center">
-                      <Typography variant="body1" width={100}>
-                        Grupa
-                      </Typography>
-                      <Dropdown
-                        options={groups}
-                        placeholder="Bez grupy"
-                        value={values.group}
-                        setFieldValue={setFieldValue}
-                        name="group"
-                      />
-                    </Stack>
                     <Stack
                       direction="row"
                       justifyContent="space-between"
@@ -188,9 +174,9 @@ export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
                         Kolor
                       </Typography>
                       <ColorField
-                        value={values.color}
+                        value={values.bgcolor}
                         setFieldValue={setFieldValue}
-                        name="color"
+                        name="bgcolor"
                       />
                     </Stack>
                   </Stack>
@@ -216,5 +202,5 @@ export function CreateStandModal({ open, setOpen }: CreateStandModalProps) {
         </>
       )}
     </Formik>
-  );
+  )
 }

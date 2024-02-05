@@ -1,26 +1,23 @@
 import { useEffect, useState } from "react"
 import { DataGridPro, useGridApiRef } from "@mui/x-data-grid-pro"
-import { Stand } from "../../../types/stand"
 import { Cell } from "../Cell/Cell"
 import { DraggedTask } from "../../App"
 import { View } from "../../../types/view"
-import { Cell as CellType, GridType } from "../../slices/grid"
+import { useAppSelector } from "../../hooks"
+import { Facility } from "../../slices/facilities"
 
 interface DataGridProps {
-  stands: Array<{ id: number } | Stand>
-  cellStateMap: GridType | null
   draggedTask: DraggedTask
   view: View
 }
 
-export function DataGrid({
-  stands,
-  cellStateMap,
-  draggedTask,
-  view,
-}: DataGridProps) {
+export function DataGrid({ draggedTask, view }: DataGridProps) {
   const [, setCellWidth] = useState<number>(100)
   const apiRef = useGridApiRef()
+
+  const facilitiesState = useAppSelector((state) => state.facilities)
+  const facilities = facilitiesState.facilities
+  const facilitiesArr = Object.values(facilities)
 
   const handleZoom = (event: WheelEvent) => {
     // Check if the "Ctrl" key is pressed
@@ -56,7 +53,7 @@ export function DataGrid({
   return (
     <DataGridPro
       apiRef={apiRef}
-      rows={stands}
+      rows={facilitiesArr}
       columns={view?.headerBottomData || []}
       disableColumnFilter
       disableColumnMenu
@@ -68,7 +65,7 @@ export function DataGrid({
       rowHeight={50}
       columnBuffer={5}
       pinnedRows={{
-        top: [{ id: 0 }],
+        top: [{ id: "0", title: "", description: "", bgcolor: "", tasks: [] }],
       }}
       initialState={{
         pinnedColumns: {
@@ -81,12 +78,11 @@ export function DataGrid({
       }}
       slotProps={{
         cell: {
-          cellStateMap: cellStateMap?.cells,
           draggedTask: draggedTask,
           view: view,
-          stands: stands,
         },
       }}
+      getRowId={(row: Facility) => row.id}
       sx={{
         //disable cell outline on focus
         "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {

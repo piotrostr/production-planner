@@ -10,6 +10,7 @@ import {
   doc,
   getDocs,
   onSnapshot,
+  setDoc,
   updateDoc,
 } from "firebase/firestore"
 
@@ -19,13 +20,28 @@ import {
   removeTask,
   deleteTaskStart,
   syncTasksStart,
+  addTaskStart,
+  upsertTask,
 } from "../slices/tasks"
+
+const addTaskToFirestore = async (task: Task) => {
+  await setDoc(doc(firestore, `tasks/${task.id}`), task)
+}
 
 const deleteTaskFromFirestore = async (taskId: string, facilityId: string) => {
   await deleteDoc(doc(firestore, `tasks/${taskId}`))
   await updateDoc(doc(firestore, `facilities/${facilityId}`), {
     tasks: arrayRemove(taskId),
   })
+}
+
+export function* addTaskSaga(action: PayloadAction<Task>) {
+  try {
+    yield call(addTaskToFirestore, action.payload)
+    yield put(upsertTask(action.payload))
+  } catch (error) {
+    console.error("Error adding task:", error)
+  }
 }
 
 export function* deleteTaskSaga(
@@ -46,9 +62,9 @@ export function* syncTasksSaga() {
     const colRef = collection(firestore, "tasks")
     const unsubscribe = onSnapshot(colRef, async () => {
       const snapshot = await getDocs(collection(firestore, "tasks"))
-      const tasks = [] as Task[]
-      snapshot.forEach((doc) =>
-        tasks.push({ id: doc.id, ...doc.data() } as Task)
+      const tasks = {} as { [key: string]: Task }
+      snapshot.forEach(
+        (doc) => (tasks[doc.id] = { id: doc.id, ...doc.data() } as Task)
       )
       emitter(tasks)
     })
@@ -69,14 +85,18 @@ export function* syncTasksSaga() {
   }
 }
 
-function* watchDeleteTaskSaga() {
+function* watchAddTask() {
+  yield takeLatest(addTaskStart.type, addTaskSaga)
+}
+
+function* watchDeleteTask() {
   yield takeLatest(deleteTaskStart.type, deleteTaskSaga)
 }
 
-function* watchSyncTasksSaga() {
+function* watchSyncTasks() {
   yield takeLatest(syncTasksStart.type, syncTasksSaga)
 }
 
-export default function* gridSagas() {
-  yield all([watchDeleteTaskSaga(), watchSyncTasksSaga()])
+export default function* taskSagas() {
+  yield all([watchAddTask(), watchDeleteTask(), watchSyncTasks()])
 }

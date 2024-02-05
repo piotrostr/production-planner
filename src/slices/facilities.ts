@@ -81,11 +81,15 @@ export const facilitiesSlice = createSlice({
       state.loading = true
       state.error = null
     },
+    addFacilityStart(state, action: PayloadAction<Facility>) {
+      state.loading = true
+      state.error = null
+    },
     deleteFacilityStart(state /*action: PayloadAction<GridType>*/) {
       state.loading = true
       state.error = null
     },
-    syncFacilitiyStart(state /*action: PayloadAction<GridType>*/) {
+    syncFacilitiesStart(state /*action: PayloadAction<GridType>*/) {
       state.loading = true
       state.error = null
     },
@@ -102,8 +106,9 @@ export const {
   fetchFacilitiesStart,
   taskOperationFailed,
   updateFacilitiesStart,
+  addFacilityStart,
   deleteFacilityStart,
-  syncFacilitiyStart,
+  syncFacilitiesStart,
 } = facilitiesSlice.actions
 
 // Export the reducer

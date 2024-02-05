@@ -1,13 +1,14 @@
-import { Task as TaskType } from "../../../types/task"
 import { Stack, Typography } from "@mui/material"
+import { Task } from "../../slices/tasks"
 
 interface DroppedTaskProps {
-  task: TaskType
+  task: Task
   cellWidth: number
   cellSpan: number
 }
 
 export function DroppedTask({ task, cellWidth, cellSpan }: DroppedTaskProps) {
+  console.log(task)
   return (
     <Stack
       width={cellWidth * cellSpan}

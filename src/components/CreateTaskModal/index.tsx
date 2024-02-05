@@ -1,93 +1,76 @@
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { Stack, Typography } from "@mui/material";
-import { TextField } from "../TextField";
-import { Modal } from "../Modal";
-import { TitleBar } from "../TitleBar";
-import { TextArea } from "../TextArea";
-import { SecondaryButton } from "../SecondaryButton";
-import { PrimaryButton } from "../PrimaryButton";
-import { doc, setDoc, collection, getDoc } from "firebase/firestore";
-import { firestore } from "../../../firebase.config";
-import { Form, Formik, FormikHelpers } from "formik";
-import { Dropdown } from "../Dropdown";
-import { ColorField } from "../ColorField";
-import { NumberField } from "../NumberField";
+import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
+import AccessTimeIcon from "@mui/icons-material/AccessTime"
+import { Stack, Typography } from "@mui/material"
+import { TextField } from "../TextField"
+import { Modal } from "../Modal"
+import { TitleBar } from "../TitleBar"
+import { TextArea } from "../TextArea"
+import { SecondaryButton } from "../SecondaryButton"
+import { PrimaryButton } from "../PrimaryButton"
+import { doc, collection } from "firebase/firestore"
+import { firestore } from "../../../firebase.config"
+import { Form, Formik, FormikHelpers } from "formik"
+import { ColorField } from "../ColorField"
+import { NumberField } from "../NumberField"
+import { useAppDispatch } from "../../hooks"
+import { addTaskStart } from "../../slices/tasks"
 
 interface CreateTaskModalProps {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<null>>;
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<null>>
 }
 
 interface FormData {
-  name: string;
-  description: string;
-  duration: number;
-  required?: string;
-  group?: string;
-  color?: string;
+  title: string
+  description: string
+  duration: number
+  bgcolor: string
 }
 
 const initialValues = {
-  name: "",
+  title: "",
   description: "",
   duration: 0,
-  required: "",
-  group: "",
-  color: "",
-};
-
-const groups = [
-  { value: "grupa 1", label: "Grupa 1" },
-  { value: "grupa 2", label: "Grupa 2" },
-  { value: "grupa 3", label: "Grupa 3" },
-];
-
-const required = [
-  { value: "zadanie 1", label: "zadanie 1" },
-  { value: "zadanie 2", label: "zadanie 2" },
-  { value: "zadanie 3", label: "zadanie 3" },
-];
+  bgcolor: "",
+}
 
 export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
+  const dispatch = useAppDispatch()
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: FormikHelpers<FormData>["setFieldValue"]
   ) => {
-    const { name, value } = e.target;
-    setFieldValue(name, value);
-  };
+    const { name, value } = e.target
+    setFieldValue(name, value)
+  }
 
   const handleSubmit = async (
     values: FormData,
     resetForm: FormikHelpers<FormData>["resetForm"]
   ) => {
     try {
-      const projectId = "PgwbCyMAeN300VU1LcsY";
-      const tasksRef = collection(firestore, "projects", projectId, "tasks");
-      const taskRef = doc(tasksRef);
-      const taskId = taskRef.id;
-      const taskSnap = await getDoc(taskRef);
-      if (!taskSnap.exists()) {
-        await setDoc(taskRef, {
-          ...values,
+      const taskId = doc(collection(firestore, "tasks")).id
+      dispatch(
+        addTaskStart({
           id: taskId,
-        });
-      }
-
-      setOpen(null);
-      resetForm();
-      alert("Dodano zadanie");
+          dropped: false,
+          ...values,
+        })
+      )
+      setOpen(null)
+      resetForm()
+      alert("Dodano zadanie")
     } catch (error) {
-      resetForm();
-      alert((error as Error).message);
+      resetForm()
+      alert((error as Error).message)
     }
-  };
+  }
 
   const handleClose = (resetForm: FormikHelpers<FormData>["resetForm"]) => {
-    setOpen(null);
-    resetForm();
-  };
+    setOpen(null)
+    resetForm()
+  }
+
   return (
     <Formik
       initialValues={initialValues}
@@ -114,9 +97,9 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
                       <TextField
                         placeholder="Nazwa"
                         icon={<DriveFileRenameOutlineIcon />}
-                        value={values.name}
+                        value={values.title}
                         onChange={(e) => handleInputChange(e, setFieldValue)}
-                        name="name"
+                        name="title"
                       />
                     </Stack>
                     <Stack
@@ -144,30 +127,6 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
                         name="duration"
                       />
                     </Stack>
-                    <Stack direction="row" spacing={5} alignItems="center">
-                      <Typography variant="body1" width={100}>
-                        Wymagane
-                      </Typography>
-                      <Dropdown
-                        options={required}
-                        placeholder="Brak wymaganych zadań"
-                        value={values.required}
-                        setFieldValue={setFieldValue}
-                        name="required"
-                      />
-                    </Stack>
-                    <Stack direction="row" spacing={5} alignItems="center">
-                      <Typography variant="body1" width={100}>
-                        Grupa
-                      </Typography>
-                      <Dropdown
-                        options={groups}
-                        placeholder="Bez grupy"
-                        value={values.group}
-                        setFieldValue={setFieldValue}
-                        name="group"
-                      />
-                    </Stack>
                     <Stack
                       direction="row"
                       justifyContent="space-between"
@@ -178,9 +137,9 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
                         Kolor
                       </Typography>
                       <ColorField
-                        value={values.color}
+                        value={values.bgcolor}
                         setFieldValue={setFieldValue}
-                        name="color"
+                        name="bgcolor"
                       />
                     </Stack>
                   </Stack>
@@ -206,5 +165,5 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
         </>
       )}
     </Formik>
-  );
+  )
 }

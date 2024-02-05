@@ -37,7 +37,7 @@ export function DataCell({
       return <div />
     } else {
       if (state === "occupied-start") {
-        const cellSpan = task.duration
+        const cellSpan = 5
         return (
           <Draggable id={cellKey} data={data}>
             <DroppedTask

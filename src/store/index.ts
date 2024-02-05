@@ -1,16 +1,16 @@
-import createSagaMiddleware from "redux-saga";
-import { configureStore } from "@reduxjs/toolkit";
-import { all } from "redux-saga/effects";
+import createSagaMiddleware from "redux-saga"
+import { configureStore } from "@reduxjs/toolkit"
+import { all } from "redux-saga/effects"
 
-import gridReducer from "../slices/grid"; // Adjust the import path as necessary
-import tasksReducer from "../slices/tasks"; // Adjust the import path as necessary
-import facilitiesReducer from "../slices/facilities"; // Adjust the import path as necessary
+import gridReducer from "../slices/grid" // Adjust the import path as necessary
+import tasksReducer from "../slices/tasks" // Adjust the import path as necessary
+import facilitiesReducer from "../slices/facilities" // Adjust the import path as necessary
 
-import gridSagas from "../sagas/grid";
+import gridSagas from "../sagas/grid"
 // import { watchTasksSagas } from "../sagas/tasks";
 // import { watchFacilitiesSagas } from "../sagas/facilities";
 
-const sagaMiddleware = createSagaMiddleware();
+const sagaMiddleware = createSagaMiddleware()
 
 export const store = configureStore({
   reducer: {
@@ -20,16 +20,16 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware),
-});
+})
 
 function* rootSaga() {
-  yield all([gridSagas()]); // watchTasksSagas(), watchFacilitiesSagas()]);
+  yield all([gridSagas()]) // watchTasksSagas(), watchFacilitiesSagas()]);
 }
 
-sagaMiddleware.run(rootSaga);
+sagaMiddleware.run(rootSaga)
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof store.getState>
 
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch = typeof store.dispatch

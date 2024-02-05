@@ -1,11 +1,11 @@
-import { Stack } from "@mui/material"
-import CloseIcon from "@mui/icons-material/Close"
+import { Stack } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface TitleBarProps {
-  setOpen: React.Dispatch<React.SetStateAction<null>>
+  onClose: () => void;
 }
 
-export function TitleBar({ setOpen }: TitleBarProps) {
+export function TitleBar({ onClose }: TitleBarProps) {
   return (
     <Stack
       direction="row-reverse"
@@ -21,8 +21,8 @@ export function TitleBar({ setOpen }: TitleBarProps) {
           p: 0.5,
           cursor: "pointer",
         }}
-        onClick={() => setOpen(null)}
+        onClick={() => onClose()}
       />
     </Stack>
-  )
+  );
 }

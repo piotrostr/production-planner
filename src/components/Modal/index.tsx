@@ -1,16 +1,16 @@
-import { Modal as MuiModal, Stack } from "@mui/material"
+import { Modal as MuiModal, Stack } from "@mui/material";
 
 interface ModalProps {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<null>>
-  children: React.ReactNode
+  open: boolean;
+  children: React.ReactNode;
+  onClose: () => void;
 }
 
-export function Modal({ open, setOpen, children }: ModalProps) {
+export function Modal({ open, children, onClose }: ModalProps) {
   return (
     <MuiModal
       open={open}
-      onClose={() => setOpen(null)}
+      onClose={() => onClose()}
       sx={{
         "& .MuiBackdrop-root": {
           bgcolor: "transparent",
@@ -33,5 +33,5 @@ export function Modal({ open, setOpen, children }: ModalProps) {
         {children}
       </Stack>
     </MuiModal>
-  )
+  );
 }

@@ -1,10 +1,18 @@
-import { InputBase, Stack } from "@mui/material"
+import { InputBase, Stack } from "@mui/material";
 
 interface TextAreaProps {
-  placeholder: string
+  placeholder: string;
+  value?: string;
+  name?: string;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export function TextArea({ placeholder }: TextAreaProps) {
+export function TextArea({
+  placeholder,
+  name,
+  onChange,
+  value,
+}: TextAreaProps) {
   return (
     <Stack
       direction="row"
@@ -17,9 +25,12 @@ export function TextArea({ placeholder }: TextAreaProps) {
       <InputBase
         sx={{ mx: 3, my: 1, flex: 1 }}
         placeholder={placeholder}
+        name={name}
+        value={value}
+        onChange={onChange}
         multiline
         minRows={5}
       />
     </Stack>
-  )
+  );
 }

@@ -1,11 +1,20 @@
-import { InputBase, Stack } from "@mui/material"
+import { InputBase, Stack } from "@mui/material";
 
 interface NumberFieldProps {
-  placeholder: string
-  icon: React.ReactNode
+  placeholder: string;
+  name?: string;
+  icon: React.ReactNode;
+  value?: number;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export function NumberField({ placeholder, icon }: NumberFieldProps) {
+export function NumberField({
+  placeholder,
+  icon,
+  name,
+  value,
+  onChange,
+}: NumberFieldProps) {
   return (
     <Stack
       direction="row"
@@ -17,6 +26,9 @@ export function NumberField({ placeholder, icon }: NumberFieldProps) {
       }}
     >
       <InputBase
+        name={name}
+        value={value}
+        onChange={onChange}
         sx={{ mx: 3, flex: 1 }}
         placeholder={placeholder}
         type="number"
@@ -32,5 +44,5 @@ export function NumberField({ placeholder, icon }: NumberFieldProps) {
         {icon}
       </Stack>
     </Stack>
-  )
+  );
 }

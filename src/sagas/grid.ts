@@ -1,9 +1,22 @@
-import { all, call, put, takeLatest } from "redux-saga/effects"
+import { all, call, cancelled, put, take, takeLatest } from "redux-saga/effects"
 import { PayloadAction } from "@reduxjs/toolkit"
-import { GridType, initializeGrid, initializeGridStart } from "../slices/grid"
-import { doc, getDoc, setDoc } from "firebase/firestore"
+import {
+  GridType,
+  initializeGrid,
+  initializeGridStart,
+  syncGridStart,
+} from "../slices/grid"
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore"
 import { firestore } from "../../firebase.config"
 import { fetchGridStart, updateGridStart, setGrid } from "../slices/grid"
+import { eventChannel } from "redux-saga"
 
 export const fetchGridFromFirestore = async (): Promise<GridType | null> => {
   const snapshot = await getDoc(doc(firestore, "grid", "first-grid"))
@@ -15,7 +28,9 @@ export const updateGridInFirestore = async (
 ): Promise<void> => {
   const gridRef = doc(firestore, "grid", "first-grid")
   const gridSnapshot = await getDoc(gridRef)
-  !gridSnapshot.exists() && (await setDoc(gridRef, gridData))
+  !gridSnapshot.exists()
+    ? await setDoc(gridRef, gridData)
+    : await updateDoc(gridRef, { ...gridData })
 }
 
 function* fetchGridSaga() {
@@ -64,6 +79,35 @@ function* initializeGridSaga(
   }
 }
 
+export function* syncGridSaga() {
+  const channel = eventChannel((emitter) => {
+    const docRef = doc(firestore, "grid", "first-grid")
+    const unsubscribe = onSnapshot(docRef, async () => {
+      const snapshot = await getDoc(docRef)
+      const gridData: GridType | null = snapshot.exists()
+        ? (snapshot.data() as GridType)
+        : null
+      if (gridData) {
+        emitter(gridData)
+      }
+    })
+
+    return unsubscribe
+  })
+
+  try {
+    while (true) {
+      const gridData: GridType = yield take(channel)
+      yield put(setGrid(gridData))
+    }
+  } finally {
+    const isCancelled: boolean = yield cancelled()
+    if (isCancelled) {
+      channel.close()
+    }
+  }
+}
+
 function* watchFetchGrid() {
   yield takeLatest(fetchGridStart.type, fetchGridSaga)
 }
@@ -76,6 +120,15 @@ function* watchInitializeGrid() {
   yield takeLatest(initializeGridStart.type, initializeGridSaga)
 }
 
+function* watchSyncGrid() {
+  yield takeLatest(syncGridStart.type, syncGridSaga)
+}
+
 export default function* gridSagas() {
-  yield all([watchFetchGrid(), watchUpdateGrid(), watchInitializeGrid()])
+  yield all([
+    watchFetchGrid(),
+    watchUpdateGrid(),
+    watchInitializeGrid(),
+    watchSyncGrid(),
+  ])
 }

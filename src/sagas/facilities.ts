@@ -54,7 +54,7 @@ export function* syncFacilitiesSaga() {
     const colRef = collection(firestore, "facilities")
     const unsubscribe = onSnapshot(colRef, async () => {
       const snapshot = await getDocs(collection(firestore, "facilities"))
-      const facilities = {} as { [key: string]: Facility }
+      const facilities: { [key: string]: Facility } = {}
       snapshot.forEach((doc) =>
         Object.assign(facilities, { [doc.id]: doc.data() as Facility })
       )

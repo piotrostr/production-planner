@@ -53,11 +53,62 @@ const gridSlice = createSlice({
       }
       state.grid.cells[cellId] = cell
     },
+    setCellsOccupied: (
+      state,
+      action: PayloadAction<{
+        rowId: string
+        colId: string
+        taskId: string
+        cellSpan: string
+      }>
+    ) => {
+      const { rowId, colId, taskId, cellSpan } = action.payload
+      const duration = Number(cellSpan)
+      const colIdx = Number(colId)
+      const cellId = `${rowId}-${colIdx}`
+      if (!state.grid) {
+        state.grid = {
+          cells: {},
+        }
+      }
+      state.grid.cells[cellId] = {
+        state: "occupied-start",
+        taskId: taskId,
+        source: cellId,
+      }
+      if (duration > 1) {
+        for (let i = 1; i < duration - 1; i++) {
+          state.grid.cells[`${rowId}-${colIdx + i}`] = {
+            state: "occupied",
+            taskId: taskId,
+            source: cellId,
+          }
+        }
+        state.grid.cells[`${rowId}-${colIdx + duration - 1}`] = {
+          state: "occupied-end",
+          taskId: taskId,
+          source: cellId,
+        }
+      }
+    },
+
     removeCell: (state, action: PayloadAction<{ cellId: string }>) => {
       if (!state.grid) {
         return
       }
       delete state.grid.cells[action.payload.cellId]
+    },
+    removeCells: (
+      state,
+      action: PayloadAction<{ rowId: string; colId: string; cellSpan: number }>
+    ) => {
+      const { rowId, colId, cellSpan } = action.payload
+      if (!state.grid) {
+        return
+      }
+      for (let i = 0; i <= cellSpan; i++) {
+        delete state.grid.cells[`${rowId}-${Number(colId) + i}`]
+      }
     },
     // Triggered when the grid fetch starts
     fetchGridStart(state) {
@@ -75,11 +126,18 @@ const gridSlice = createSlice({
       state.error = action.payload
     },
     // Triggered to start the grid update process
-    updateGridStart(state /*action: PayloadAction<GridType>*/) {
+    updateGridStart(state, action: PayloadAction<GridType>) {
       state.loading = true
       state.error = null
     },
-    initializeGridStart(state) {
+    initializeGridStart(
+      state,
+      action: PayloadAction<{ rowCount: number; columnCount: number }>
+    ) {
+      state.loading = true
+      state.error = null
+    },
+    syncGridStart(state) {
       state.loading = true
       state.error = null
     },
@@ -93,8 +151,11 @@ export const {
   updateGridStart,
   initializeGrid,
   removeCell,
+  removeCells,
   setCell,
+  setCellsOccupied,
   initializeGridStart,
+  syncGridStart,
 } = gridSlice.actions
 
 // Default export the reducer

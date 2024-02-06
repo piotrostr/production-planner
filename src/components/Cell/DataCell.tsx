@@ -19,44 +19,75 @@ export function DataCell({
   rowId,
 }: DataCellProps) {
   const cellKey = `${rowId}-${columnIndex}`
-  const gridState = useAppSelector((state) => state.grid)
+  const cells = useAppSelector((state) => state.grid.grid?.cells)
   const tasks = useAppSelector((state) => state.tasks.tasks)
-  const cellStateMap = gridState.grid
-
-  const cell = cellStateMap?.cells[cellKey]
+  const cell = cells?.[cellKey]
   const state = cell?.state
   const taskId = cell?.taskId as string
   const task = tasks?.[taskId]
 
   const renderTask = () => {
-    if (draggedTask.id !== null && draggedTask.draggableId === cellKey) {
+    if (state == "occupied-start" && draggedTask.task?.id !== task.id) {
       return (
-        <Draggable id={cellKey} data={task}>
+        <Draggable
+          id={cellKey}
+          data={{
+            task,
+            sourceId: cellKey,
+          }}
+        >
+          <DroppedTask task={task} cellWidth={cellWidth} />
+        </Draggable>
+      )
+    } else if (state == "occupied-start" && draggedTask.task?.id === task.id) {
+      return (
+        <Draggable
+          id={cellKey}
+          data={{
+            task,
+            sourceId: cellKey,
+          }}
+        >
           <Task task={task} />
         </Draggable>
       )
-    } else if (
-      draggedTask &&
-      draggedTask.draggableId !== cellKey &&
-      draggedTask?.task?.id === task?.id
-    ) {
-      return <div />
     } else {
-      if (state === "occupied-start") {
-        const cellSpan = task?.duration
-        return (
-          <Draggable id={cellKey} data={task}>
-            <DroppedTask
-              task={task}
-              cellWidth={cellWidth}
-              cellSpan={cellSpan}
-            />
-          </Draggable>
-        )
-      } else {
-        return <div />
-      }
+      return <div>ERR</div>
     }
+    // if (draggedTask.id !== null && draggedTask.draggableId === cellKey) {
+    //   return (
+    //     <Draggable
+    //       id={cellKey}
+    //       data={{
+    //         task,
+    //         sourceId: cellKey,
+    //       }}
+    //     >
+    //       <Task task={task} />
+    //     </Draggable>
+    //   )
+    // } else if (
+    //   draggedTask.draggableId !== cellKey &&
+    //   draggedTask?.task?.id === taskId
+    // ) {
+    //   return <div>elo</div>
+    // } else {
+    //   if (state === "occupied-start") {
+    //     return (
+    //       <Draggable
+    //         id={cellKey}
+    //         data={{
+    //           task,
+    //           sourceId: cellKey,
+    //         }}
+    //       >
+    //         <DroppedTask task={task} cellWidth={cellWidth} />
+    //       </Draggable>
+    //     )
+    //   } else {
+    //     return <div>ERR</div>
+    //   }
+    // }
   }
 
   return (

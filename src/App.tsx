@@ -19,10 +19,16 @@ import { ToggleView } from "./components/ToggleView"
 import { generateMonthView } from "./generateView"
 
 import grid, {
+  GridType,
   fetchGridStart,
   initializeGrid,
+  initializeGridStart,
   removeCell,
+  removeCells,
   setCell,
+  setCellsOccupied,
+  syncGridStart,
+  updateGridStart,
 } from "./slices/grid"
 
 import { stands as mockStands, tasks as mockTasks, tasks } from "./mock-data"
@@ -46,8 +52,9 @@ function App() {
   useEffect(() => {
     dispatch(syncTasksStart())
     dispatch(syncFacilitiesStart())
+    dispatch(syncGridStart())
     dispatch(
-      initializeGrid({
+      initializeGridStart({
         rowCount: view.headerBottomData.length,
         columnCount: mockStands.length,
       })
@@ -57,17 +64,15 @@ function App() {
   const gridState = useAppSelector((state) => state.grid)
   const cellStateMap = gridState.grid
 
-  if (gridState.loading) {
-    return <div>Loading...</div>
-  }
-
   const checkCanDrop = (over: Over, active: Active) => {
     // move this to sagas/tasks.ts, there is a helper there to check for collisions
     // it will be hard at first but once we migrate this, the logic will be clear
     // in this component
     const overId = over.id
+
     const task = active.data.current?.task
     const cellSpan = task.duration
+
     const [x, y] = (overId as string).split("-").map((n: string) => Number(n))
     if (!cellStateMap) return
     for (let i = 0; i < cellSpan; i++) {
@@ -87,126 +92,50 @@ function App() {
     const cellId = over?.id as string
     const task = active.data.current?.task
     const cellSpan = task.duration
-    const rowId = cellId.split("-")[0]
-    const colId = cellId.split("-")[1]
-    console.log(rowId, colId, cellSpan)
-
-    dispatch(
-      setCell({
-        cellId: cellId,
-        cell: {
-          state: "occupied-start",
-          source: cellId,
-          taskId: task.id,
-        },
-      })
-    )
-    if (cellSpan > 1) {
-      for (let i = 1; i < cellSpan - 1; i++) {
-        dispatch(
-          setCell({
-            cellId: `${rowId}-${Number(colId) + i}`,
-            cell: {
-              state: "occupied",
-              source: cellId,
-              taskId: task.id,
-            },
-          })
-        )
-      }
-      dispatch(
-        setCell({
-          cellId: `${rowId}-${Number(colId) + cellSpan - 1}`,
-          cell: {
-            state: "occupied-end",
-            source: cellId,
-            taskId: task.id,
-          },
-        })
-      )
-    }
+    const [rowId, colId] = cellId.split("-")
+    dispatch(setCellsOccupied({ rowId, colId, taskId: task.id, cellSpan }))
   }
-  console.log(cellStateMap)
+
   const handleDragEndBetweenCells = (over: Over, active: Active) => {
     //remove task from cellStateMap
-    const startCellId = over?.id as string
+    const startCellId = over.id as string
     const task = active.data.current?.task
     const cellSpan = task.duration
-    const sourceId = active.data.current?.source as string
-    const [x, y] = sourceId.split("-").map((n: string) => Number(n))
-
-    if (cellSpan > 1) {
-      for (let i = 1; i <= cellSpan - 1; i++) {
-        dispatch(
-          removeCell({
-            cellId: `${x}-${y + i}`,
-          })
-        )
-      }
-    }
-
+    const [rowId, colId] = startCellId.split("-")
+    const sourceId = active.id as string
+    const [sourceRowId, sourceColId] = sourceId.split("-")
     dispatch(
-      setCell({
-        cellId: startCellId,
-        cell: {
-          state: "occupied-start",
-          source: startCellId,
-          taskId: task.id,
-        },
+      removeCells({
+        rowId: sourceRowId,
+        colId: sourceColId,
+        cellSpan: cellSpan,
       })
     )
-    if (cellSpan > 1) {
-      for (let i = 1; i < cellSpan - 1; i++) {
-        const midCellId = `${startCellId.split("-")[0]}-${
-          Number(startCellId.split("-")[1]) + i
-        }`
-        dispatch(
-          setCell({
-            cellId: midCellId,
-            cell: {
-              state: "occupied",
-              source: startCellId,
-              taskId: task.id,
-            },
-          })
-        )
-        const endCellId = `${startCellId.split("-")[0]}-${
-          Number(startCellId.split("-")[1]) + cellSpan - 1
-        }`
-        dispatch(
-          setCell({
-            cellId: endCellId,
-            cell: {
-              state: "occupied-end",
-              source: startCellId,
-              taskId: task.id,
-            },
-          })
-        )
-      }
-    }
+    dispatch(
+      setCellsOccupied({
+        rowId,
+        colId,
+        taskId: task?.id,
+        cellSpan,
+      })
+    )
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
     if (!event.over) {
       return
     }
-    const canDrop = checkCanDrop(event.over, event.active)
-    if (event.active.id !== event.over.id && canDrop) {
-      //if task is in the task array)
+    if (event.active.id !== event.over.id) {
       if (event.active.data?.current?.source === null) {
         handleDragEndFromSlider(event.over, event.active)
       } else {
         handleDragEndBetweenCells(event.over, event.active)
       }
+      setDraggedTask({ draggableId: null, task: null })
     }
-    setDraggedTask({ draggableId: null, task: null })
   }
 
   const handleDragStart = (event: DragStartEvent) => {
-    if (!event.active.data?.current?.task) {
-      return
-    }
     setDraggedTask({
       draggableId: String(event.active.id),
       task: event.active.data?.current?.task,

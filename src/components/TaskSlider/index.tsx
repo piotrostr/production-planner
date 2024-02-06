@@ -8,7 +8,9 @@ export function TaskSlider() {
   const outerRef = useRef<HTMLDivElement>(null)
   const innerRef = useRef<HTMLDivElement>(null)
   const tasksState = useAppSelector((state) => state.tasks)
-  const taskArr = Object.entries(tasksState.tasks)
+  const taskArr = Object.entries(tasksState.tasks).filter(
+    ([, task]) => !task.dropped
+  )
 
   return (
     <Stack width="100%">

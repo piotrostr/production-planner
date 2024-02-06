@@ -4,14 +4,12 @@ import { Task } from "../../slices/tasks"
 interface DroppedTaskProps {
   task: Task
   cellWidth: number
-  cellSpan: number
 }
 
-export function DroppedTask({ task, cellWidth, cellSpan }: DroppedTaskProps) {
-  console.log(task)
+export function DroppedTask({ task, cellWidth }: DroppedTaskProps) {
   return (
     <Stack
-      width={cellWidth * cellSpan}
+      width={cellWidth * task.duration}
       height="2rem"
       justifyContent="center"
       position="absolute"

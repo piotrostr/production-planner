@@ -73,13 +73,13 @@ function App() {
     const task = active.data.current?.task
     const cellSpan = task.duration
 
-    const [x, y] = (overId as string).split("-").map((n: string) => Number(n))
+    const [rowId, colId] = (overId as string).split("-")
     if (!cellStateMap) return
     for (let i = 0; i < cellSpan; i++) {
-      const cellId = `${x}-${y + i}`
+      const cellId = `${rowId}-${Number(colId) + i}`
       if (cellId in cellStateMap.cells) {
         const cell = cellStateMap.cells[cellId]
-        if (cell.state !== "empty" && task.id !== cell.taskId) {
+        if (task.id !== cell.taskId) {
           return false
         }
       }
@@ -125,14 +125,15 @@ function App() {
     if (!event.over) {
       return
     }
-    if (event.active.id !== event.over.id) {
+    const canDrop = checkCanDrop(event.over, event.active)
+    if (event.active.id !== event.over.id && canDrop) {
       if (event.active.data?.current?.source === null) {
         handleDragEndFromSlider(event.over, event.active)
       } else {
         handleDragEndBetweenCells(event.over, event.active)
       }
-      setDraggedTask({ draggableId: null, task: null })
     }
+    setDraggedTask({ draggableId: null, task: null })
   }
 
   const handleDragStart = (event: DragStartEvent) => {

@@ -52,42 +52,8 @@ export function DataCell({
         </Draggable>
       )
     } else {
-      return <div>ERR</div>
+      return <div />
     }
-    // if (draggedTask.id !== null && draggedTask.draggableId === cellKey) {
-    //   return (
-    //     <Draggable
-    //       id={cellKey}
-    //       data={{
-    //         task,
-    //         sourceId: cellKey,
-    //       }}
-    //     >
-    //       <Task task={task} />
-    //     </Draggable>
-    //   )
-    // } else if (
-    //   draggedTask.draggableId !== cellKey &&
-    //   draggedTask?.task?.id === taskId
-    // ) {
-    //   return <div>elo</div>
-    // } else {
-    //   if (state === "occupied-start") {
-    //     return (
-    //       <Draggable
-    //         id={cellKey}
-    //         data={{
-    //           task,
-    //           sourceId: cellKey,
-    //         }}
-    //       >
-    //         <DroppedTask task={task} cellWidth={cellWidth} />
-    //       </Draggable>
-    //     )
-    //   } else {
-    //     return <div>ERR</div>
-    //   }
-    // }
   }
 
   return (

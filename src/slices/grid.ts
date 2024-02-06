@@ -106,7 +106,7 @@ const gridSlice = createSlice({
       if (!state.grid) {
         return
       }
-      for (let i = 0; i <= cellSpan; i++) {
+      for (let i = 0; i <= cellSpan - 1; i++) {
         delete state.grid.cells[`${rowId}-${Number(colId) + i}`]
       }
     },

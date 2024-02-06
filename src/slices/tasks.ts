@@ -115,6 +115,13 @@ export const tasksSlice = createSlice({
       state.loading = true
       state.error = null
     },
+    setTaskDroppedStart(
+      state,
+      action: PayloadAction<{ taskId: string; dropped: boolean }>
+    ) {
+      state.loading = true
+      state.error = null
+    },
     syncTasksStart(state /*action: PayloadAction<GridType>*/) {
       state.loading = true
       state.error = null
@@ -134,6 +141,7 @@ export const {
   updateTasksStart,
   addTaskStart,
   deleteTaskStart,
+  setTaskDroppedStart,
   syncTasksStart,
 } = tasksSlice.actions
 

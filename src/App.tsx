@@ -18,21 +18,22 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { ToggleView } from "./components/ToggleView"
 import { generateMonthView } from "./generateView"
 
-import grid, {
+import {
   GridType,
-  fetchGridStart,
-  initializeGrid,
   initializeGridStart,
-  removeCell,
   removeCells,
-  setCell,
   setCellsOccupied,
   syncGridStart,
   updateGridStart,
 } from "./slices/grid"
 
-import { stands as mockStands, tasks as mockTasks, tasks } from "./mock-data"
-import { Task, syncTasksStart } from "./slices/tasks"
+import { stands as mockStands } from "./mock-data"
+import {
+  Task,
+  setTaskDropped,
+  setTaskDroppedStart,
+  syncTasksStart,
+} from "./slices/tasks"
 import { useAppDispatch, useAppSelector } from "./hooks"
 import { syncFacilitiesStart } from "./slices/facilities"
 
@@ -43,6 +44,7 @@ export interface DraggedTask {
 
 function App() {
   const [view, setView] = useState(generateMonthView(1000))
+  const [isGridUpdated, setIsGridUpdated] = useState(false)
   const [draggedTask, setDraggedTask] = useState<DraggedTask>({
     draggableId: null,
     task: null,
@@ -63,6 +65,13 @@ function App() {
 
   const gridState = useAppSelector((state) => state.grid)
   const cellStateMap = gridState.grid
+
+  useEffect(() => {
+    if (isGridUpdated && gridState.grid) {
+      dispatch(updateGridStart(gridState.grid))
+      setIsGridUpdated(false)
+    }
+  }, [isGridUpdated, dispatch, gridState.grid])
 
   const checkCanDrop = (over: Over, active: Active) => {
     // move this to sagas/tasks.ts, there is a helper there to check for collisions
@@ -94,6 +103,8 @@ function App() {
     const cellSpan = task.duration
     const [rowId, colId] = cellId.split("-")
     dispatch(setCellsOccupied({ rowId, colId, taskId: task.id, cellSpan }))
+    dispatch(setTaskDroppedStart({ taskId: task.id, dropped: true }))
+    setIsGridUpdated(true)
   }
 
   const handleDragEndBetweenCells = (over: Over, active: Active) => {
@@ -119,6 +130,7 @@ function App() {
         cellSpan,
       })
     )
+    setIsGridUpdated(true)
   }
 
   const handleDragEnd = (event: DragEndEvent) => {

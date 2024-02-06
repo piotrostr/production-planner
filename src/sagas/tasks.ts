@@ -22,10 +22,18 @@ import {
   syncTasksStart,
   addTaskStart,
   upsertTask,
+  setTaskDroppedStart,
 } from "../slices/tasks"
 
 const addTaskToFirestore = async (task: Task) => {
   await setDoc(doc(firestore, `tasks/${task.id}`), task)
+}
+
+const updateTaskInFirestore = async (
+  id: string,
+  updateData: { [key: string]: any }
+) => {
+  await updateDoc(doc(firestore, `tasks/${id}`), updateData)
 }
 
 const deleteTaskFromFirestore = async (taskId: string, facilityId: string) => {
@@ -54,6 +62,18 @@ export function* deleteTaskSaga(
     yield put(removeTaskFromFacility({ facilityId, taskId }))
   } catch (error) {
     console.error("Error deleting task:", error)
+  }
+}
+
+export function* setTaskDroppedSaga(
+  action: PayloadAction<{ taskId: string; dropped: boolean }>
+): Generator<any, void, any> {
+  try {
+    const { taskId, dropped } = action.payload
+    yield call(updateTaskInFirestore, taskId, { dropped })
+    yield put(setTaskDroppedStart(action.payload))
+  } catch (error) {
+    console.error("Error setting task dropped:", error)
   }
 }
 
@@ -93,10 +113,19 @@ function* watchDeleteTask() {
   yield takeLatest(deleteTaskStart.type, deleteTaskSaga)
 }
 
+function* watchSetTaskDropped() {
+  yield takeLatest(setTaskDroppedStart.type, setTaskDroppedSaga)
+}
+
 function* watchSyncTasks() {
   yield takeLatest(syncTasksStart.type, syncTasksSaga)
 }
 
 export default function* taskSagas() {
-  yield all([watchAddTask(), watchDeleteTask(), watchSyncTasks()])
+  yield all([
+    watchAddTask(),
+    watchDeleteTask(),
+    watchSyncTasks(),
+    watchSetTaskDropped(),
+  ])
 }

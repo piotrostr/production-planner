@@ -6,14 +6,7 @@ import {
   initializeGridStart,
   syncGridStart,
 } from "../slices/grid"
-import {
-  collection,
-  doc,
-  getDoc,
-  onSnapshot,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore"
+import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore"
 import { firestore } from "../../firebase.config"
 import { fetchGridStart, updateGridStart, setGrid } from "../slices/grid"
 import { eventChannel } from "redux-saga"
@@ -37,7 +30,7 @@ function* fetchGridSaga() {
   try {
     const gridData: GridType | null = yield call(fetchGridFromFirestore)
     if (gridData) {
-      yield put(setGrid(gridData)) // Assuming you have a 'setGrid' action in your grid slice
+      yield put(setGrid(gridData))
     } else {
       console.error("No grid data found")
     }
@@ -49,6 +42,7 @@ function* fetchGridSaga() {
 function* updateGridSaga(action: PayloadAction<GridType>) {
   try {
     yield call(updateGridInFirestore, action.payload)
+
     // Dispatch success action or handle success scenario
   } catch (error) {
     console.error("Error updating grid data:", error)

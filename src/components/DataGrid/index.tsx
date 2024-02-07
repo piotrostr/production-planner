@@ -1,55 +1,55 @@
-import { useEffect, useState } from "react"
-import { DataGridPro, useGridApiRef } from "@mui/x-data-grid-pro"
-import { Cell } from "../Cell/Cell"
-import { DraggedTask } from "../../App"
-import { View } from "../../../types/view"
-import { useAppSelector } from "../../hooks"
-import { Facility } from "../../slices/facilities"
+import { useEffect, useState } from "react";
+import { DataGridPro, useGridApiRef } from "@mui/x-data-grid-pro";
+import { Cell } from "../Cell/Cell";
+import { DraggedTask } from "../../App";
+import { View } from "../../../types/view";
+import { useAppSelector } from "../../hooks";
+import { Facility } from "../../slices/facilities";
 
 interface DataGridProps {
-  draggedTask: DraggedTask
+  draggedTask: DraggedTask;
 }
 
 export function DataGrid({ draggedTask }: DataGridProps) {
-  const [, setCellWidth] = useState<number>(100)
-  const apiRef = useGridApiRef()
+  const [, setCellWidth] = useState<number>(100);
+  const apiRef = useGridApiRef();
 
-  const facilitiesState = useAppSelector((state) => state.facilities)
-  const viewState = useAppSelector((state) => state.view)
-  const facilities = facilitiesState.facilities
-  const view = viewState.view
-  const facilitiesArr = Object.values(facilities)
+  const facilitiesState = useAppSelector((state) => state.facilities);
+  const viewState = useAppSelector((state) => state.view);
+  const facilities = facilitiesState.facilities;
+  const view = viewState.view;
+  const facilitiesArr = Object.values(facilities);
 
   const handleZoom = (event: WheelEvent) => {
     // Check if the "Ctrl" key is pressed
     if (event.metaKey) {
-      event.preventDefault()
-      const minCellWidth = 50
-      const maxCellWidth = 200
+      event.preventDefault();
+      const minCellWidth = 50;
+      const maxCellWidth = 200;
       // Zoom in
       if (event.deltaY < 0) {
         setCellWidth((cellWidth) =>
           cellWidth >= maxCellWidth ? cellWidth : cellWidth + 2
-        )
+        );
       }
       // Zoom out
       if (event.deltaY > 0) {
         setCellWidth((cellWidth) =>
           cellWidth <= minCellWidth ? cellWidth : cellWidth - 2
-        )
+        );
       }
     }
-  }
+  };
 
   useEffect(() => {
     // Add event listener to the component when it mounts
-    document.addEventListener("wheel", handleZoom, { passive: false })
+    document.addEventListener("wheel", handleZoom, { passive: false });
 
     // Clean up the event listener when the component unmounts
     return () => {
-      document.removeEventListener("wheel", handleZoom)
-    }
-  }, []) //
+      document.removeEventListener("wheel", handleZoom);
+    };
+  }, []); //
 
   return (
     <DataGridPro
@@ -74,7 +74,6 @@ export function DataGrid({ draggedTask }: DataGridProps) {
         },
       }}
       slots={{
-        columnHeaders: () => null,
         cell: Cell,
       }}
       slotProps={{
@@ -105,14 +104,15 @@ export function DataGrid({ draggedTask }: DataGridProps) {
           },
         },
         //disable header cell outline on focus
-        "& .MuiDataGrid-columnHeader": {
+        "& .MuiDataGrid-columnHeaders": {
           all: "unset",
           "&:focus": {
             all: "unset",
             outline: "none",
           },
+          display: "none",
         },
       }}
     />
-  )
+  );
 }

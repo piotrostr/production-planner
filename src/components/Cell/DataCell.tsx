@@ -4,29 +4,30 @@ import { Task } from "../Task"
 import { DroppedTask } from "../DroppedTask"
 import { Stack } from "@mui/material"
 import { useAppSelector } from "../../hooks"
-import { GridType } from "../../slices/grid"
+
+import { Task as TaskType } from "../../slices/tasks"
 
 interface DataCellProps {
-  columnIndex: number
   draggedTask: any
   cellWidth: number
   rowId: string | number
+  date: string
 }
 export function DataCell({
-  columnIndex,
   draggedTask,
   cellWidth,
   rowId,
+  date,
 }: DataCellProps) {
-  const cellKey = `${rowId}-${columnIndex}`
+  const time = new Date(date).getTime()
+  const cellKey = `${rowId}-${time}`
   const cells = useAppSelector((state) => state.grid.grid?.cells)
   const tasks = useAppSelector((state) => state.tasks.tasks)
   const cell = cells?.[cellKey]
   const state = cell?.state
-  const taskId = cell?.taskId as string
-  const task = tasks?.[taskId]
+  const tasksInCell = cell?.tasks
 
-  const renderTask = () => {
+  const renderTask = (task: TaskType, left: number, width: number) => {
     if (state == "occupied-start" && draggedTask.task?.id !== task.id) {
       return (
         <Draggable
@@ -36,7 +37,12 @@ export function DataCell({
             sourceId: cellKey,
           }}
         >
-          <DroppedTask task={task} cellWidth={cellWidth} />
+          <DroppedTask
+            task={task}
+            cellWidth={cellWidth}
+            left={left}
+            width={width}
+          />
         </Draggable>
       )
     } else if (state == "occupied-start" && draggedTask.task?.id === task.id) {
@@ -72,7 +78,15 @@ export function DataCell({
         userSelect: "none",
       }}
     >
-      <Droppable id={cellKey}>{renderTask()}</Droppable>
+      <Droppable id={cellKey}>
+        <>
+          {tasksInCell?.map((taskInCell, idx) => {
+            const task = tasks[taskInCell.taskId]
+            const { left, width } = taskInCell
+            return renderTask(task, left, width)
+          })}
+        </>
+      </Droppable>
     </Stack>
   )
 }

@@ -2,7 +2,11 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 
 export interface Cell {
   state: string
-  taskId: string
+  tasks: Array<{
+    taskId: string
+    left?: number
+    width?: number
+  }>
   source: string
 }
 
@@ -11,8 +15,6 @@ export interface GridType {
   cells: {
     [key: string]: Cell
   }
-  columnCount?: number
-  rowCount?: number
 }
 
 interface GridState {
@@ -32,17 +34,12 @@ const gridSlice = createSlice({
   initialState,
   reducers: {
     // Action to initialize the grid with a predefined size
-    initializeGrid: (
-      state,
-      action: PayloadAction<{ rowCount: number; columnCount: number }>
-    ) => {
+    initializeGrid: (state) => {
       if (!state.grid) {
         state.grid = {
           cells: {},
         }
       }
-      state.grid.rowCount = action.payload.rowCount
-      state.grid.columnCount = action.payload.columnCount
     },
     setCell: (state, action: PayloadAction<{ cellId: string; cell: Cell }>) => {
       const { cellId, cell } = action.payload
@@ -63,9 +60,10 @@ const gridSlice = createSlice({
       }>
     ) => {
       const { rowId, colId, taskId, cellSpan } = action.payload
+      const colTime = Number(colId)
+      const originalDate = new Date(colTime * 1000)
       const duration = Number(cellSpan)
-      const colIdx = Number(colId)
-      const cellId = `${rowId}-${colIdx}`
+      const cellId = `${rowId}-${colTime}`
       if (!state.grid) {
         state.grid = {
           cells: {},
@@ -73,20 +71,26 @@ const gridSlice = createSlice({
       }
       state.grid.cells[cellId] = {
         state: "occupied-start",
-        taskId: taskId,
+        tasks: [{ taskId }],
         source: cellId,
       }
       if (duration > 1) {
         for (let i = 1; i < duration - 1; i++) {
-          state.grid.cells[`${rowId}-${colIdx + i}`] = {
+          const nextDate = new Date(originalDate)
+          nextDate.setDate(originalDate.getDate() + i)
+          const nextDateTime = nextDate.getTime() / 1000
+          state.grid.cells[`${rowId}-${nextDateTime}`] = {
             state: "occupied",
-            taskId: taskId,
+            tasks: [{ taskId }],
             source: cellId,
           }
         }
-        state.grid.cells[`${rowId}-${colIdx + duration - 1}`] = {
+        const lastDate = new Date(originalDate)
+        lastDate.setDate(originalDate.getDate() + duration - 1)
+        const lastDateTime = lastDate.getTime() / 1000
+        state.grid.cells[`${rowId}-${lastDateTime}`] = {
           state: "occupied-end",
-          taskId: taskId,
+          tasks: [{ taskId }],
           source: cellId,
         }
       }
@@ -106,8 +110,13 @@ const gridSlice = createSlice({
       if (!state.grid) {
         return
       }
+      const colTime = Number(colId)
+      const originalDate = new Date(colTime * 1000)
       for (let i = 0; i <= cellSpan - 1; i++) {
-        delete state.grid.cells[`${rowId}-${Number(colId) + i}`]
+        const nextDate = new Date(originalDate)
+        nextDate.setDate(originalDate.getDate() + i)
+        const nextDateTime = nextDate.getTime() / 1000
+        delete state.grid.cells[`${rowId}-${nextDateTime}`]
       }
     },
     // Triggered when the grid fetch starts
@@ -130,10 +139,7 @@ const gridSlice = createSlice({
       state.loading = true
       state.error = null
     },
-    initializeGridStart(
-      state,
-      action: PayloadAction<{ rowCount: number; columnCount: number }>
-    ) {
+    initializeGridStart(state) {
       state.loading = true
       state.error = null
     },

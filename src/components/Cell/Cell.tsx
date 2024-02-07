@@ -41,10 +41,10 @@ export function Cell({
   } else {
     return (
       <DataCell
-        columnIndex={colIndex}
         rowId={rowId}
         draggedTask={draggedTask}
         cellWidth={width}
+        date={column.date}
       />
     )
   }

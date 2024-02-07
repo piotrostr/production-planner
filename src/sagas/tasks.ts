@@ -47,7 +47,6 @@ const deleteTaskFromFirestore = async (taskId: string, facilityId: string) => {
 export function* addTaskSaga(action: PayloadAction<Task>) {
   try {
     yield call(addTaskToFirestore, action.payload)
-    yield put(upsertTask(action.payload))
     yield put(setToastOpen({ message: "Task added", severity: "success" }))
   } catch (error) {
     yield put(setToastOpen({ message: "Error adding task", severity: "error" }))

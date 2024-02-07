@@ -22,7 +22,7 @@ export const generateMonthView = (numberOfColumns: number) => {
     {
       field: "stand",
       headerName: "",
-      date: new Date(),
+      date: new Date().getTime(),
       editable: false,
       sortable: false,
       width: 225,
@@ -37,7 +37,7 @@ export const generateMonthView = (numberOfColumns: number) => {
       return {
         field: "date" + i,
         headerName: date.toLocaleDateString("pl-Pl"),
-        date: date,
+        date: date.getTime(),
         editable: false,
         sortable: false,
         width: cellWidth,
@@ -46,7 +46,7 @@ export const generateMonthView = (numberOfColumns: number) => {
     })
   )
   const headerTopData = headerBottomData.map((date) => {
-    const week = getWeek(date.date)
+    const week = getWeek(new Date(date.date))
     return "Tydzień " + week
   })
 
@@ -65,7 +65,7 @@ export const generateQuarterYearView = (numberOfColumns: number) => {
     {
       field: "stand",
       headerName: "",
-      date: new Date(),
+      date: new Date().getTime(),
       editable: false,
       sortable: false,
       width: 225,
@@ -80,7 +80,7 @@ export const generateQuarterYearView = (numberOfColumns: number) => {
       return {
         field: "date" + i,
         headerName: dateStart.toLocaleDateString("pl-Pl"),
-        date: dateStart,
+        date: dateStart.getTime(),
         editable: false,
         sortable: false,
         width: cellWidth,
@@ -89,7 +89,7 @@ export const generateQuarterYearView = (numberOfColumns: number) => {
     })
   )
   const headerTopData = headerBottomData.map((date) => {
-    const month = getMonth(date.date)
+    const month = getMonth(new Date(date.date))
     return month
   })
 
@@ -108,7 +108,7 @@ export const generateYearView = (numberOfColumns: number) => {
     {
       field: "stand",
       headerName: "",
-      date: new Date(),
+      date: new Date().getTime(),
       editable: false,
       sortable: false,
       width: 225,
@@ -123,7 +123,7 @@ export const generateYearView = (numberOfColumns: number) => {
       return {
         field: "date" + i,
         headerName: getMonth(date),
-        date: date,
+        date: date.getTime(),
         editable: false,
         sortable: false,
         width: cellWidth,
@@ -132,7 +132,7 @@ export const generateYearView = (numberOfColumns: number) => {
     })
   )
   const headerTopData = headerBottomData.map((date) => {
-    const year = getYear(date.date)
+    const year = getYear(new Date(date.date))
     return `${year}`
   })
 

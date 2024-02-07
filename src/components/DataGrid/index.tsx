@@ -8,15 +8,16 @@ import { Facility } from "../../slices/facilities"
 
 interface DataGridProps {
   draggedTask: DraggedTask
-  view: View
 }
 
-export function DataGrid({ draggedTask, view }: DataGridProps) {
+export function DataGrid({ draggedTask }: DataGridProps) {
   const [, setCellWidth] = useState<number>(100)
   const apiRef = useGridApiRef()
 
   const facilitiesState = useAppSelector((state) => state.facilities)
+  const viewState = useAppSelector((state) => state.view)
   const facilities = facilitiesState.facilities
+  const view = viewState.view
   const facilitiesArr = Object.values(facilities)
 
   const handleZoom = (event: WheelEvent) => {

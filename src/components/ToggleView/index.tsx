@@ -6,24 +6,40 @@ import {
 } from "../../generateView"
 import { View } from "../../../types/view"
 import { ChangeEventHandler } from "react"
+import { useAppDispatch, useAppSelector } from "../../hooks"
+import { setMonthView } from "../../slices/view"
 
-interface ToggleViewProps {
-  view: View
-  setView: React.Dispatch<React.SetStateAction<View>>
-}
+interface ToggleViewProps {}
 
-export function ToggleView({ view, setView }: ToggleViewProps) {
-  const handleChange = (event: ChangeEventHandler<string>, newView: string) => {
-    switch (newView) {
-      case "year":
-        setView(generateYearView(24))
-        break
-      case "3months.":
-        setView(generateQuarterYearView(46))
-        break
-      case "1month.":
-        setView(generateMonthView(365))
-        break
+export function ToggleView({}: ToggleViewProps) {
+  const dispatch = useAppDispatch()
+  const gridState = useAppSelector((state) => state.grid)
+  const viewState = useAppSelector((state) => state.view)
+  const cellStateMap = gridState.grid
+  const view = viewState.view
+
+  if (!view) {
+    return null
+  }
+
+  const handleChange = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
+    newView: string
+  ) => {
+    if (cellStateMap) {
+      switch (newView) {
+        case "year":
+          null
+          break
+        case "3months.":
+          null
+          break
+        case "1month.":
+          dispatch(
+            setMonthView({ view: generateMonthView(1000), grid: cellStateMap })
+          )
+          break
+      }
     }
   }
 

@@ -26,11 +26,11 @@ import {
   updateGridStart,
 } from "./slices/grid"
 
-import { stands as mockStands } from "./mock-data"
 import { Task, setTaskDroppedStart, syncTasksStart } from "./slices/tasks"
 import { useAppDispatch, useAppSelector } from "./hooks"
 import { syncFacilitiesStart } from "./slices/facilities"
 import { setToastClose } from "./slices/toast"
+import { setMonthView } from "./slices/view"
 
 export interface DraggedTask {
   draggableId: string | null
@@ -38,7 +38,6 @@ export interface DraggedTask {
 }
 
 function App() {
-  const [view, setView] = useState(generateMonthView(1000))
   const [isGridUpdated, setIsGridUpdated] = useState(false)
   const [draggedTask, setDraggedTask] = useState<DraggedTask>({
     draggableId: null,
@@ -50,17 +49,22 @@ function App() {
     dispatch(syncTasksStart())
     dispatch(syncFacilitiesStart())
     dispatch(syncGridStart())
-    dispatch(
-      initializeGridStart({
-        rowCount: view.headerBottomData.length,
-        columnCount: mockStands.length,
-      })
-    )
+    dispatch(initializeGridStart())
   }, [dispatch])
 
+  const viewState = useAppSelector((state) => state.view)
   const toastState = useAppSelector((state) => state.toast)
   const gridState = useAppSelector((state) => state.grid)
   const cellStateMap = gridState.grid
+  const view = viewState.view
+
+  useEffect(() => {
+    if (cellStateMap) {
+      dispatch(
+        setMonthView({ view: generateMonthView(1000), grid: cellStateMap })
+      )
+    }
+  }, [dispatch, gridState.grid])
 
   useEffect(() => {
     if (isGridUpdated && gridState.grid) {
@@ -84,7 +88,7 @@ function App() {
       const cellId = `${rowId}-${Number(colId) + i}`
       if (cellId in cellStateMap.cells) {
         const cell = cellStateMap.cells[cellId]
-        if (task.id !== cell.taskId) {
+        if (cell.tasks.some((t) => t.taskId !== task.id)) {
           return false
         }
       }
@@ -102,7 +106,7 @@ function App() {
     dispatch(setTaskDroppedStart({ taskId: task.id, dropped: true }))
     setIsGridUpdated(true)
   }
-
+  console.log(cellStateMap)
   const handleDragEndBetweenCells = (over: Over, active: Active) => {
     //remove task from cellStateMap
     const startCellId = over.id as string
@@ -118,6 +122,7 @@ function App() {
         cellSpan: cellSpan,
       })
     )
+
     dispatch(
       setCellsOccupied({
         rowId,
@@ -161,7 +166,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <Stack width="100vw" height="100vh">
             <Toolbar />
-            <ToggleView view={view} setView={setView} />
+            <ToggleView />
             <DndContext
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
@@ -170,7 +175,7 @@ function App() {
               modifiers={[snapCenterToCursor]}
             >
               <TaskSlider />
-              <DataGrid draggedTask={draggedTask} view={view} />
+              <DataGrid draggedTask={draggedTask} />
             </DndContext>
             <Snackbar
               open={toastState.open}

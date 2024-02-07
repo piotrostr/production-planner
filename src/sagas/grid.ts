@@ -56,19 +56,13 @@ function* updateGridSaga(action: PayloadAction<GridType>) {
   }
 }
 
-function* initializeGridSaga(
-  action: PayloadAction<{
-    columnCount: number
-    rowCount: number
-  }>
-) {
+function* initializeGridSaga() {
   try {
     const gridData: GridType | null = yield call(fetchGridFromFirestore)
 
     if (!gridData) {
-      yield put(initializeGrid(action.payload))
+      yield put(initializeGrid())
       yield call(updateGridInFirestore, {
-        ...action.payload,
         cells: {},
       })
     } else {

@@ -10,6 +10,7 @@ import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore"
 import { firestore } from "../../firebase.config"
 import { fetchGridStart, updateGridStart, setGrid } from "../slices/grid"
 import { eventChannel } from "redux-saga"
+import { setToastOpen } from "../slices/toast"
 
 export const fetchGridFromFirestore = async (): Promise<GridType | null> => {
   const snapshot = await getDoc(doc(firestore, "grid", "first-grid"))
@@ -42,11 +43,16 @@ function* fetchGridSaga() {
 function* updateGridSaga(action: PayloadAction<GridType>) {
   try {
     yield call(updateGridInFirestore, action.payload)
-
-    // Dispatch success action or handle success scenario
+    yield put(
+      setToastOpen({
+        message: "Grid updated successfully",
+        severity: "success",
+      })
+    )
   } catch (error) {
-    console.error("Error updating grid data:", error)
-    // Dispatch failure action or handle error scenario
+    yield put(
+      setToastOpen({ message: "Grid update failed", severity: "error" })
+    )
   }
 }
 

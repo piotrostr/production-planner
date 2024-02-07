@@ -59,10 +59,8 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
       )
       setOpen(null)
       resetForm()
-      alert("Dodano zadanie")
     } catch (error) {
       resetForm()
-      alert((error as Error).message)
     }
   }
 

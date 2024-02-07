@@ -19,6 +19,7 @@ import {
   onSnapshot,
   setDoc,
 } from "firebase/firestore"
+import { setToastOpen } from "../slices/toast"
 
 const addFacilityToFirestore = async (facility: Facility) => {
   await setDoc(doc(firestore, `facilities/${facility.id}`), facility)
@@ -32,8 +33,19 @@ export function* addFacilitySaga(action: PayloadAction<Facility>) {
   try {
     yield call(addFacilityToFirestore, action.payload)
     yield put(upsertFacility(action.payload))
+    yield put(
+      setToastOpen({
+        message: "Facility added successfully",
+        severity: "success",
+      })
+    )
   } catch (error) {
-    console.error("Error adding facility:", error)
+    yield put(
+      setToastOpen({
+        message: "Error adding facility",
+        severity: "error",
+      })
+    )
   }
 }
 

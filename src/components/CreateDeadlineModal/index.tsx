@@ -1,32 +1,32 @@
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import { Stack, Typography } from "@mui/material";
-import { TextField } from "../TextField";
-import { Modal } from "../Modal";
-import { TitleBar } from "../TitleBar";
-import { TextArea } from "../TextArea";
-import { SecondaryButton } from "../SecondaryButton";
-import { PrimaryButton } from "../PrimaryButton";
-import { doc, setDoc, collection, getDoc, Timestamp } from "firebase/firestore";
-import { firestore } from "../../../firebase.config";
-import { Form, Formik, FormikHelpers } from "formik";
-import { DateField } from "../DateField";
+import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
+import { Stack, Typography } from "@mui/material"
+import { TextField } from "../TextField"
+import { Modal } from "../Modal"
+import { TitleBar } from "../TitleBar"
+import { TextArea } from "../TextArea"
+import { SecondaryButton } from "../SecondaryButton"
+import { PrimaryButton } from "../PrimaryButton"
+import { doc, setDoc, collection, getDoc, Timestamp } from "firebase/firestore"
+import { firestore } from "../../../firebase.config"
+import { Form, Formik, FormikHelpers } from "formik"
+import { DateField } from "../DateField"
 
 interface CreateDeadlineModalProps {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<null>>;
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<null>>
 }
 
 interface FormData {
-  name: string;
-  description: string;
-  date: Date;
+  name: string
+  description: string
+  date: Date
 }
 
 const initialValues = {
   name: "",
   description: "",
   date: new Date(),
-};
+}
 
 export function CreateDeadlineModal({
   open,
@@ -36,46 +36,44 @@ export function CreateDeadlineModal({
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: FormikHelpers<FormData>["setFieldValue"]
   ) => {
-    const { name, value } = e.target;
-    setFieldValue(name, value);
-  };
+    const { name, value } = e.target
+    setFieldValue(name, value)
+  }
 
   const handleSubmit = async (
     values: FormData,
     resetForm: FormikHelpers<FormData>["resetForm"]
   ) => {
     try {
-      const projectId = "PgwbCyMAeN300VU1LcsY";
+      const projectId = "PgwbCyMAeN300VU1LcsY"
       const deadlinesRef = collection(
         firestore,
         "projects",
         projectId,
         "deadlines"
-      );
-      const deadlineRef = doc(deadlinesRef);
-      const deadlineId = deadlineRef.id;
-      const deadlineSnap = await getDoc(deadlineRef);
+      )
+      const deadlineRef = doc(deadlinesRef)
+      const deadlineId = deadlineRef.id
+      const deadlineSnap = await getDoc(deadlineRef)
       if (!deadlineSnap.exists()) {
         await setDoc(deadlineRef, {
           ...values,
           id: deadlineId,
           date: Timestamp.fromDate(values.date),
-        });
+        })
       }
 
-      setOpen(null);
-      resetForm();
-      alert("Dodano deadline");
+      setOpen(null)
+      resetForm()
     } catch (error) {
-      resetForm();
-      alert((error as Error).message);
+      resetForm()
     }
-  };
+  }
 
   const handleClose = (resetForm: FormikHelpers<FormData>["resetForm"]) => {
-    setOpen(null);
-    resetForm();
-  };
+    setOpen(null)
+    resetForm()
+  }
   return (
     <Formik
       initialValues={initialValues}
@@ -159,5 +157,5 @@ export function CreateDeadlineModal({
         </>
       )}
     </Formik>
-  );
+  )
 }

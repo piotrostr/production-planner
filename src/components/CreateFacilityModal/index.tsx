@@ -82,10 +82,8 @@ export function CreateFacilityModal({
       )
       setOpen(null)
       resetForm()
-      alert("Dodano stanowisko")
     } catch (error) {
       resetForm()
-      alert((error as Error).message)
     }
   }
 

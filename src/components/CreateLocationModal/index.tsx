@@ -1,29 +1,29 @@
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import { Stack, Typography } from "@mui/material";
-import { TextField } from "../TextField";
-import { Modal } from "../Modal";
-import { TitleBar } from "../TitleBar";
-import { TextArea } from "../TextArea";
-import { SecondaryButton } from "../SecondaryButton";
-import { PrimaryButton } from "../PrimaryButton";
-import { doc, setDoc, collection, getDoc } from "firebase/firestore";
-import { firestore } from "../../../firebase.config";
-import { Form, Formik, FormikHelpers } from "formik";
+import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
+import { Stack, Typography } from "@mui/material"
+import { TextField } from "../TextField"
+import { Modal } from "../Modal"
+import { TitleBar } from "../TitleBar"
+import { TextArea } from "../TextArea"
+import { SecondaryButton } from "../SecondaryButton"
+import { PrimaryButton } from "../PrimaryButton"
+import { doc, setDoc, collection, getDoc } from "firebase/firestore"
+import { firestore } from "../../../firebase.config"
+import { Form, Formik, FormikHelpers } from "formik"
 
 interface CreateLocationModalProps {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<null>>;
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<null>>
 }
 
 interface FormData {
-  name: string;
-  description: string;
+  name: string
+  description: string
 }
 
 const initialValues = {
   name: "",
   description: "",
-};
+}
 
 export function CreateLocationModal({
   open,
@@ -33,45 +33,43 @@ export function CreateLocationModal({
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: FormikHelpers<FormData>["setFieldValue"]
   ) => {
-    const { name, value } = e.target;
-    setFieldValue(name, value);
-  };
+    const { name, value } = e.target
+    setFieldValue(name, value)
+  }
 
   const handleSubmit = async (
     values: FormData,
     resetForm: FormikHelpers<FormData>["resetForm"]
   ) => {
     try {
-      const projectId = "PgwbCyMAeN300VU1LcsY";
+      const projectId = "PgwbCyMAeN300VU1LcsY"
       const locationsRef = collection(
         firestore,
         "projects",
         projectId,
         "locations"
-      );
-      const locationRef = doc(locationsRef);
-      const locationId = locationRef.id;
-      const locationSnap = await getDoc(locationRef);
+      )
+      const locationRef = doc(locationsRef)
+      const locationId = locationRef.id
+      const locationSnap = await getDoc(locationRef)
       if (!locationSnap.exists()) {
         await setDoc(locationRef, {
           ...values,
           id: locationId,
-        });
+        })
       }
 
-      setOpen(null);
-      resetForm();
-      alert("Dodano lokalizacje");
+      setOpen(null)
+      resetForm()
     } catch (error) {
-      resetForm();
-      alert((error as Error).message);
+      resetForm()
     }
-  };
+  }
 
   const handleClose = (resetForm: FormikHelpers<FormData>["resetForm"]) => {
-    setOpen(null);
-    resetForm();
-  };
+    setOpen(null)
+    resetForm()
+  }
   return (
     <Formik
       initialValues={initialValues}
@@ -139,5 +137,5 @@ export function CreateLocationModal({
         </>
       )}
     </Formik>
-  );
+  )
 }

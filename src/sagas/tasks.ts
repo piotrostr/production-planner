@@ -24,6 +24,7 @@ import {
   upsertTask,
   setTaskDroppedStart,
 } from "../slices/tasks"
+import { setToastOpen } from "../slices/toast"
 
 const addTaskToFirestore = async (task: Task) => {
   await setDoc(doc(firestore, `tasks/${task.id}`), task)
@@ -47,8 +48,9 @@ export function* addTaskSaga(action: PayloadAction<Task>) {
   try {
     yield call(addTaskToFirestore, action.payload)
     yield put(upsertTask(action.payload))
+    yield put(setToastOpen({ message: "Task added", severity: "success" }))
   } catch (error) {
-    console.error("Error adding task:", error)
+    yield put(setToastOpen({ message: "Error adding task", severity: "error" }))
   }
 }
 

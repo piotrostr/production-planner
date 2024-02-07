@@ -5,6 +5,7 @@ import { all } from "redux-saga/effects"
 import gridReducer from "../slices/grid" // Adjust the import path as necessary
 import tasksReducer from "../slices/tasks" // Adjust the import path as necessary
 import facilitiesReducer from "../slices/facilities" // Adjust the import path as necessary
+import toastReducer from "../slices/toast" // Adjust the import path as necessary
 
 import gridSagas from "../sagas/grid"
 import tasksSagas from "../sagas/tasks"
@@ -17,6 +18,7 @@ export const store = configureStore({
     grid: gridReducer,
     tasks: tasksReducer,
     facilities: facilitiesReducer,
+    toast: toastReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),

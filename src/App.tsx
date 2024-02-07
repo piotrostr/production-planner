@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material"
+import { Alert, Box, Snackbar, Stack } from "@mui/material"
 import { TaskSlider } from "./components/TaskSlider"
 import {
   Active,
@@ -19,7 +19,6 @@ import { ToggleView } from "./components/ToggleView"
 import { generateMonthView } from "./generateView"
 
 import {
-  GridType,
   initializeGridStart,
   removeCells,
   setCellsOccupied,
@@ -28,14 +27,10 @@ import {
 } from "./slices/grid"
 
 import { stands as mockStands } from "./mock-data"
-import {
-  Task,
-  setTaskDropped,
-  setTaskDroppedStart,
-  syncTasksStart,
-} from "./slices/tasks"
+import { Task, setTaskDroppedStart, syncTasksStart } from "./slices/tasks"
 import { useAppDispatch, useAppSelector } from "./hooks"
 import { syncFacilitiesStart } from "./slices/facilities"
+import { setToastClose } from "./slices/toast"
 
 export interface DraggedTask {
   draggableId: string | null
@@ -63,6 +58,7 @@ function App() {
     )
   }, [dispatch])
 
+  const toastState = useAppSelector((state) => state.toast)
   const gridState = useAppSelector((state) => state.grid)
   const cellStateMap = gridState.grid
 
@@ -176,6 +172,13 @@ function App() {
               <TaskSlider />
               <DataGrid draggedTask={draggedTask} view={view} />
             </DndContext>
+            <Snackbar
+              open={toastState.open}
+              autoHideDuration={6000}
+              onClose={() => dispatch(setToastClose())}
+            >
+              <Alert severity={toastState.severity}>{toastState.message}</Alert>
+            </Snackbar>
           </Stack>
         </ThemeProvider>
       </LocalizationProvider>

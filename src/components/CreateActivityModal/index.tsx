@@ -1,29 +1,29 @@
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import { Stack, Typography } from "@mui/material";
-import { TextField } from "../TextField";
-import { Modal } from "../Modal";
-import { TitleBar } from "../TitleBar";
-import { TextArea } from "../TextArea";
-import { SecondaryButton } from "../SecondaryButton";
-import { PrimaryButton } from "../PrimaryButton";
-import { doc, setDoc, collection, getDoc } from "firebase/firestore";
-import { firestore } from "../../../firebase.config";
-import { Form, Formik, FormikHelpers } from "formik";
+import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
+import { Stack, Typography } from "@mui/material"
+import { TextField } from "../TextField"
+import { Modal } from "../Modal"
+import { TitleBar } from "../TitleBar"
+import { TextArea } from "../TextArea"
+import { SecondaryButton } from "../SecondaryButton"
+import { PrimaryButton } from "../PrimaryButton"
+import { doc, setDoc, collection, getDoc } from "firebase/firestore"
+import { firestore } from "../../../firebase.config"
+import { Form, Formik, FormikHelpers } from "formik"
 
 interface CreateActivityModalProps {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<null>>;
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<null>>
 }
 
 interface FormData {
-  name: string;
-  description: string;
+  name: string
+  description: string
 }
 
 const initialValues = {
   name: "",
   description: "",
-};
+}
 
 export function CreateActivityModal({
   open,
@@ -33,45 +33,43 @@ export function CreateActivityModal({
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: FormikHelpers<FormData>["setFieldValue"]
   ) => {
-    const { name, value } = e.target;
-    setFieldValue(name, value);
-  };
+    const { name, value } = e.target
+    setFieldValue(name, value)
+  }
 
   const handleSubmit = async (
     values: FormData,
     resetForm: FormikHelpers<FormData>["resetForm"]
   ) => {
     try {
-      const projectId = "PgwbCyMAeN300VU1LcsY";
+      const projectId = "PgwbCyMAeN300VU1LcsY"
       const activitiesRef = collection(
         firestore,
         "projects",
         projectId,
         "activities"
-      );
-      const activityRef = doc(activitiesRef);
-      const activityId = activityRef.id;
-      const activitySnap = await getDoc(activityRef);
+      )
+      const activityRef = doc(activitiesRef)
+      const activityId = activityRef.id
+      const activitySnap = await getDoc(activityRef)
       if (!activitySnap.exists()) {
         await setDoc(activityRef, {
           ...values,
           id: activityId,
-        });
+        })
       }
 
-      setOpen(null);
-      resetForm();
-      alert("Dodano czynność");
+      setOpen(null)
+      resetForm()
     } catch (error) {
-      resetForm();
-      alert((error as Error).message);
+      resetForm()
     }
-  };
+  }
 
   const handleClose = (resetForm: FormikHelpers<FormData>["resetForm"]) => {
-    setOpen(null);
-    resetForm();
-  };
+    setOpen(null)
+    resetForm()
+  }
   return (
     <Formik
       initialValues={initialValues}
@@ -139,5 +137,5 @@ export function CreateActivityModal({
         </>
       )}
     </Formik>
-  );
+  )
 }

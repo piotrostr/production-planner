@@ -23,6 +23,7 @@ import {
   addTaskStart,
   upsertTask,
   setTaskDroppedStart,
+  setTaskDropped,
 } from "../slices/tasks"
 import { setToastOpen } from "../slices/toast"
 
@@ -72,7 +73,7 @@ export function* setTaskDroppedSaga(
   try {
     const { taskId, dropped } = action.payload
     yield call(updateTaskInFirestore, taskId, { dropped })
-    yield put(setTaskDroppedStart(action.payload))
+    yield put(setTaskDropped({ id: taskId, dropped }))
   } catch (error) {
     console.error("Error setting task dropped:", error)
   }

@@ -4,8 +4,8 @@ import { Task } from "../../slices/tasks"
 interface DroppedTaskProps {
   task: Task
   cellWidth: number
-  left: number
-  width: number
+  left: number | undefined
+  width: number | undefined
 }
 
 export function DroppedTask({
@@ -16,13 +16,13 @@ export function DroppedTask({
 }: DroppedTaskProps) {
   return (
     <Stack
-      width={cellWidth * task.duration}
+      width={width ? width : cellWidth * task.duration}
       height="2rem"
       justifyContent="center"
       position="absolute"
       top="50%"
+      alignItems="center"
       left={left}
-      px={3}
       sx={{
         zIndex: 20,
         transform: "translateY(-50%)",
@@ -33,7 +33,7 @@ export function DroppedTask({
         border: "1px solid black",
       }}
     >
-      <Typography variant="body2" fontWeight={700}>
+      <Typography variant="body2" fontWeight={700} noWrap>
         {task.title}
       </Typography>
     </Stack>

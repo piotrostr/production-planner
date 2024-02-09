@@ -2,11 +2,14 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 
 export interface Cell {
   state: string
-  tasks: Array<{
-    taskId: string
-    left?: number
-    width?: number
-  }>
+  tasks: {
+    [key: string]: {
+      taskId: string
+      left?: number
+      width?: number
+      duration: number
+    }
+  }
   source: string
 }
 
@@ -57,6 +60,7 @@ const gridSlice = createSlice({
         colId: string
         taskId: string
         cellSpan: string
+        taskDuration: number
       }>
     ) => {
       const { rowId, colId, taskId, cellSpan } = action.payload
@@ -71,7 +75,7 @@ const gridSlice = createSlice({
       }
       state.grid.cells[cellId] = {
         state: "occupied-start",
-        tasks: [{ taskId }],
+        tasks: { [taskId]: { taskId, duration } },
         source: cellId,
       }
       if (duration > 1) {
@@ -81,7 +85,7 @@ const gridSlice = createSlice({
           const nextDateTime = nextDate.getTime() / 1000
           state.grid.cells[`${rowId}-${nextDateTime}`] = {
             state: "occupied",
-            tasks: [{ taskId }],
+            tasks: { [taskId]: { taskId, duration } },
             source: cellId,
           }
         }
@@ -90,7 +94,7 @@ const gridSlice = createSlice({
         const lastDateTime = lastDate.getTime() / 1000
         state.grid.cells[`${rowId}-${lastDateTime}`] = {
           state: "occupied-end",
-          tasks: [{ taskId }],
+          tasks: { [taskId]: { taskId, duration } },
           source: cellId,
         }
       }

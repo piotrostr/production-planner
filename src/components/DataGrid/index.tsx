@@ -74,7 +74,6 @@ export function DataGrid({ draggedTask }: DataGridProps) {
         },
       }}
       slots={{
-        columnHeaders: () => null,
         cell: Cell,
       }}
       slotProps={{
@@ -105,8 +104,9 @@ export function DataGrid({ draggedTask }: DataGridProps) {
           },
         },
         //disable header cell outline on focus
-        "& .MuiDataGrid-columnHeader": {
+        "& .MuiDataGrid-columnHeaders": {
           all: "unset",
+          display: "none",
           "&:focus": {
             all: "unset",
             outline: "none",

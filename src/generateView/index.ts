@@ -1,16 +1,16 @@
-const getWeek = (date: Date): number => {
+export const getWeek = (date: Date): number => {
   const startOfYear = new Date(date.getFullYear(), 0, 1)
   const diff = date.getTime() - startOfYear.getTime()
   const oneWeek = 7 * 24 * 60 * 60 * 1000
   return Math.ceil(diff / oneWeek)
 }
 
-const getMonth = (date: Date): string => {
+export const getMonth = (date: Date): string => {
   const month = date.toLocaleString("default", { month: "long" })
   return month.charAt(0).toUpperCase() + month.slice(1)
 }
 
-const getYear = (date: Date): number => {
+export const getYear = (date: Date): number => {
   return date.getFullYear()
 }
 
@@ -32,7 +32,7 @@ export const generateMonthView = (numberOfColumns: number) => {
 
   headerBottomData.push(
     ...Array.from({ length: numberOfColumns }, (_, i) => {
-      const date = new Date()
+      const date = new Date(2024, 1, 1)
       date.setDate(i + 1)
       return {
         field: "date" + i,
@@ -75,8 +75,8 @@ export const generateQuarterYearView = (numberOfColumns: number) => {
 
   headerBottomData.push(
     ...Array.from({ length: numberOfColumns }, (_, i) => {
-      const dateStart = new Date()
-      dateStart.setDate(i + 1 + 7 * i)
+      const dateStart = new Date(2024, 1, 1)
+      dateStart.setDate(1 + 7 * i)
       return {
         field: "date" + i,
         headerName: dateStart.toLocaleDateString("pl-Pl"),
@@ -118,7 +118,7 @@ export const generateYearView = (numberOfColumns: number) => {
 
   headerBottomData.push(
     ...Array.from({ length: numberOfColumns }, (_, i) => {
-      const date = new Date()
+      const date = new Date(2024, 1, 1)
       date.setMonth(i)
       return {
         field: "date" + i,

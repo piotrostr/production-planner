@@ -1,4 +1,5 @@
 import { useDraggable } from "@dnd-kit/core"
+import { useAppSelector } from "../../hooks"
 interface DraggableProps {
   children: React.ReactNode
   id: string
@@ -6,9 +7,11 @@ interface DraggableProps {
 }
 
 export function Draggable({ children, id, data }: DraggableProps) {
+  const view = useAppSelector((state) => state.view.view)
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
     data: data,
+    disabled: !view?.isEditable,
   })
 
   const style = transform
@@ -24,7 +27,11 @@ export function Draggable({ children, id, data }: DraggableProps) {
     <>
       <button
         ref={setNodeRef}
-        style={{ all: "unset", cursor: "grab", ...style }}
+        style={{
+          all: "unset",
+          cursor: view?.isEditable ? "grab" : "initial",
+          ...style,
+        }}
         {...listeners}
         {...attributes}
       >

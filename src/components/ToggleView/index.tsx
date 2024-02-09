@@ -4,10 +4,9 @@ import {
   generateMonthView,
   generateYearView,
 } from "../../generateView"
-import { View } from "../../../types/view"
-import { ChangeEventHandler } from "react"
+
 import { useAppDispatch, useAppSelector } from "../../hooks"
-import { setMonthView } from "../../slices/view"
+import { setMonthView, setQuarterView } from "../../slices/view"
 
 interface ToggleViewProps {}
 
@@ -17,10 +16,7 @@ export function ToggleView({}: ToggleViewProps) {
   const viewState = useAppSelector((state) => state.view)
   const cellStateMap = gridState.grid
   const view = viewState.view
-
-  if (!view) {
-    return null
-  }
+  if (!view) return null
 
   const handleChange = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
@@ -32,7 +28,12 @@ export function ToggleView({}: ToggleViewProps) {
           null
           break
         case "3months.":
-          null
+          dispatch(
+            setQuarterView({
+              view: generateQuarterYearView(1000),
+              grid: cellStateMap,
+            })
+          )
           break
         case "1month.":
           dispatch(

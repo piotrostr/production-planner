@@ -106,7 +106,7 @@ function App() {
     dispatch(setTaskDroppedStart({ taskId: task.id, dropped: true }))
     setIsGridUpdated(true)
   }
-  console.log(cellStateMap)
+
   const handleDragEndBetweenCells = (over: Over, active: Active) => {
     //remove task from cellStateMap
     const startCellId = over.id as string

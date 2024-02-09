@@ -88,7 +88,7 @@ function App() {
       const cellId = `${rowId}-${Number(colId) + i}`
       if (cellId in cellStateMap.cells) {
         const cell = cellStateMap.cells[cellId]
-        if (cell.tasks.some((t) => t.taskId !== task.id)) {
+        if (Object.keys(cell.tasks).some((tid) => tid !== task.id)) {
           return false
         }
       }

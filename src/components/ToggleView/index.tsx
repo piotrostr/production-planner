@@ -6,7 +6,7 @@ import {
 } from "../../generateView"
 
 import { useAppDispatch, useAppSelector } from "../../hooks"
-import { setMonthView, setQuarterView } from "../../slices/view"
+import { setMonthView, setQuarterView, setYearView } from "../../slices/view"
 
 interface ToggleViewProps {}
 
@@ -25,7 +25,12 @@ export function ToggleView({}: ToggleViewProps) {
     if (cellStateMap) {
       switch (newView) {
         case "year":
-          null
+          dispatch(
+            setYearView({
+              view: generateYearView(1000),
+              grid: cellStateMap,
+            })
+          )
           break
         case "3months.":
           dispatch(

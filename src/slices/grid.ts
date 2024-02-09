@@ -60,7 +60,6 @@ const gridSlice = createSlice({
         colId: string
         taskId: string
         cellSpan: string
-        taskDuration: number
       }>
     ) => {
       const { rowId, colId, taskId, cellSpan } = action.payload

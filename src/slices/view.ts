@@ -47,11 +47,11 @@ const initialState: ViewState = {
   error: null,
 }
 
-function findClosestWeekStart(
-  weekTimestamps: Array<number>,
+function findClosestDateStart(
+  dateTimestamps: Array<number>,
   dateTimestamp: number
 ) {
-  const closest = weekTimestamps.reduce((acc, weekTimestamp) => {
+  const closest = dateTimestamps.reduce((acc, weekTimestamp) => {
     const num = weekTimestamp - dateTimestamp
     if (num <= 0 && Math.abs(num) < Math.abs(acc)) {
       return num
@@ -63,13 +63,14 @@ function findClosestWeekStart(
 }
 
 const getTaskLeftOffset = (
-  weekTimestamp: number,
+  targetTimestamp: number,
   dayTimestamp: number,
-  cellWidth: number
+  cellWidth: number,
+  diff: number
 ) => {
   //calculate amount of days from week timestamp to day timestamp
-  const days = (dayTimestamp - weekTimestamp) / (1000 * 60 * 60 * 24)
-  return (days * cellWidth) / 7
+  const days = (dayTimestamp - targetTimestamp) / (1000 * 60 * 60 * 24)
+  return (days * cellWidth) / diff
 }
 
 // Create the facilities slice
@@ -99,10 +100,10 @@ export const viewSlice = createSlice({
           acc = {}
         }
         const [rowId, colId] = key.split("-")
-        const newColId = findClosestWeekStart(weeks, Number(colId))
+        const newColId = findClosestDateStart(weeks, Number(colId))
         const newKey = `${rowId}-${newColId}`
         if (!acc[newKey]) {
-          acc[newKey] = { ...value }
+          acc[newKey] = { ...value, state: "occupied-start" }
         } else {
           const newTasks = Object.values(value.tasks).reduce((acc, task) => {
             if (acc[task.taskId]) {
@@ -110,7 +111,12 @@ export const viewSlice = createSlice({
             }
 
             const width = (cellWidth / 7) * task.duration
-            const left = getTaskLeftOffset(newColId, Number(colId), cellWidth)
+            const left = getTaskLeftOffset(
+              newColId,
+              Number(colId),
+              cellWidth,
+              7
+            )
             return {
               ...acc,
               [task.taskId]: {
@@ -132,13 +138,53 @@ export const viewSlice = createSlice({
       state,
       action: PayloadAction<{ view: View; grid: GridType }>
     ) => {
-      state.view = action.payload.view
-      state.view.cells = action.payload.grid.cells
+      const view = action.payload.view
+      const cells = action.payload.grid.cells
+      const cellWidth = view.cellWidth
+      const months = view.headerBottomData.map((data) => data.date)
+      const res = Object.entries(cells).reduce((acc, [key, value]) => {
+        if (!acc) {
+          acc = {}
+        }
+        const [rowId, colId] = key.split("-")
+        const newColId = findClosestDateStart(months, Number(colId))
+        const newKey = `${rowId}-${newColId}`
+        if (!acc[newKey]) {
+          acc[newKey] = { ...value, state: "occupied-start" }
+        } else {
+          const newTasks = Object.values(value.tasks).reduce((acc, task) => {
+            if (acc[task.taskId]) {
+              return acc
+            }
+
+            const width = (cellWidth / 30) * task.duration
+            const left = getTaskLeftOffset(
+              newColId,
+              Number(colId),
+              cellWidth,
+              30
+            )
+            return {
+              ...acc,
+              [task.taskId]: {
+                ...task,
+                left,
+                width,
+                duration: task.duration,
+              },
+            }
+          }, {} as { [key: string]: { taskId: string; left?: number; width: number; duration: number } })
+          acc[newKey].tasks = { ...acc[newKey].tasks, ...newTasks }
+        }
+
+        return acc
+      }, view.cells)
+      state.view = { ...view, cells: res, isEditable: false }
     },
   },
 })
 // Export the actions
-export const { setMonthView, setQuarterView } = viewSlice.actions
+export const { setMonthView, setQuarterView, setYearView } = viewSlice.actions
 
 // Export the reducer
 export default viewSlice.reducer

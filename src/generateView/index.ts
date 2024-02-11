@@ -118,7 +118,7 @@ export const generateYearView = (numberOfColumns: number) => {
 
   headerBottomData.push(
     ...Array.from({ length: numberOfColumns }, (_, i) => {
-      const date = new Date(2024, 1, 1)
+      const date = new Date(2024, 1, 1, 0, 0)
       date.setMonth(i)
       return {
         field: "date" + i,

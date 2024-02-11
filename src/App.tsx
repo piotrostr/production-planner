@@ -15,7 +15,6 @@ import { ThemeProvider } from "@mui/material/styles"
 import { theme } from "../theme"
 import { LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
-import { ToggleView } from "./components/ToggleView"
 import { generateMonthView } from "./generateView"
 
 import {
@@ -80,13 +79,15 @@ function App() {
 
     const task = active.data.current?.task
     const cellSpan = task.duration
-
     const [rowId, colId] = (overId as string).split("-")
+
     if (!cellStateMap) return
     //increment is one day in milliseconds
-    const increment = 1000 * 60 * 60 * 24
-    for (let i = 0; i < cellSpan * increment; i += increment) {
-      const cellId = `${rowId}-${Number(colId) + i}`
+    for (let i = 0; i < cellSpan; i += 1) {
+      const nextDate = new Date(Number(colId))
+      nextDate.setDate(nextDate.getDate() + i)
+      const newColId = nextDate.getTime()
+      const cellId = `${rowId}-${newColId}`
       if (cellId in cellStateMap.cells) {
         const cell = cellStateMap.cells[cellId]
         if (Object.keys(cell.tasks).some((tid) => tid !== task.id)) {

@@ -29,7 +29,7 @@ export function Toolbar() {
         <Tooltip title="Dodaj produkt" arrow>
           <ToggleButton
             value="facility"
-            onClick={() => setModalOpen("facility")}
+            onClick={() => setModalOpen("task")}
             sx={{
               px: 1,
               py: 0.5,
@@ -45,7 +45,7 @@ export function Toolbar() {
         <Tooltip title="Dodaj stanowisko" arrow>
           <ToggleButton
             value="task"
-            onClick={() => setModalOpen("task")}
+            onClick={() => setModalOpen("facility")}
             sx={{
               px: 1,
               py: 0.5,

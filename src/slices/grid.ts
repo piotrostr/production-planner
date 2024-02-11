@@ -64,8 +64,9 @@ const gridSlice = createSlice({
     ) => {
       const { rowId, colId, taskId, cellSpan } = action.payload
       const colTime = Number(colId)
-      const originalDate = new Date(colTime * 1000)
+      const originalDate = new Date(colTime)
       const duration = Number(cellSpan)
+
       const cellId = `${rowId}-${colTime}`
       if (!state.grid) {
         state.grid = {
@@ -81,7 +82,7 @@ const gridSlice = createSlice({
         for (let i = 1; i < duration - 1; i++) {
           const nextDate = new Date(originalDate)
           nextDate.setDate(originalDate.getDate() + i)
-          const nextDateTime = nextDate.getTime() / 1000
+          const nextDateTime = nextDate.getTime()
           state.grid.cells[`${rowId}-${nextDateTime}`] = {
             state: "occupied",
             tasks: { [taskId]: { taskId, duration } },
@@ -89,8 +90,8 @@ const gridSlice = createSlice({
           }
         }
         const lastDate = new Date(originalDate)
-        lastDate.setDate(originalDate.getDate() + duration - 1)
-        const lastDateTime = lastDate.getTime() / 1000
+        lastDate.setDate(originalDate.getDate() + (duration - 1))
+        const lastDateTime = lastDate.getTime()
         state.grid.cells[`${rowId}-${lastDateTime}`] = {
           state: "occupied-end",
           tasks: { [taskId]: { taskId, duration } },
@@ -114,11 +115,11 @@ const gridSlice = createSlice({
         return
       }
       const colTime = Number(colId)
-      const originalDate = new Date(colTime * 1000)
+      const originalDate = new Date(colTime)
       for (let i = 0; i <= cellSpan - 1; i++) {
         const nextDate = new Date(originalDate)
         nextDate.setDate(originalDate.getDate() + i)
-        const nextDateTime = nextDate.getTime() / 1000
+        const nextDateTime = nextDate.getTime()
         delete state.grid.cells[`${rowId}-${nextDateTime}`]
       }
     },

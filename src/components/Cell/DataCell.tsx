@@ -25,7 +25,6 @@ export function DataCell({
   const cells = useAppSelector((state) => state.view.view?.cells)
   const cell = cells?.[cellKey]
   const tasksInCell = cell?.tasks
-
   const renderTask = (
     task: TaskType,
     left: number | undefined,
@@ -93,7 +92,6 @@ export function DataCell({
 
                 const left = taskInCell.left
                 const width = taskInCell.width
-
                 return renderTask(task, left, width, idx)
               })
             : null}

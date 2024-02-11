@@ -95,23 +95,23 @@ export const viewSlice = createSlice({
       const cells = action.payload.grid.cells
       const cellWidth = view.cellWidth
       const weeks = view.headerBottomData.map((data) => data.date)
-
-      const res = Object.entries(cells).reduce((acc, [key, value]) => {
-        if (!acc) {
-          acc = {}
+      const addedTasks: string[] = []
+      const cellsArr = Object.entries(cells)
+      const res = cellsArr.reduce((cellsAcc, [key, value]) => {
+        if (!cellsAcc) {
+          cellsAcc = {}
         }
+        if (value.state !== "occupied-start") return cellsAcc
         const [rowId, colId] = key.split("-")
         const newColId = findClosestDateStart(weeks, Number(colId))
-
         const newKey = `${rowId}-${newColId}`
-        if (!acc[newKey]) {
-          acc[newKey] = { ...value, state: "occupied-start" }
-        } else {
-          const newTasks = Object.values(value.tasks).reduce((acc, task) => {
+        const taskArr = Object.values(value.tasks)
+        if (!cellsAcc[newKey]) {
+          cellsAcc[newKey] = { ...value, state: "occupied-start" }
+          const newTasks = taskArr.reduce((acc, task) => {
             if (acc[task.taskId]) {
               return acc
             }
-
             const width = (cellWidth / 7) * task.duration
             const left = getTaskLeftOffset(
               newColId,
@@ -119,7 +119,7 @@ export const viewSlice = createSlice({
               cellWidth,
               7
             )
-
+            addedTasks.push(task.taskId)
             return {
               ...acc,
               [task.taskId]: {
@@ -130,10 +130,10 @@ export const viewSlice = createSlice({
               },
             }
           }, {} as { [key: string]: { taskId: string; left?: number; width: number; duration: number } })
-          acc[newKey].tasks = { ...acc[newKey].tasks, ...newTasks }
+          cellsAcc[newKey].tasks = { ...newTasks }
         }
 
-        return acc
+        return cellsAcc
       }, view.cells)
 
       state.view = { ...view, cells: res, isEditable: false }
@@ -145,22 +145,24 @@ export const viewSlice = createSlice({
       const view = action.payload.view
       const cells = action.payload.grid.cells
       const cellWidth = view.cellWidth
-      const months = view.headerBottomData.map((data) => data.date)
-      const res = Object.entries(cells).reduce((acc, [key, value]) => {
-        if (!acc) {
-          acc = {}
+      const weeks = view.headerBottomData.map((data) => data.date)
+      const addedTasks: string[] = []
+      const cellsArr = Object.entries(cells)
+      const res = cellsArr.reduce((cellsAcc, [key, value]) => {
+        if (!cellsAcc) {
+          cellsAcc = {}
         }
+        if (value.state !== "occupied-start") return cellsAcc
         const [rowId, colId] = key.split("-")
-        const newColId = findClosestDateStart(months, Number(colId))
+        const newColId = findClosestDateStart(weeks, Number(colId))
         const newKey = `${rowId}-${newColId}`
-        if (!acc[newKey]) {
-          acc[newKey] = { ...value, state: "occupied-start" }
-        } else {
-          const newTasks = Object.values(value.tasks).reduce((acc, task) => {
+        const taskArr = Object.values(value.tasks)
+        if (!cellsAcc[newKey]) {
+          cellsAcc[newKey] = { ...value, state: "occupied-start" }
+          const newTasks = taskArr.reduce((acc, task) => {
             if (acc[task.taskId]) {
               return acc
             }
-
             const width = (cellWidth / 30) * task.duration
             const left = getTaskLeftOffset(
               newColId,
@@ -168,6 +170,7 @@ export const viewSlice = createSlice({
               cellWidth,
               30
             )
+            addedTasks.push(task.taskId)
             return {
               ...acc,
               [task.taskId]: {
@@ -178,11 +181,12 @@ export const viewSlice = createSlice({
               },
             }
           }, {} as { [key: string]: { taskId: string; left?: number; width: number; duration: number } })
-          acc[newKey].tasks = { ...acc[newKey].tasks, ...newTasks }
+          cellsAcc[newKey].tasks = { ...newTasks }
         }
 
-        return acc
+        return cellsAcc
       }, view.cells)
+
       state.view = { ...view, cells: res, isEditable: false }
     },
   },

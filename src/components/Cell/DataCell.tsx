@@ -20,7 +20,6 @@ export function DataCell({
   date,
 }: DataCellProps) {
   const time = new Date(date).getTime()
-
   const cellKey = `${rowId}-${time}`
   const tasks = useAppSelector((state) => state.tasks.tasks)
   const cells = useAppSelector((state) => state.view.view?.cells)
@@ -67,8 +66,6 @@ export function DataCell({
           <Task task={task} />
         </Draggable>
       )
-    } else {
-      return <div key={cellKey + task.id + idx} />
     }
   }
 
@@ -93,8 +90,10 @@ export function DataCell({
           {tasksInCell
             ? Object.values(tasksInCell).map((taskInCell, idx) => {
                 const task = tasks[taskInCell.taskId]
+
                 const left = taskInCell.left
                 const width = taskInCell.width
+
                 return renderTask(task, left, width, idx)
               })
             : null}

@@ -28,14 +28,28 @@ export function DroppedTask({
         transform: "translateY(-50%)",
         boxSizing: "border-box",
         bgcolor: task.bgcolor,
-        color: "#FFFFFF",
+        color: "black",
         borderRadius: 1,
         border: "1px solid black",
       }}
     >
-      <Typography variant="body2" fontWeight={700} noWrap>
-        {task.title}
-      </Typography>
+      {task.title ? (
+        <Typography
+          px={1}
+          variant="body2"
+          fontWeight={700}
+          noWrap
+          sx={{
+            maxWidth: "100%",
+            textAlign: "center",
+            boxSizing: "border-box",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+          }}
+        >
+          {task.title}
+        </Typography>
+      ) : null}
     </Stack>
   )
 }

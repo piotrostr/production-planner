@@ -1,4 +1,4 @@
-import { Alert, Box, Snackbar, Stack } from "@mui/material"
+import { Alert, Snackbar, Stack } from "@mui/material"
 import { TaskSlider } from "./components/TaskSlider"
 import {
   Active,
@@ -52,11 +52,9 @@ function App() {
     dispatch(initializeGridStart())
   }, [dispatch])
 
-  const viewState = useAppSelector((state) => state.view)
   const toastState = useAppSelector((state) => state.toast)
   const gridState = useAppSelector((state) => state.grid)
   const cellStateMap = gridState.grid
-  const view = viewState.view
 
   useEffect(() => {
     if (cellStateMap) {
@@ -84,7 +82,9 @@ function App() {
 
     const [rowId, colId] = (overId as string).split("-")
     if (!cellStateMap) return
-    for (let i = 0; i < cellSpan; i++) {
+    //increment is one day in milliseconds
+    const increment = 1000 * 60 * 60 * 24
+    for (let i = 0; i < cellSpan * increment; i += increment) {
       const cellId = `${rowId}-${Number(colId) + i}`
       if (cellId in cellStateMap.cells) {
         const cell = cellStateMap.cells[cellId]

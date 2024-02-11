@@ -95,12 +95,14 @@ export const viewSlice = createSlice({
       const cells = action.payload.grid.cells
       const cellWidth = view.cellWidth
       const weeks = view.headerBottomData.map((data) => data.date)
+
       const res = Object.entries(cells).reduce((acc, [key, value]) => {
         if (!acc) {
           acc = {}
         }
         const [rowId, colId] = key.split("-")
         const newColId = findClosestDateStart(weeks, Number(colId))
+
         const newKey = `${rowId}-${newColId}`
         if (!acc[newKey]) {
           acc[newKey] = { ...value, state: "occupied-start" }
@@ -117,6 +119,7 @@ export const viewSlice = createSlice({
               cellWidth,
               7
             )
+
             return {
               ...acc,
               [task.taskId]: {
@@ -132,6 +135,7 @@ export const viewSlice = createSlice({
 
         return acc
       }, view.cells)
+
       state.view = { ...view, cells: res, isEditable: false }
     },
     setYearView: (

@@ -22,7 +22,7 @@ export const generateMonthView = (numberOfColumns: number) => {
     {
       field: "stand",
       headerName: "",
-      date: new Date().getTime(),
+      date: 0,
       editable: false,
       sortable: false,
       width: 225,
@@ -32,7 +32,7 @@ export const generateMonthView = (numberOfColumns: number) => {
 
   headerBottomData.push(
     ...Array.from({ length: numberOfColumns }, (_, i) => {
-      const date = new Date(2024, 1, 1)
+      const date = new Date(2024, 1, 1, 0, 0)
       date.setDate(i + 1)
       return {
         field: "date" + i,
@@ -65,7 +65,7 @@ export const generateQuarterYearView = (numberOfColumns: number) => {
     {
       field: "stand",
       headerName: "",
-      date: new Date().getTime(),
+      date: 0,
       editable: false,
       sortable: false,
       width: 225,
@@ -75,7 +75,7 @@ export const generateQuarterYearView = (numberOfColumns: number) => {
 
   headerBottomData.push(
     ...Array.from({ length: numberOfColumns }, (_, i) => {
-      const dateStart = new Date(2024, 1, 1)
+      const dateStart = new Date(2024, 1, 1, 0, 0)
       dateStart.setDate(1 + 7 * i)
       return {
         field: "date" + i,
@@ -108,7 +108,7 @@ export const generateYearView = (numberOfColumns: number) => {
     {
       field: "stand",
       headerName: "",
-      date: new Date().getTime(),
+      date: 0,
       editable: false,
       sortable: false,
       width: 225,

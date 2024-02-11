@@ -56,6 +56,7 @@ export function ToggleView({}: ToggleViewProps) {
       exclusive
       aria-label="Platform"
       onChange={handleChange}
+      disabled={gridState.loading ? true : false}
     >
       <ToggleButton value="year">1 rok</ToggleButton>
       <ToggleButton value="3months.">3 mies.</ToggleButton>

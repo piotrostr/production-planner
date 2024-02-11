@@ -119,7 +119,7 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
                       </Typography>
                       <NumberField
                         placeholder="Czas"
-                        icon={<AccessTimeIcon />}
+                        icon={<Typography fontWeight={600}>[dni]</Typography>}
                         value={values.duration}
                         onChange={(e) => handleInputChange(e, setFieldValue)}
                         name="duration"

@@ -43,12 +43,6 @@ function* fetchGridSaga() {
 function* updateGridSaga(action: PayloadAction<GridType>) {
   try {
     yield call(updateGridInFirestore, action.payload)
-    yield put(
-      setToastOpen({
-        message: "Grid updated successfully",
-        severity: "success",
-      })
-    )
   } catch (error) {
     yield put(
       setToastOpen({ message: "Grid update failed", severity: "error" })

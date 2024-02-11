@@ -6,6 +6,9 @@ import {
   DragEndEvent,
   DragStartEvent,
   Over,
+  useSensor,
+  useSensors,
+  MouseSensor,
 } from "@dnd-kit/core"
 import { Toolbar } from "./components/Toolbar"
 import { useEffect, useState } from "react"
@@ -79,15 +82,13 @@ function App() {
 
     const task = active.data.current?.task
     const cellSpan = task.duration
-    const [rowId, colId] = (overId as string).split("-")
 
+    const [rowId, colId] = (overId as string).split("-")
     if (!cellStateMap) return
     //increment is one day in milliseconds
-    for (let i = 0; i < cellSpan; i += 1) {
-      const nextDate = new Date(Number(colId))
-      nextDate.setDate(nextDate.getDate() + i)
-      const newColId = nextDate.getTime()
-      const cellId = `${rowId}-${newColId}`
+    const increment = 1000 * 60 * 60 * 24
+    for (let i = 0; i < cellSpan * increment; i += increment) {
+      const cellId = `${rowId}-${Number(colId) + i}`
       if (cellId in cellStateMap.cells) {
         const cell = cellStateMap.cells[cellId]
         if (Object.keys(cell.tasks).some((tid) => tid !== task.id)) {
@@ -162,6 +163,14 @@ function App() {
     setDraggedTask({ draggableId: null, task: null })
   }
 
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 3,
+    },
+  })
+
+  const sensors = useSensors(mouseSensor)
+
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -169,6 +178,7 @@ function App() {
           <Stack width="100vw" height="100vh">
             <Toolbar />
             <DndContext
+              sensors={sensors}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
               onDragCancel={handleDragCancel}

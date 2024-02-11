@@ -1,11 +1,13 @@
-import { Stack, Typography } from "@mui/material"
-import { Task } from "../../slices/tasks"
+import { Stack, Typography } from "@mui/material";
+import { Task } from "../../slices/tasks";
+import { ContextMenu } from "../ContextMenu";
+import { useState } from "react";
 
 interface DroppedTaskProps {
-  task: Task
-  cellWidth: number
-  left: number | undefined
-  width: number | undefined
+  task: Task;
+  cellWidth: number;
+  left: number | undefined;
+  width: number | undefined;
 }
 
 export function DroppedTask({
@@ -14,8 +16,22 @@ export function DroppedTask({
   left,
   width,
 }: DroppedTaskProps) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [cursorPosition, setCursorPosition] = useState({ left: 0, top: 0 });
+  const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    setCursorPosition({ left: event.clientX - 2, top: event.clientY - 4 });
+    setAnchorEl(event.currentTarget);
+  };
+  const open = Boolean(anchorEl);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Stack
+      onContextMenu={(e) => handleRightClick(e)}
       width={width ? width : cellWidth * task.duration}
       height="2rem"
       justifyContent="center"
@@ -49,6 +65,13 @@ export function DroppedTask({
           {task.title}
         </Typography>
       ) : null}
+      <ContextMenu
+        open={open}
+        anchorEl={anchorEl}
+        cursorPosition={cursorPosition}
+        onClose={handleClose}
+        task={task}
+      />
     </Stack>
-  )
+  );
 }

@@ -13,7 +13,7 @@ import { ColorField } from "../ColorField"
 
 interface CreateGroupModalProps {
   open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<null>>
+  setOpen: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 interface FormData {

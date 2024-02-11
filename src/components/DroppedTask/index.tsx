@@ -35,7 +35,6 @@ export function DroppedTask({
     >
       {task.title ? (
         <Typography
-          px={1}
           variant="body2"
           fontWeight={700}
           noWrap

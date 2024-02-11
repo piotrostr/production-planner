@@ -31,6 +31,7 @@ import { useAppDispatch, useAppSelector } from "./hooks"
 import { syncFacilitiesStart } from "./slices/facilities"
 import { setToastClose } from "./slices/toast"
 import { setMonthView } from "./slices/view"
+import { TimelineToolbar } from "./components/TimelineToolbar"
 
 export interface DraggedTask {
   draggableId: string | null
@@ -166,7 +167,6 @@ function App() {
         <ThemeProvider theme={theme}>
           <Stack width="100vw" height="100vh">
             <Toolbar />
-            <ToggleView />
             <DndContext
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
@@ -175,6 +175,7 @@ function App() {
               modifiers={[snapCenterToCursor]}
             >
               <TaskSlider />
+              <TimelineToolbar />
               <DataGrid draggedTask={draggedTask} />
             </DndContext>
             <Snackbar

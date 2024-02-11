@@ -12,7 +12,7 @@ import { Form, Formik, FormikHelpers } from "formik"
 
 interface CreateLocationModalProps {
   open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<null>>
+  setOpen: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 interface FormData {

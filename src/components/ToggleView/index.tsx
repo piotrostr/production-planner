@@ -1,4 +1,9 @@
-import { ToggleButton, ToggleButtonGroup } from "@mui/material"
+import {
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from "@mui/material"
 import {
   generateQuarterYearView,
   generateMonthView,
@@ -7,6 +12,11 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../../hooks"
 import { setMonthView, setQuarterView, setYearView } from "../../slices/view"
+import ViewWeekIcon from "@mui/icons-material/ViewWeek"
+import ViewDayIcon from "@mui/icons-material/ViewDay"
+import { ViewTimeline } from "@mui/icons-material"
+import { Tooltip } from "@mui/material"
+import { all } from "redux-saga/effects"
 
 interface ToggleViewProps {}
 
@@ -57,10 +67,61 @@ export function ToggleView({}: ToggleViewProps) {
       aria-label="Platform"
       onChange={handleChange}
       disabled={gridState.loading ? true : false}
+      sx={{
+        all: "unset",
+      }}
     >
-      <ToggleButton value="year">1 rok</ToggleButton>
-      <ToggleButton value="3months.">3 mies.</ToggleButton>
-      <ToggleButton value="1month.">1 mies.</ToggleButton>
+      <Tooltip title="1 rok" arrow>
+        <ToggleButton
+          value="year"
+          sx={{
+            px: 1,
+            py: 0.5,
+            border: "none",
+            "&:focus": {
+              outline: "none",
+              bgcolor: "primary.main",
+              color: "white",
+            },
+          }}
+        >
+          <ViewTimeline />
+        </ToggleButton>
+      </Tooltip>
+      <Tooltip title="3 miesiące" arrow>
+        <ToggleButton
+          value="3months."
+          sx={{
+            px: 1,
+            py: 0.5,
+            border: "none",
+            "&:focus": {
+              outline: "none",
+              bgcolor: "primary.main",
+              color: "white",
+            },
+          }}
+        >
+          <ViewWeekIcon />
+        </ToggleButton>
+      </Tooltip>
+      <Tooltip title="1 miesiąc" arrow>
+        <ToggleButton
+          value="1month."
+          sx={{
+            px: 1,
+            py: 0.5,
+            border: "none",
+            "&:focus": {
+              outline: "none",
+              bgcolor: "primary.main",
+              color: "white",
+            },
+          }}
+        >
+          <ViewDayIcon />
+        </ToggleButton>
+      </Tooltip>
     </ToggleButtonGroup>
   )
 }

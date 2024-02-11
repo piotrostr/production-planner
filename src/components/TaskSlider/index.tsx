@@ -19,6 +19,7 @@ export function TaskSlider() {
         direction="row"
         px={2}
         py={1}
+        minHeight={80}
         overflow="scroll"
         borderTop="1px solid #000000"
         borderBottom="1px solid #000000"

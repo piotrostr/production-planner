@@ -1,12 +1,8 @@
 import SearchIcon from "@mui/icons-material/Search"
-import MenuIcon from "@mui/icons-material/Menu"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
 import FilterAltIcon from "@mui/icons-material/FilterAlt"
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
-import { Stack } from "@mui/material"
-import { ToolbarIcon } from "../ToolbarIcon"
-import { PopoverCreate } from "../PopoverCreate"
+import { Stack, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material"
 import { useState } from "react"
 import { CreateTaskModal } from "../CreateTaskModal"
 import { CreateActivityModal } from "../CreateActivityModal"
@@ -14,76 +10,55 @@ import { CreateLocationModal } from "../CreateLocationModal"
 import { CreateFacilityModal } from "../CreateFacilityModal"
 import { CreateDeadlineModal } from "../CreateDeadlineModal"
 import { CreateGroupModal } from "../CreateGroupModal"
-
-const icons = [
-  {
-    icon: <CalendarMonthIcon />,
-    iconText: "idź do",
-    expandMore: true,
-  },
-  {
-    icon: <FilterAltIcon />,
-    iconText: "Filtruj",
-  },
-  {
-    icon: <SearchIcon />,
-    iconText: "Szukaj",
-  },
-  {
-    icon: <MoreVertIcon />,
-    iconText: "Więcej",
-    expandMore: true,
-  },
-]
+import AddHomeWork from "@mui/icons-material/AddHomeWork"
+import AddTaskIcon from "@mui/icons-material/AddTask"
 
 export function Toolbar() {
-  const [anchorEl, setAnchorEl] = useState(null as HTMLButtonElement | null)
-  const [modalopen, setModalOpen] = useState(null)
-
-  const handleCreateOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
+  const [modalopen, setModalOpen] = useState<string | null>(null)
 
   return (
     <Stack
       direction="row"
       width="100%"
-      minHeight="2.2rem"
       bgcolor="lightgrey"
       alignItems="center"
       justifyContent="space-between"
       borderTop="1px solid #000000"
     >
-      <Stack direction="row" height="100%" width="100%">
-        <ToolbarIcon icon={<MenuIcon />} />
-        <button style={{ all: "unset" }} onClick={handleCreateOpen}>
-          <ToolbarIcon
-            icon={<AddCircleOutlineIcon />}
-            iconText="Dodaj"
-            expandMore={true}
-            onClick={handleCreateOpen}
-          />
-        </button>
-      </Stack>
-      <Stack direction="row">
-        {icons.map((icon, idx) => (
-          <ToolbarIcon
-            key={idx}
-            icon={icon.icon}
-            iconText={icon.iconText}
-            expandMore={icon.expandMore}
-          />
-        ))}
-      </Stack>
-      <PopoverCreate
-        anchorEl={anchorEl}
-        setAnchorEl={setAnchorEl}
-        setModalOpen={
-          setModalOpen as unknown as React.Dispatch<
-            React.SetStateAction<string>
+      <ToggleButtonGroup>
+        <Tooltip title="Dodaj produkt" arrow>
+          <ToggleButton
+            value="facility"
+            onClick={() => setModalOpen("facility")}
+            sx={{
+              px: 1,
+              py: 0.5,
+              border: "none",
+              "&:focus": {
+                outline: "none",
+              },
+            }}
           >
-        }
-      />
+            <AddTaskIcon />
+          </ToggleButton>
+        </Tooltip>
+        <Tooltip title="Dodaj stanowisko" arrow>
+          <ToggleButton
+            value="task"
+            onClick={() => setModalOpen("task")}
+            sx={{
+              px: 1,
+              py: 0.5,
+              border: "none",
+              "&:focus": {
+                outline: "none",
+              },
+            }}
+          >
+            <AddHomeWork />
+          </ToggleButton>
+        </Tooltip>
+      </ToggleButtonGroup>
       <CreateActivityModal
         open={modalopen === "activity"}
         setOpen={setModalOpen}

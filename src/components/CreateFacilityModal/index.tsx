@@ -19,7 +19,7 @@ import { addFacilityStart } from "../../slices/facilities"
 
 interface CreateFacilityModalProps {
   open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<null>>
+  setOpen: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 interface FormData {

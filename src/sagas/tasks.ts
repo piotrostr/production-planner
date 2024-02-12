@@ -21,9 +21,9 @@ import {
   deleteTaskStart,
   syncTasksStart,
   addTaskStart,
-  upsertTask,
   setTaskDroppedStart,
   setTaskDropped,
+  updateTaskStart,
 } from "../slices/tasks"
 import { setToastOpen } from "../slices/toast"
 
@@ -79,6 +79,20 @@ export function* setTaskDroppedSaga(
   }
 }
 
+export function* updateTaskSaga(
+  action: PayloadAction<{ id: string; data: any }>
+): Generator<any, void, any> {
+  try {
+    const { id, data } = action.payload
+    yield call(updateTaskInFirestore, id, data)
+    yield put(setToastOpen({ message: "Task updated", severity: "success" }))
+  } catch (error) {
+    yield put(
+      setToastOpen({ message: "Task update failed", severity: "success" })
+    )
+  }
+}
+
 export function* syncTasksSaga() {
   const channel = eventChannel((emitter) => {
     const colRef = collection(firestore, "tasks")
@@ -115,6 +129,10 @@ function* watchDeleteTask() {
   yield takeLatest(deleteTaskStart.type, deleteTaskSaga)
 }
 
+function* watchUpdateTask() {
+  yield takeLatest(updateTaskStart.type, updateTaskSaga)
+}
+
 function* watchSetTaskDropped() {
   yield takeLatest(setTaskDroppedStart.type, setTaskDroppedSaga)
 }
@@ -129,5 +147,6 @@ export default function* taskSagas() {
     watchDeleteTask(),
     watchSyncTasks(),
     watchSetTaskDropped(),
+    watchUpdateTask(),
   ])
 }

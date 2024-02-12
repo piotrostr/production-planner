@@ -1,5 +1,4 @@
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
-import AccessTimeIcon from "@mui/icons-material/AccessTime"
 import { Stack, Typography } from "@mui/material"
 import { TextField } from "../TextField"
 import { Modal } from "../Modal"
@@ -12,12 +11,14 @@ import { firestore } from "../../../firebase.config"
 import { Form, Formik, FormikHelpers } from "formik"
 import { ColorField } from "../ColorField"
 import { NumberField } from "../NumberField"
-import { useAppDispatch } from "../../hooks"
-import { addTaskStart } from "../../slices/tasks"
+import { useAppDispatch, useAppSelector } from "../../hooks"
+import { Task, addTaskStart, updateTaskStart } from "../../slices/tasks"
+import { useEffect, useState } from "react"
 
 interface CreateTaskModalProps {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<string | null>>
+  taskId?: string
 }
 
 interface FormData {
@@ -28,13 +29,21 @@ interface FormData {
 }
 
 const initialValues = {
+  id: "",
   title: "",
+  dropped: false,
   description: "",
   duration: 0,
   bgcolor: "",
 }
 
-export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
+export function CreateTaskModal({
+  open,
+  setOpen,
+  taskId,
+}: CreateTaskModalProps) {
+  const [task, setTask] = useState<Task>(initialValues)
+  const tasks = useAppSelector((state) => state.tasks.tasks)
   const dispatch = useAppDispatch()
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -44,19 +53,30 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
     setFieldValue(name, value)
   }
 
+  useEffect(() => {
+    if (taskId) {
+      const task = tasks[taskId]
+      setTask(task)
+    }
+  }, [taskId, tasks])
+
   const handleSubmit = async (
     values: FormData,
     resetForm: FormikHelpers<FormData>["resetForm"]
   ) => {
     try {
       const taskId = doc(collection(firestore, "tasks")).id
-      dispatch(
-        addTaskStart({
-          id: taskId,
-          dropped: false,
-          ...values,
-        })
-      )
+      if (!task) {
+        dispatch(
+          addTaskStart({
+            id: taskId,
+            dropped: false,
+            ...values,
+          })
+        )
+      } else {
+        dispatch(updateTaskStart({ id: task.id, data: values }))
+      }
       setOpen(null)
       resetForm()
     } catch (error) {
@@ -71,19 +91,22 @@ export function CreateTaskModal({ open, setOpen }: CreateTaskModalProps) {
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={task}
+      enableReinitialize
       onSubmit={(values: FormData, { resetForm }) =>
         handleSubmit(values, resetForm)
       }
     >
-      {({ values, handleSubmit, setFieldValue, resetForm }) => (
+      {({ values, handleSubmit, setFieldValue, resetForm, setFormikState }) => (
         <>
           <Form onSubmit={handleSubmit}>
             <Modal open={open} onClose={() => handleClose(resetForm)}>
               <Stack alignItems="center" justifyContent="center">
                 <TitleBar onClose={() => handleClose(resetForm)} />
                 <Stack p={2} bgcolor="white" width="fit-content" spacing={4}>
-                  <Typography variant="h6">Dodaj zadanie</Typography>
+                  <Typography variant="h6">
+                    {taskId ? "Edytuj" : "Dodaj"} zadanie
+                  </Typography>
                   <Stack spacing={2}>
                     <Stack
                       direction="row"

@@ -59,6 +59,13 @@ export const tasksSlice = createSlice({
     removeTask: (state, action: PayloadAction<string>) => {
       delete state.tasks[action.payload]
     },
+    updateTask: (state, action: PayloadAction<{ id: string; data: any }>) => {
+      const { id, data } = action.payload
+      const task = state.tasks[id]
+      if (task) {
+        state.tasks[id] = { ...task, ...data }
+      }
+    },
     moveTask: (
       state,
       action: PayloadAction<{
@@ -111,6 +118,10 @@ export const tasksSlice = createSlice({
       state.loading = true
       state.error = null
     },
+    updateTaskStart(state, action: PayloadAction<{ id: string; data: any }>) {
+      state.loading = true
+      state.error = null
+    },
     deleteTaskStart(state /*action: PayloadAction<GridType>*/) {
       state.loading = true
       state.error = null
@@ -136,11 +147,13 @@ export const {
   moveTask,
   setTaskDropped,
   fetchTasksStart,
+  updateTask,
   setTasks,
   taskOperationFailed,
   updateTasksStart,
   addTaskStart,
   deleteTaskStart,
+  updateTaskStart,
   setTaskDroppedStart,
   syncTasksStart,
 } = tasksSlice.actions

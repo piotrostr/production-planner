@@ -89,8 +89,7 @@ function App() {
         if (Object.keys(cell.tasks).some((tid) => tid !== task.id)) {
           dispatch(
             setToastOpen({
-              message:
-                "Zadanie nie może zostać przesunięte, ponieważ koliduje z innym zadaniem.",
+              message: "Wykryto kolizję",
               severity: "error",
             })
           )

@@ -2,7 +2,7 @@ import { Draggable } from "../Draggable"
 import { Droppable } from "../Droppable"
 import { Task } from "../Task"
 import { DroppedTask } from "../DroppedTask"
-import { Stack } from "@mui/material"
+import { Box, Stack } from "@mui/material"
 import { useAppSelector } from "../../hooks"
 
 import { Task as TaskType } from "../../slices/tasks"
@@ -25,6 +25,7 @@ export function DataCell({
   const cells = useAppSelector((state) => state.view.view?.cells)
   const cell = cells?.[cellKey]
   const tasksInCell = cell?.tasks
+
   const renderTask = (
     task: TaskType,
     left: number | undefined,

@@ -30,9 +30,11 @@ export function DroppedTask({
   const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault()
     if (view?.name !== "1 mies.") return
-    setCursorPosition({ left: event.clientX - 2, top: event.clientY - 4 })
-    setAnchorEl(event.currentTarget)
-    dispatch(setDragDisabled(true))
+    if (!anchorEl) {
+      setCursorPosition({ left: event.clientX - 2, top: event.clientY - 4 })
+      setAnchorEl(event.currentTarget)
+      dispatch(setDragDisabled(true))
+    }
   }
   const open = Boolean(anchorEl)
 
@@ -44,6 +46,7 @@ export function DroppedTask({
   return (
     <Stack
       onContextMenu={(e) => handleRightClick(e)}
+      key={task.id}
       width={width ? width : cellWidth * task.duration}
       height="2rem"
       justifyContent="center"

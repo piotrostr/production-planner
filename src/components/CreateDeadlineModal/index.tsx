@@ -59,7 +59,7 @@ export function CreateDeadlineModal({
         await setDoc(deadlineRef, {
           ...values,
           id: deadlineId,
-          date: Timestamp.fromDate(values.date),
+          timestamp: Timestamp.fromDate(values.date),
         })
       }
 

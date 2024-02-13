@@ -18,7 +18,15 @@ export function DataGrid({ draggedTask }: DataGridProps) {
   const viewState = useAppSelector((state) => state.view)
   const facilities = facilitiesState.facilities
   const view = viewState.view
-  const facilitiesArr = Object.values(facilities)
+  const sortedFacilities = Object.values(facilities).sort((a, b) => {
+    if (a.bgcolor < b.bgcolor) {
+      return -1
+    }
+    if (a.bgcolor > b.bgcolor) {
+      return 1
+    }
+    return 0
+  })
 
   const handleZoom = (event: WheelEvent) => {
     // Check if the "Ctrl" key is pressed
@@ -54,7 +62,7 @@ export function DataGrid({ draggedTask }: DataGridProps) {
   return (
     <DataGridPro
       apiRef={apiRef}
-      rows={facilitiesArr}
+      rows={sortedFacilities}
       columns={view?.headerBottomData || []}
       disableColumnFilter
       disableColumnMenu

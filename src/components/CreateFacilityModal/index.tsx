@@ -53,6 +53,29 @@ const activities = [
   { value: "INSTALLATION", label: "INSTALLATION" },
 ]
 
+const colorOptions = [
+  {
+    bgcolor: "#aec6cf",
+    color: "#000000",
+  },
+  {
+    bgcolor: "#a3d3a4",
+    color: "#000000",
+  },
+  {
+    bgcolor: "#f0e68c",
+    color: "#000000",
+  },
+  {
+    bgcolor: "#ffb347",
+    color: "#000000",
+  },
+  {
+    bgcolor: "#b19cd9",
+    color: "#000000",
+  },
+]
+
 export function CreateFacilityModal({
   open,
   setOpen,
@@ -175,6 +198,7 @@ export function CreateFacilityModal({
                         value={values.bgcolor}
                         setFieldValue={setFieldValue}
                         name="bgcolor"
+                        colorOptions={colorOptions}
                       />
                     </Stack>
                   </Stack>

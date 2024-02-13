@@ -29,6 +29,29 @@ interface FormData {
   bgcolor: string
 }
 
+const colorOptions = [
+  {
+    bgcolor: "#6ab1f7",
+    color: "#FFFFFF",
+  },
+  {
+    bgcolor: "#FF4500",
+    color: "#000000",
+  },
+  {
+    bgcolor: "#27ae60",
+    color: "#000000",
+  },
+  {
+    bgcolor: "#f39c12",
+    color: "#000000",
+  },
+  {
+    bgcolor: "#8e44ad",
+    color: "#000000",
+  },
+]
+
 const initialValues = {
   id: "",
   title: "",
@@ -80,6 +103,7 @@ export function CreateTaskModal({
       }
       setOpen(null)
       resetForm()
+      dispatch(setDragDisabled(false))
     } catch (error) {
       resetForm()
     }
@@ -99,7 +123,7 @@ export function CreateTaskModal({
         handleSubmit(values, resetForm)
       }
     >
-      {({ values, handleSubmit, setFieldValue, resetForm, setFormikState }) => (
+      {({ values, handleSubmit, setFieldValue, resetForm }) => (
         <>
           <Form onSubmit={handleSubmit}>
             <Modal open={open} onClose={() => handleClose(resetForm)}>
@@ -163,6 +187,7 @@ export function CreateTaskModal({
                         value={values.bgcolor}
                         setFieldValue={setFieldValue}
                         name="bgcolor"
+                        colorOptions={colorOptions}
                       />
                     </Stack>
                   </Stack>

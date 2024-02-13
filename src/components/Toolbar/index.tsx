@@ -8,6 +8,7 @@ import { CreateDeadlineModal } from "../CreateDeadlineModal"
 import { CreateGroupModal } from "../CreateGroupModal"
 import AddHomeWork from "@mui/icons-material/AddHomeWork"
 import AddTaskIcon from "@mui/icons-material/AddTask"
+import AddAlarmIcon from "@mui/icons-material/AddAlarm"
 
 export function Toolbar() {
   const [modalopen, setModalOpen] = useState<string | null>(null)
@@ -52,6 +53,22 @@ export function Toolbar() {
             }}
           >
             <AddHomeWork />
+          </ToggleButton>
+        </Tooltip>
+        <Tooltip title="Dodaj deadline" arrow>
+          <ToggleButton
+            value="task"
+            onClick={() => setModalOpen("deadline")}
+            sx={{
+              px: 1,
+              py: 0.5,
+              border: "none",
+              "&:focus": {
+                outline: "none",
+              },
+            }}
+          >
+            <AddAlarmIcon />
           </ToggleButton>
         </Tooltip>
       </ToggleButtonGroup>

@@ -1,4 +1,9 @@
-import { ToggleButton, ToggleButtonGroup } from "@mui/material"
+import {
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from "@mui/material"
 import {
   generateQuarterYearView,
   generateMonthView,
@@ -58,67 +63,75 @@ export function ToggleView({}: ToggleViewProps) {
   }
 
   return (
-    <ToggleButtonGroup
-      color="primary"
-      value={view.name}
-      exclusive
-      aria-label="Platform"
-      onChange={handleChange}
-      sx={{
-        all: "unset",
-      }}
-    >
-      <Tooltip title="1 rok" arrow>
-        <ToggleButton
-          value="year"
-          sx={{
-            px: 1,
-            py: 0.5,
-            border: "none",
-            "&:focus": {
-              outline: "none",
-              bgcolor: "primary.main",
-              color: "white",
-            },
-          }}
-        >
-          <ViewTimeline />
-        </ToggleButton>
-      </Tooltip>
-      <Tooltip title="3 miesiące" arrow>
-        <ToggleButton
-          value="3months."
-          sx={{
-            px: 1,
-            py: 0.5,
-            border: "none",
-            "&:focus": {
-              outline: "none",
-              bgcolor: "primary.main",
-              color: "white",
-            },
-          }}
-        >
-          <ViewWeekIcon />
-        </ToggleButton>
-      </Tooltip>
-      <Tooltip title="1 miesiąc" arrow>
-        <ToggleButton
-          value="1month."
-          sx={{
-            px: 1,
-            py: 0.5,
-            border: "none",
-            "&:focus": {
-              outline: "none",
-              bgcolor: "primary.main",
-              color: "white",
-            },
-          }}
-        >
-          <ViewDayIcon />
-        </ToggleButton>
-      </Tooltip>
-    </ToggleButtonGroup>
+    <Stack direction="row" alignItems="center" spacing={1}>
+      <Typography
+        color={view?.name == "1 mies." ? "#228B22" : "#FF5349"}
+        fontWeight={600}
+      >
+        Tryb {view?.name == "1 mies." ? "edycji" : "odczytu"}
+      </Typography>
+      <ToggleButtonGroup
+        color="primary"
+        value={view.name}
+        exclusive
+        aria-label="Platform"
+        onChange={handleChange}
+        sx={{
+          all: "unset",
+        }}
+      >
+        <Tooltip title="1 rok" arrow>
+          <ToggleButton
+            value="year"
+            sx={{
+              px: 1,
+              py: 0.5,
+              border: "none",
+              "&:focus": {
+                outline: "none",
+                bgcolor: "primary.main",
+                color: "white",
+              },
+            }}
+          >
+            <ViewTimeline />
+          </ToggleButton>
+        </Tooltip>
+        <Tooltip title="3 miesiące" arrow>
+          <ToggleButton
+            value="3months."
+            sx={{
+              px: 1,
+              py: 0.5,
+              border: "none",
+              "&:focus": {
+                outline: "none",
+                bgcolor: "primary.main",
+                color: "white",
+              },
+            }}
+          >
+            <ViewWeekIcon />
+          </ToggleButton>
+        </Tooltip>
+        <Tooltip title="1 miesiąc" arrow>
+          <ToggleButton
+            value="1month."
+            sx={{
+              px: 1,
+              py: 0.5,
+              border: "none",
+              "&:focus": {
+                outline: "none",
+                bgcolor: "primary.main",
+                color: "white",
+              },
+            }}
+          >
+            <ViewDayIcon />
+          </ToggleButton>
+        </Tooltip>
+      </ToggleButtonGroup>
+    </Stack>
   )
 }

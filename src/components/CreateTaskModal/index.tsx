@@ -14,6 +14,7 @@ import { NumberField } from "../NumberField"
 import { useAppDispatch, useAppSelector } from "../../hooks"
 import { Task, addTaskStart, updateTaskStart } from "../../slices/tasks"
 import { useEffect, useState } from "react"
+import { setDragDisabled } from "../../slices/drag"
 
 interface CreateTaskModalProps {
   open: boolean
@@ -65,13 +66,13 @@ export function CreateTaskModal({
     resetForm: FormikHelpers<FormData>["resetForm"]
   ) => {
     try {
-      const taskId = doc(collection(firestore, "tasks")).id
-      if (!task) {
+      if (!taskId) {
+        const id = doc(collection(firestore, "tasks")).id
         dispatch(
           addTaskStart({
-            id: taskId,
-            dropped: false,
             ...values,
+            dropped: false,
+            id,
           })
         )
       } else {
@@ -87,6 +88,7 @@ export function CreateTaskModal({
   const handleClose = (resetForm: FormikHelpers<FormData>["resetForm"]) => {
     setOpen(null)
     resetForm()
+    dispatch(setDragDisabled(false))
   }
 
   return (

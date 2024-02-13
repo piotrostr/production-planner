@@ -1,7 +1,3 @@
-import SearchIcon from "@mui/icons-material/Search"
-import MoreVertIcon from "@mui/icons-material/MoreVert"
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
-import FilterAltIcon from "@mui/icons-material/FilterAlt"
 import { Stack, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material"
 import { useState } from "react"
 import { CreateTaskModal } from "../CreateTaskModal"

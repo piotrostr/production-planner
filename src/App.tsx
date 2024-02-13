@@ -31,7 +31,7 @@ import {
 import { Task, setTaskDroppedStart, syncTasksStart } from "./slices/tasks"
 import { useAppDispatch, useAppSelector } from "./hooks"
 import { syncFacilitiesStart } from "./slices/facilities"
-import { setToastClose } from "./slices/toast"
+import { setToastClose, setToastOpen } from "./slices/toast"
 import { setMonthView } from "./slices/view"
 import { TimelineToolbar } from "./components/TimelineToolbar"
 
@@ -75,23 +75,25 @@ function App() {
   }, [isGridUpdated, dispatch, gridState.grid])
 
   const checkCanDrop = (over: Over, active: Active) => {
-    // move this to sagas/tasks.ts, there is a helper there to check for collisions
-    // it will be hard at first but once we migrate this, the logic will be clear
-    // in this component
     const overId = over.id
-
     const task = active.data.current?.task
     const cellSpan = task.duration
 
     const [rowId, colId] = (overId as string).split("-")
     if (!cellStateMap) return
-    //increment is one day in milliseconds
     const increment = 1000 * 60 * 60 * 24
     for (let i = 0; i < cellSpan * increment; i += increment) {
       const cellId = `${rowId}-${Number(colId) + i}`
       if (cellId in cellStateMap.cells) {
         const cell = cellStateMap.cells[cellId]
         if (Object.keys(cell.tasks).some((tid) => tid !== task.id)) {
+          dispatch(
+            setToastOpen({
+              message:
+                "Zadanie nie może zostać przesunięte, ponieważ koliduje z innym zadaniem.",
+              severity: "error",
+            })
+          )
           return false
         }
       }
@@ -105,13 +107,19 @@ function App() {
     const task = active.data.current?.task
     const cellSpan = task.duration
     const [rowId, colId] = cellId.split("-")
-    dispatch(setCellsOccupied({ rowId, colId, taskId: task.id, cellSpan }))
-    dispatch(setTaskDroppedStart({ taskId: task.id, dropped: true }))
+    dispatch(
+      setTaskDroppedStart({
+        taskId: task.id,
+        dropped: true,
+        rowId,
+        colId: Number(colId),
+        cellSpan,
+      })
+    )
     setIsGridUpdated(true)
   }
 
   const handleDragEndBetweenCells = (over: Over, active: Active) => {
-    //remove task from cellStateMap
     const startCellId = over.id as string
     const task = active.data.current?.task
     const cellSpan = task.duration
@@ -125,7 +133,6 @@ function App() {
         cellSpan: cellSpan,
       })
     )
-
     dispatch(
       setCellsOccupied({
         rowId,

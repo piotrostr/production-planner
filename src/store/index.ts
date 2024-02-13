@@ -7,6 +7,7 @@ import tasksReducer from "../slices/tasks" // Adjust the import path as necessar
 import facilitiesReducer from "../slices/facilities" // Adjust the import path as necessary
 import toastReducer from "../slices/toast" // Adjust the import path as necessary
 import viewReducer from "../slices/view" // Adjust the import path as necessary
+import dragReducer from "../slices/drag" // Adjust the import path as necessary
 
 import gridSagas from "../sagas/grid"
 import tasksSagas from "../sagas/tasks"
@@ -21,6 +22,7 @@ export const store = configureStore({
     facilities: facilitiesReducer,
     view: viewReducer,
     toast: toastReducer,
+    drag: dragReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),

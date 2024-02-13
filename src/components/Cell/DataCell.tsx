@@ -46,6 +46,8 @@ export function DataCell({
             cellWidth={cellWidth}
             left={left}
             width={width}
+            rowId={rowId}
+            colId={time}
           />
         </Draggable>
       )
@@ -89,7 +91,6 @@ export function DataCell({
           {tasksInCell
             ? Object.values(tasksInCell).map((taskInCell, idx) => {
                 const task = tasks[taskInCell.taskId]
-
                 const left = taskInCell.left
                 const width = taskInCell.width
                 return renderTask(task, left, width, idx)

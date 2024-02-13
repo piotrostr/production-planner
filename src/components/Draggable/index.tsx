@@ -8,10 +8,11 @@ interface DraggableProps {
 
 export function Draggable({ children, id, data }: DraggableProps) {
   const view = useAppSelector((state) => state.view.view)
+  const disabled = useAppSelector((state) => state.drag.disabled)
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
     data: data,
-    disabled: !view?.isEditable,
+    disabled: disabled,
   })
 
   const style = transform

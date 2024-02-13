@@ -122,13 +122,27 @@ export const tasksSlice = createSlice({
       state.loading = true
       state.error = null
     },
-    deleteTaskStart(state /*action: PayloadAction<GridType>*/) {
+    deleteTaskStart(
+      state,
+      action: PayloadAction<{
+        taskId: string
+        facilityId?: string
+        colId?: number
+        cellSpan?: number
+      }>
+    ) {
       state.loading = true
       state.error = null
     },
     setTaskDroppedStart(
       state,
-      action: PayloadAction<{ taskId: string; dropped: boolean }>
+      action: PayloadAction<{
+        taskId: string
+        dropped: boolean
+        rowId: string
+        colId: number
+        cellSpan: number
+      }>
     ) {
       state.loading = true
       state.error = null

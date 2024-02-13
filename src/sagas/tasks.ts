@@ -26,6 +26,7 @@ import {
   updateTaskStart,
 } from "../slices/tasks"
 import { setToastOpen } from "../slices/toast"
+import { removeCells, setCellsOccupied } from "../slices/grid"
 
 const addTaskToFirestore = async (task: Task) => {
   await setDoc(doc(firestore, `tasks/${task.id}`), task)
@@ -38,44 +39,73 @@ const updateTaskInFirestore = async (
   await updateDoc(doc(firestore, `tasks/${id}`), updateData)
 }
 
-const deleteTaskFromFirestore = async (taskId: string, facilityId: string) => {
+const deleteTaskFromFirestore = async (taskId: string, facilityId?: string) => {
   await deleteDoc(doc(firestore, `tasks/${taskId}`))
-  await updateDoc(doc(firestore, `facilities/${facilityId}`), {
-    tasks: arrayRemove(taskId),
-  })
+  if (facilityId) {
+    await updateDoc(doc(firestore, `facilities/${facilityId}`), {
+      tasks: arrayRemove(taskId),
+    })
+  }
 }
 
 export function* addTaskSaga(action: PayloadAction<Task>) {
   try {
     yield call(addTaskToFirestore, action.payload)
-    yield put(setToastOpen({ message: "Task added", severity: "success" }))
+    yield put(setToastOpen({ message: "Dodano zadanie", severity: "success" }))
   } catch (error) {
-    yield put(setToastOpen({ message: "Error adding task", severity: "error" }))
+    yield put(setToastOpen({ message: "Wystąpił błądś", severity: "error" }))
   }
 }
 
 export function* deleteTaskSaga(
-  action: PayloadAction<{ taskId: string; facilityId: string }>
+  action: PayloadAction<{
+    taskId: string
+    facilityId?: string
+    colId?: string
+    cellSpan?: string
+  }>
 ): Generator<any, void, any> {
   try {
-    const { taskId, facilityId } = action.payload
+    const { taskId, facilityId, colId, cellSpan } = action.payload
+    if (facilityId && colId && cellSpan) {
+      yield put(
+        removeCells({ rowId: facilityId, colId, cellSpan: Number(cellSpan) })
+      )
+      yield put(removeTaskFromFacility({ facilityId, taskId }))
+    }
     yield call(deleteTaskFromFirestore, taskId, facilityId)
     yield put(removeTask(taskId))
-    yield put(removeTaskFromFacility({ facilityId, taskId }))
+    yield put(
+      setToastOpen({ message: "Usunięto zadanie", severity: "success" })
+    )
   } catch (error) {
-    console.error("Error deleting task:", error)
+    yield put(setToastOpen({ message: "Wystąpił błąd", severity: "error" }))
   }
 }
 
 export function* setTaskDroppedSaga(
-  action: PayloadAction<{ taskId: string; dropped: boolean }>
+  action: PayloadAction<{
+    taskId: string
+    dropped: boolean
+    rowId: string
+    colId: string
+    cellSpan: string
+  }>
 ): Generator<any, void, any> {
   try {
-    const { taskId, dropped } = action.payload
-    yield call(updateTaskInFirestore, taskId, { dropped })
+    const { taskId, dropped, rowId, colId, cellSpan } = action.payload
+    if (dropped) {
+      yield put(
+        setCellsOccupied({ rowId, colId, taskId, cellSpan: Number(cellSpan) })
+      )
+    } else {
+      yield put(removeCells({ rowId, colId, cellSpan: Number(cellSpan) }))
+    }
     yield put(setTaskDropped({ id: taskId, dropped }))
+    yield call(updateTaskInFirestore, taskId, { dropped })
+    // no need to set the toast here as the toast is displayed on successful grid update
   } catch (error) {
-    console.error("Error setting task dropped:", error)
+    yield put(setToastOpen({ message: "Wystąpił błąd", severity: "error" }))
   }
 }
 
@@ -85,11 +115,11 @@ export function* updateTaskSaga(
   try {
     const { id, data } = action.payload
     yield call(updateTaskInFirestore, id, data)
-    yield put(setToastOpen({ message: "Task updated", severity: "success" }))
-  } catch (error) {
     yield put(
-      setToastOpen({ message: "Task update failed", severity: "success" })
+      setToastOpen({ message: "Zaktualizowano zadanie", severity: "success" })
     )
+  } catch (error) {
+    yield put(setToastOpen({ message: "Wystąpił błąd", severity: "success" }))
   }
 }
 

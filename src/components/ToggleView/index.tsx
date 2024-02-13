@@ -1,9 +1,4 @@
-import {
-  Stack,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from "@mui/material"
+import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 import {
   generateQuarterYearView,
   generateMonthView,
@@ -16,7 +11,7 @@ import ViewWeekIcon from "@mui/icons-material/ViewWeek"
 import ViewDayIcon from "@mui/icons-material/ViewDay"
 import { ViewTimeline } from "@mui/icons-material"
 import { Tooltip } from "@mui/material"
-import { all } from "redux-saga/effects"
+import { setDragDisabled } from "../../slices/drag"
 
 interface ToggleViewProps {}
 
@@ -41,6 +36,7 @@ export function ToggleView({}: ToggleViewProps) {
               grid: cellStateMap,
             })
           )
+          dispatch(setDragDisabled(true))
           break
         case "3months.":
           dispatch(
@@ -49,11 +45,13 @@ export function ToggleView({}: ToggleViewProps) {
               grid: cellStateMap,
             })
           )
+          dispatch(setDragDisabled(true))
           break
         case "1month.":
           dispatch(
             setMonthView({ view: generateMonthView(1000), grid: cellStateMap })
           )
+          dispatch(setDragDisabled(false))
           break
       }
     }
@@ -66,7 +64,6 @@ export function ToggleView({}: ToggleViewProps) {
       exclusive
       aria-label="Platform"
       onChange={handleChange}
-      disabled={gridState.loading ? true : false}
       sx={{
         all: "unset",
       }}

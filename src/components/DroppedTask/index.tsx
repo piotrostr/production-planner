@@ -2,12 +2,16 @@ import { Stack, Typography } from "@mui/material"
 import { Task } from "../../slices/tasks"
 import { ContextMenu } from "../ContextMenu"
 import { useState } from "react"
+import { useAppDispatch, useAppSelector } from "../../hooks"
+import { setDragDisabled } from "../../slices/drag"
 
 interface DroppedTaskProps {
   task: Task
   cellWidth: number
   left: number | undefined
   width: number | undefined
+  rowId: string | number
+  colId: number
 }
 
 export function DroppedTask({
@@ -15,18 +19,26 @@ export function DroppedTask({
   cellWidth,
   left,
   width,
+  rowId,
+  colId,
 }: DroppedTaskProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [cursorPosition, setCursorPosition] = useState({ left: 0, top: 0 })
+  const dispatch = useAppDispatch()
+  const view = useAppSelector((state) => state.view.view)
+
   const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault()
+    if (view?.name !== "1 mies.") return
     setCursorPosition({ left: event.clientX - 2, top: event.clientY - 4 })
     setAnchorEl(event.currentTarget)
+    dispatch(setDragDisabled(true))
   }
   const open = Boolean(anchorEl)
 
   const handleClose = () => {
     setAnchorEl(null)
+    dispatch(setDragDisabled(false))
   }
 
   return (
@@ -37,7 +49,6 @@ export function DroppedTask({
       justifyContent="center"
       position="absolute"
       top="50%"
-      alignItems="center"
       left={left}
       sx={{
         zIndex: 20,
@@ -56,10 +67,10 @@ export function DroppedTask({
           noWrap
           sx={{
             maxWidth: "100%",
-            textAlign: "center",
             boxSizing: "border-box",
-            textOverflow: "ellipsis",
+            textOverflow: "clip",
             overflow: "hidden",
+            pl: "min(20px, 10%)",
           }}
         >
           {task.title}
@@ -70,6 +81,9 @@ export function DroppedTask({
         cursorPosition={cursorPosition}
         onClose={handleClose}
         task={task}
+        rowId={rowId as string}
+        colId={colId}
+        cellSpan={task.duration}
       />
     </Stack>
   )

@@ -59,13 +59,13 @@ const gridSlice = createSlice({
         rowId: string
         colId: string
         taskId: string
-        cellSpan: string
+        cellSpan: number
       }>
     ) => {
       const { rowId, colId, taskId, cellSpan } = action.payload
       const colTime = Number(colId)
       const originalDate = new Date(colTime)
-      const duration = Number(cellSpan)
+      const duration = cellSpan
 
       const cellId = `${rowId}-${colTime}`
       if (!state.grid) {

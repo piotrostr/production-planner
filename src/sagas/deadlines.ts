@@ -2,9 +2,7 @@ import { eventChannel } from "redux-saga"
 import { PayloadAction } from "@reduxjs/toolkit"
 import { call, put, take, cancelled, takeLatest, all } from "redux-saga/effects"
 import { firestore } from "../../firebase.config"
-import { removeTaskFromFacility } from "../slices/facilities"
 import {
-  arrayRemove,
   collection,
   deleteDoc,
   doc,
@@ -13,126 +11,87 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore"
-
-import {
-  setTasks,
-  Task,
-  removeTask,
-  deleteTaskStart,
-  syncTasksStart,
-  addTaskStart,
-  setTaskDroppedStart,
-  setTaskDropped,
-  updateTaskStart,
-} from "../slices/tasks"
 import { setToastOpen } from "../slices/toast"
-import { removeCells, setCellsOccupied } from "../slices/grid"
+import {
+  Deadline,
+  removeDeadline,
+  setDeadlines,
+  removeDeadlineStart,
+  updateDeadlineStart,
+  syncDeadlinesStart,
+  addDeadlineStart,
+} from "../slices/deadlines"
 
-const addTaskToFirestore = async (task: Task) => {
-  await setDoc(doc(firestore, `tasks/${task.id}`), task)
+const addDeadlineToFirestore = async (deadline: Deadline) => {
+  await setDoc(doc(firestore, `deadlines/${deadline.id}`), deadline)
 }
 
-const updateTaskInFirestore = async (
+const updateDeadlineInFirestore = async (
   id: string,
   updateData: { [key: string]: any }
 ) => {
   await updateDoc(doc(firestore, `tasks/${id}`), updateData)
 }
 
-const deleteTaskFromFirestore = async (taskId: string, facilityId?: string) => {
-  await deleteDoc(doc(firestore, `tasks/${taskId}`))
-  if (facilityId) {
-    await updateDoc(doc(firestore, `facilities/${facilityId}`), {
-      tasks: arrayRemove(taskId),
-    })
-  }
+const deleteDeadlineFromFirestore = async (deadlineId: string) => {
+  await deleteDoc(doc(firestore, `deadlines/${deadlineId}`))
 }
 
-export function* addTaskSaga(action: PayloadAction<Task>) {
+export function* addDeadlineSaga(action: PayloadAction<Deadline>) {
   try {
-    yield call(addTaskToFirestore, action.payload)
-    yield put(setToastOpen({ message: "Dodano zadanie", severity: "success" }))
+    yield call(addDeadlineToFirestore, action.payload)
+    yield put(setToastOpen({ message: "Dodano deadline", severity: "success" }))
   } catch (error) {
-    yield put(setToastOpen({ message: "Wystąpił błądś", severity: "error" }))
+    yield put(setToastOpen({ message: "Wystąpił błąd", severity: "error" }))
   }
 }
 
-export function* deleteTaskSaga(
+export function* deleteDeadlineSaga(
   action: PayloadAction<{
-    taskId: string
-    facilityId?: string
-    colId?: string
-    cellSpan?: string
+    deadlineId: string
   }>
 ): Generator<any, void, any> {
   try {
-    const { taskId, facilityId, colId, cellSpan } = action.payload
-    if (facilityId && colId && cellSpan) {
-      yield put(
-        removeCells({ rowId: facilityId, colId, cellSpan: Number(cellSpan) })
-      )
-      yield put(removeTaskFromFacility({ facilityId, taskId }))
-    }
-    yield call(deleteTaskFromFirestore, taskId, facilityId)
-    yield put(removeTask(taskId))
+    const deadlineId = action.payload.deadlineId
+
+    yield call(deleteDeadlineFromFirestore, deadlineId)
+    yield put(removeDeadline(deadlineId))
     yield put(
-      setToastOpen({ message: "Usunięto zadanie", severity: "success" })
+      setToastOpen({ message: "Usunięto deadline", severity: "success" })
     )
   } catch (error) {
     yield put(setToastOpen({ message: "Wystąpił błąd", severity: "error" }))
   }
 }
 
-export function* setTaskDroppedSaga(
-  action: PayloadAction<{
-    taskId: string
-    dropped: boolean
-    rowId: string
-    colId: string
-    cellSpan: string
-  }>
-): Generator<any, void, any> {
-  try {
-    const { taskId, dropped, rowId, colId, cellSpan } = action.payload
-    if (dropped) {
-      yield put(
-        setCellsOccupied({ rowId, colId, taskId, cellSpan: Number(cellSpan) })
-      )
-    } else {
-      yield put(removeCells({ rowId, colId, cellSpan: Number(cellSpan) }))
-    }
-    yield put(setTaskDropped({ id: taskId, dropped }))
-    yield call(updateTaskInFirestore, taskId, { dropped })
-    // no need to set the toast here as the toast is displayed on successful grid update
-  } catch (error) {
-    yield put(setToastOpen({ message: "Wystąpił błąd", severity: "error" }))
-  }
-}
-
-export function* updateTaskSaga(
+export function* updateDeadlineSaga(
   action: PayloadAction<{ id: string; data: any }>
 ): Generator<any, void, any> {
   try {
     const { id, data } = action.payload
-    yield call(updateTaskInFirestore, id, data)
+    yield call(updateDeadlineInFirestore, id, data)
     yield put(
-      setToastOpen({ message: "Zaktualizowano zadanie", severity: "success" })
+      setToastOpen({ message: "Zaktualizowano deadline", severity: "success" })
     )
   } catch (error) {
     yield put(setToastOpen({ message: "Wystąpił błąd", severity: "success" }))
   }
 }
 
-export function* syncTasksSaga() {
+export function* syncDeadlinesSaga() {
   const channel = eventChannel((emitter) => {
-    const colRef = collection(firestore, "tasks")
+    const colRef = collection(firestore, "deadlines")
     const unsubscribe = onSnapshot(colRef, async () => {
-      const snapshot = await getDocs(collection(firestore, "tasks"))
-      const tasks = {} as { [key: string]: Task }
+      const snapshot = await getDocs(collection(firestore, "deadlines"))
+      const deadlines = {} as { [key: string]: Deadline }
       snapshot.forEach(
-        (doc) => (tasks[doc.id] = { id: doc.id, ...doc.data() } as Task)
+        (doc) =>
+          (deadlines[doc.id] = {
+            id: doc.id,
+            ...doc.data(),
+          } as unknown as Deadline)
       )
-      emitter(tasks)
+      emitter(deadlines)
     })
 
     return unsubscribe
@@ -140,8 +99,8 @@ export function* syncTasksSaga() {
 
   try {
     while (true) {
-      const tasks: { [key: string]: Task } = yield take(channel)
-      yield put(setTasks(tasks))
+      const deadlines: { [key: string]: Deadline } = yield take(channel)
+      yield put(setDeadlines(deadlines))
     }
   } finally {
     const isCancelled: boolean = yield cancelled()
@@ -151,32 +110,27 @@ export function* syncTasksSaga() {
   }
 }
 
-function* watchAddTask() {
-  yield takeLatest(addTaskStart.type, addTaskSaga)
+function* watchAddDeadline() {
+  yield takeLatest(addDeadlineStart.type, addDeadlineSaga)
 }
 
-function* watchDeleteTask() {
-  yield takeLatest(deleteTaskStart.type, deleteTaskSaga)
+function* watchDeleteDeadline() {
+  yield takeLatest(removeDeadlineStart.type, deleteDeadlineSaga)
 }
 
-function* watchUpdateTask() {
-  yield takeLatest(updateTaskStart.type, updateTaskSaga)
+function* watchUpdateDeadline() {
+  yield takeLatest(updateDeadlineStart.type, updateDeadlineSaga)
 }
 
-function* watchSetTaskDropped() {
-  yield takeLatest(setTaskDroppedStart.type, setTaskDroppedSaga)
+function* watchSyncDeadlines() {
+  yield takeLatest(syncDeadlinesStart.type, syncDeadlinesSaga)
 }
 
-function* watchSyncTasks() {
-  yield takeLatest(syncTasksStart.type, syncTasksSaga)
-}
-
-export default function* taskSagas() {
+export default function* deadlineSagas() {
   yield all([
-    watchAddTask(),
-    watchDeleteTask(),
-    watchSyncTasks(),
-    watchSetTaskDropped(),
-    watchUpdateTask(),
+    watchAddDeadline(),
+    watchDeleteDeadline(),
+    watchUpdateDeadline(),
+    watchSyncDeadlines(),
   ])
 }

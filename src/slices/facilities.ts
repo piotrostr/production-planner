@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 // Define the Facility interface
 export interface Facility {
   id: string
+  index: number
   title: string
   description: string
   bgcolor: string
@@ -64,8 +65,18 @@ export const facilitiesSlice = createSlice({
       }
     },
     setFacilities(state, action: PayloadAction<{ [id: string]: Facility }>) {
-      state.facilities = action.payload
+      //add index property to each facility by bgcolor order
+      const facilities = action.payload
+      const facilitiesArray = Object.values(facilities)
+      facilitiesArray.sort((a, b) => {
+        return a.bgcolor.localeCompare(b.bgcolor)
+      })
+      facilitiesArray.forEach((facility, index) => {
+        facility.index = index
+      })
+      state.facilities = facilities
       state.loading = false
+      state.error = null
     },
     fetchFacilitiesStart(state) {
       state.loading = true

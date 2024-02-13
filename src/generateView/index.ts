@@ -15,7 +15,7 @@ export const getYear = (date: Date): number => {
 }
 
 export const generateMonthView = (numberOfColumns: number) => {
-  const numOfCellsInViewport = 30
+  const numOfCellsInViewport = 25
   const cellWidth = (window.innerWidth - 225) / numOfCellsInViewport
 
   const headerBottomData = [
@@ -36,7 +36,10 @@ export const generateMonthView = (numberOfColumns: number) => {
       date.setDate(i + 1)
       return {
         field: "date" + i,
-        headerName: date.toLocaleDateString("pl-Pl"),
+        headerName: date.toLocaleDateString("pl-Pl", {
+          day: "2-digit",
+          month: "2-digit",
+        }),
         date: date.getTime(),
         editable: false,
         sortable: false,
@@ -47,7 +50,7 @@ export const generateMonthView = (numberOfColumns: number) => {
   )
   const headerTopData = headerBottomData.map((date) => {
     const week = getWeek(new Date(date.date))
-    return "Tydzień " + week
+    return "Tydzień " + week + " - " + getYear(new Date(date.date))
   })
 
   return {

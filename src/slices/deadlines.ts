@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { Timestamp } from "firebase/firestore"
 
 // Define the Task interface
 export interface Deadline {
-  id: number
+  id: string
   title: string
   description: string
   timestamp: number
@@ -40,16 +41,17 @@ export const deadlinesSlice = createSlice({
       const deadline = action.payload
       state.deadlines[deadline.id] = deadline
     },
-    setDeadlines: (state, action: PayloadAction<Deadline[]>) => {
-      const deadlines = action.payload
-      state.deadlines = deadlines.reduce(
-        (obj, deadline) => ({ ...obj, [deadline.id]: deadline }),
-        {}
-      )
+    setDeadlines: (
+      state,
+      action: PayloadAction<{ [id: string]: Deadline }>
+    ) => {
+      state.deadlines = action.payload
+      state.loading = false
     },
     addDeadlineStart: (
       state,
       action: PayloadAction<{
+        id: string
         title: string
         description: string
         timestamp: number
@@ -78,11 +80,25 @@ export const deadlinesSlice = createSlice({
       state.loading = true
       state.error = null
     },
+    syncDeadlinesStart: (state) => {
+      state.loading = true
+      state.error = null
+    },
   },
 })
 
 // Export the actions
-export const {} = deadlinesSlice.actions
+export const {
+  addDeadline,
+  removeDeadline,
+  updateDeadline,
+  setDeadlines,
+  addDeadlineStart,
+  removeDeadlineStart,
+  updateDeadlineStart,
+  setDeadlinesStart,
+  syncDeadlinesStart,
+} = deadlinesSlice.actions
 
 // Export the reducer
 export default deadlinesSlice.reducer

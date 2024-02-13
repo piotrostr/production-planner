@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { DataGridPro, useGridApiRef } from "@mui/x-data-grid-pro"
 import { Cell } from "../Cell/Cell"
 import { DraggedTask } from "../../App"
-import { View } from "../../../types/view"
 import { useAppSelector } from "../../hooks"
 import { Facility } from "../../slices/facilities"
 
@@ -72,9 +71,18 @@ export function DataGrid({ draggedTask }: DataGridProps) {
       disableMultipleRowSelection
       hideFooter
       rowHeight={50}
-      columnBuffer={5}
+      columnBuffer={30}
       pinnedRows={{
-        top: [{ id: "0", title: "", description: "", bgcolor: "", tasks: [] }],
+        top: [
+          {
+            id: "0",
+            title: "",
+            description: "",
+            bgcolor: "",
+            tasks: [],
+            index: 0,
+          },
+        ],
       }}
       initialState={{
         pinnedColumns: {

@@ -46,7 +46,8 @@ export function HeadCell({
       <Stack
         height="100%"
         justifyContent="center"
-        sx={{ pl: 1, borderRight: "1px solid black" }}
+        alignItems="center"
+        sx={{ borderRight: "1px solid black" }}
       >
         <Typography variant="body2" noWrap textOverflow="clip">
           {bottomLabel}

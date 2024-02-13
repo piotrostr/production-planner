@@ -6,10 +6,12 @@ import { TitleBar } from "../TitleBar"
 import { TextArea } from "../TextArea"
 import { SecondaryButton } from "../SecondaryButton"
 import { PrimaryButton } from "../PrimaryButton"
-import { doc, setDoc, collection, getDoc, Timestamp } from "firebase/firestore"
+import { doc, collection, Timestamp } from "firebase/firestore"
 import { firestore } from "../../../firebase.config"
 import { Form, Formik, FormikHelpers } from "formik"
 import { DateField } from "../DateField"
+import { useAppDispatch } from "../../hooks"
+import { addDeadlineStart } from "../../slices/deadlines"
 
 interface CreateDeadlineModalProps {
   open: boolean
@@ -17,13 +19,15 @@ interface CreateDeadlineModalProps {
 }
 
 interface FormData {
-  name: string
+  id: string
+  title: string
   description: string
   date: Date
 }
 
 const initialValues = {
-  name: "",
+  id: "",
+  title: "",
   description: "",
   date: new Date(),
 }
@@ -32,6 +36,7 @@ export function CreateDeadlineModal({
   open,
   setOpen,
 }: CreateDeadlineModalProps) {
+  const dispatch = useAppDispatch()
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: FormikHelpers<FormData>["setFieldValue"]
@@ -44,25 +49,18 @@ export function CreateDeadlineModal({
     values: FormData,
     resetForm: FormikHelpers<FormData>["resetForm"]
   ) => {
-    try {
-      const projectId = "PgwbCyMAeN300VU1LcsY"
-      const deadlinesRef = collection(
-        firestore,
-        "projects",
-        projectId,
-        "deadlines"
-      )
-      const deadlineRef = doc(deadlinesRef)
-      const deadlineId = deadlineRef.id
-      const deadlineSnap = await getDoc(deadlineRef)
-      if (!deadlineSnap.exists()) {
-        await setDoc(deadlineRef, {
-          ...values,
-          id: deadlineId,
-          timestamp: Timestamp.fromDate(values.date),
-        })
-      }
+    const { date, ...rest } = values
+    const timestamp = date.getTime()
 
+    try {
+      const id = doc(collection(firestore, "deadlines")).id
+      dispatch(
+        addDeadlineStart({
+          ...rest,
+          id,
+          timestamp,
+        })
+      )
       setOpen(null)
       resetForm()
     } catch (error) {
@@ -100,9 +98,9 @@ export function CreateDeadlineModal({
                       <TextField
                         placeholder="Nazwa"
                         icon={<DriveFileRenameOutlineIcon />}
-                        value={values.name}
+                        value={values.title}
                         onChange={(e) => handleInputChange(e, setFieldValue)}
-                        name="name"
+                        name="title"
                       />
                     </Stack>
                     <Stack

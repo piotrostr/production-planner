@@ -13,6 +13,7 @@ import deadlinesReducer from "../slices/deadlines" // Adjust the import path as 
 import gridSagas from "../sagas/grid"
 import tasksSagas from "../sagas/tasks"
 import facilitiesSagas from "../sagas/facilities"
+import deadlineSagas from "../sagas/deadlines"
 
 const sagaMiddleware = createSagaMiddleware()
 
@@ -31,7 +32,7 @@ export const store = configureStore({
 })
 
 function* rootSaga() {
-  yield all([gridSagas(), tasksSagas(), facilitiesSagas()])
+  yield all([gridSagas(), tasksSagas(), facilitiesSagas(), deadlineSagas()])
 }
 
 sagaMiddleware.run(rootSaga)

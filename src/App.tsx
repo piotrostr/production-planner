@@ -34,6 +34,7 @@ import { syncFacilitiesStart } from "./slices/facilities"
 import { setToastClose, setToastOpen } from "./slices/toast"
 import { setMonthView } from "./slices/view"
 import { TimelineToolbar } from "./components/TimelineToolbar"
+import { syncDeadlinesStart } from "./slices/deadlines"
 
 export interface DraggedTask {
   draggableId: string | null
@@ -52,6 +53,7 @@ function App() {
     dispatch(syncTasksStart())
     dispatch(syncFacilitiesStart())
     dispatch(syncGridStart())
+    dispatch(syncDeadlinesStart())
     dispatch(initializeGridStart())
   }, [dispatch])
 

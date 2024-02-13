@@ -2,13 +2,17 @@ import { Draggable } from "../Draggable"
 import { Droppable } from "../Droppable"
 import { Task } from "../Task"
 import { DroppedTask } from "../DroppedTask"
-import { Box, Stack } from "@mui/material"
+import { Stack } from "@mui/material"
 import { useAppSelector } from "../../hooks"
 
 import { Task as TaskType } from "../../slices/tasks"
+import { Deadlines } from "../Deadlines"
 
 interface DataCellProps {
-  draggedTask: any
+  draggedTask: {
+    draggableId: string | null
+    task: TaskType | null
+  }
   cellWidth: number
   rowId: string | number
   date: string
@@ -23,6 +27,9 @@ export function DataCell({
   const cellKey = `${rowId}-${time}`
   const tasks = useAppSelector((state) => state.tasks.tasks)
   const cells = useAppSelector((state) => state.view.view?.cells)
+  const facilities = useAppSelector((state) => state.facilities.facilities)
+  const rowIndex = facilities[rowId].index
+  const lastIndex = Object.keys(facilities).length - 1
   const cell = cells?.[cellKey]
   const tasksInCell = cell?.tasks
 
@@ -99,6 +106,7 @@ export function DataCell({
             : null}
         </>
       </Droppable>
+      <Deadlines time={time} rowIndex={rowIndex} lastIndex={lastIndex} />
     </Stack>
   )
 }

@@ -1,7 +1,3 @@
-//lokalizacja -> czynnosc -> opis -> siła robocza -> grupa -> kolor
-// sila robocza - number field, icon={<DriveFileRenameOutlineIcon />}
-//
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
 import { Stack, Typography } from "@mui/material"
 import { Modal } from "../Modal"
 import { TitleBar } from "../TitleBar"
@@ -16,6 +12,7 @@ import { ColorField } from "../ColorField"
 import { NumberField } from "../NumberField"
 import { useAppDispatch } from "../../hooks"
 import { addFacilityStart } from "../../slices/facilities"
+import GroupsIcon from "@mui/icons-material/Groups"
 
 interface CreateFacilityModalProps {
   open: boolean
@@ -179,7 +176,7 @@ export function CreateFacilityModal({
                       </Typography>
                       <NumberField
                         placeholder="ilość osób"
-                        icon={<DriveFileRenameOutlineIcon />}
+                        icon={<GroupsIcon />}
                         value={values.manpower}
                         onChange={(e) => handleInputChange(e, setFieldValue)}
                         name="manpower"

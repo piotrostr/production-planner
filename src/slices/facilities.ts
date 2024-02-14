@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 // Define the Facility interface
 export interface Facility {
   id: string
-  index: number
+  index?: number
   title: string
   description: string
   bgcolor: string

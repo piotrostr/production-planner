@@ -1,12 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { Timestamp } from "firebase/firestore"
 
 // Define the Task interface
 export interface Deadline {
   id: string
   title: string
   description: string
-  timestamp: number
+  timestamp: {
+    day: number
+    week: number
+    month: number
+  }
 }
 
 // Define the state structure for tasks
@@ -54,7 +57,11 @@ export const deadlinesSlice = createSlice({
         id: string
         title: string
         description: string
-        timestamp: number
+        timestamp: {
+          day: number
+          week: number
+          month: number
+        }
       }>
     ) => {
       state.loading = true
@@ -70,7 +77,11 @@ export const deadlinesSlice = createSlice({
         id: number
         title: string
         description: string
-        timestamp: number
+        timestamp: {
+          day: number
+          week: number
+          month: number
+        }
       }>
     ) => {
       state.loading = true

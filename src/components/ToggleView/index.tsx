@@ -72,9 +72,8 @@ export function ToggleView({}: ToggleViewProps) {
       </Typography>
       <ToggleButtonGroup
         color="primary"
-        value={view.name}
+        value={view?.name}
         exclusive
-        aria-label="Platform"
         onChange={handleChange}
         sx={{
           all: "unset",

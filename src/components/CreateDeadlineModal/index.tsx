@@ -50,7 +50,17 @@ export function CreateDeadlineModal({
     resetForm: FormikHelpers<FormData>["resetForm"]
   ) => {
     const { date, ...rest } = values
+    const quarterDate = new Date(2024, 1, 1, 0, 0)
+    const yearDate = new Date(2024, 1, 1, 0, 0)
     const timestamp = date.getTime()
+    while (timestamp >= quarterDate.getTime() + 7 * 24 * 60 * 60 * 1000) {
+      quarterDate.setDate(quarterDate.getDate() + 7)
+    }
+    while (timestamp >= yearDate.getTime() + 30 * 24 * 60 * 60 * 1000) {
+      yearDate.setMonth(yearDate.getMonth() + 1)
+    }
+    const weekTimestamp = quarterDate.getTime()
+    const monthTimestamp = yearDate.getTime()
 
     try {
       const id = doc(collection(firestore, "deadlines")).id
@@ -58,7 +68,11 @@ export function CreateDeadlineModal({
         addDeadlineStart({
           ...rest,
           id,
-          timestamp,
+          timestamp: {
+            day: timestamp,
+            week: weekTimestamp,
+            month: monthTimestamp,
+          },
         })
       )
       setOpen(null)

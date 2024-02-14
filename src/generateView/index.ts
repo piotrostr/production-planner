@@ -93,7 +93,7 @@ export const generateQuarterYearView = (numberOfColumns: number) => {
   )
   const headerTopData = headerBottomData.map((date) => {
     const month = getMonth(new Date(date.date))
-    return month
+    return month + " - " + getYear(new Date(date.date))
   })
 
   return {
@@ -136,7 +136,7 @@ export const generateYearView = (numberOfColumns: number) => {
   )
   const headerTopData = headerBottomData.map((date) => {
     const year = getYear(new Date(date.date))
-    return `${year}`
+    return `Rok ${year}`
   })
 
   return {

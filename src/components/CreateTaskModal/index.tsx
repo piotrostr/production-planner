@@ -1,5 +1,5 @@
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"
-import { Stack, Typography } from "@mui/material"
+import { Stack, Tooltip, Typography } from "@mui/material"
 import { TextField } from "../TextField"
 import { Modal } from "../Modal"
 import { TitleBar } from "../TitleBar"
@@ -162,16 +162,23 @@ export function CreateTaskModal({
                         name="description"
                       />
                     </Stack>
+                    {taskId && task.dropped ? (
+                      <Typography variant="body2" color="error">
+                        Aby zmienić czas trwania, usuń zadanie z harmonogramu
+                      </Typography>
+                    ) : null}
                     <Stack direction="row" spacing={5} alignItems="center">
                       <Typography variant="body1" width={100}>
                         Czas trwania
                       </Typography>
+
                       <NumberField
                         placeholder="Czas"
                         icon={<Typography fontWeight={600}>[dni]</Typography>}
                         value={values.duration}
                         onChange={(e) => handleInputChange(e, setFieldValue)}
                         name="duration"
+                        disabled={taskId ? true : false}
                       />
                     </Stack>
                     <Stack

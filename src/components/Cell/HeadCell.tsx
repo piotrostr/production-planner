@@ -28,6 +28,7 @@ export function HeadCell({
         width="100%"
         sx={{
           boxSizing: "border-box",
+          justifyContent: "center",
           borderRight:
             topData[columnIndex + 1] == topData[columnIndex]
               ? "none"

@@ -71,9 +71,9 @@ export function DroppedTask({
           sx={{
             maxWidth: "100%",
             boxSizing: "border-box",
-            textOverflow: "clip",
+            textOverflow: "ellipsis",
             overflow: "hidden",
-            pl: "min(20px, 10%)",
+            px: "min(20px, 10%)",
           }}
         >
           {task.title}

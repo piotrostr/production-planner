@@ -23,6 +23,9 @@ import {
   updateDoc,
 } from "firebase/firestore"
 import { setToastOpen } from "../slices/toast"
+import { setTaskDropped } from "../slices/tasks"
+import { removeFacilityFromGrid } from "../slices/grid"
+import { updateTaskInFirestore } from "./tasks"
 
 export const addFacilityToFirestore = async (facility: Facility) => {
   await setDoc(doc(firestore, `facilities/${facility.id}`), facility)
@@ -71,10 +74,21 @@ export function* addFacilitySaga(action: PayloadAction<Facility>) {
 }
 
 export function* deleteFacilitySaga(
-  action: PayloadAction<string>
+  action: PayloadAction<Facility>
 ): Generator<any, void, any> {
   try {
-    const facilityId = action.payload
+    const facilityId = action.payload.id
+    const tasks = action.payload.tasks
+    yield put(removeFacilityFromGrid({ facilityId }))
+    for (const taskId of tasks) {
+      yield put(
+        setTaskDropped({
+          id: taskId,
+          dropped: false,
+        })
+      )
+      yield call(updateTaskInFirestore, taskId, { dropped: false })
+    }
     yield call(deleteFacilityFromFirestore, facilityId)
     yield put(removeFacility(facilityId))
   } catch (error) {

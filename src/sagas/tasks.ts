@@ -40,7 +40,7 @@ const addTaskToFirestore = async (task: Task) => {
   await setDoc(doc(firestore, `tasks/${task.id}`), task)
 }
 
-const updateTaskInFirestore = async (
+export const updateTaskInFirestore = async (
   id: string,
   updateData: { [key: string]: any }
 ) => {

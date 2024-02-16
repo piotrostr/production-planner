@@ -106,6 +106,21 @@ const gridSlice = createSlice({
       }
       delete state.grid.cells[action.payload.cellId]
     },
+    removeFacilityFromGrid: (
+      state,
+      action: PayloadAction<{ facilityId: string }>
+    ) => {
+      if (!state.grid) {
+        return
+      }
+      const { facilityId } = action.payload
+      Object.keys(state.grid.cells).forEach((cellId) => {
+        const cell = state.grid?.cells[cellId]
+        if (cellId.includes(facilityId) && cell) {
+          delete state.grid?.cells[cellId]
+        }
+      })
+    },
     removeCells: (
       state,
       action: PayloadAction<{ rowId: string; colId: string; cellSpan: number }>
@@ -165,6 +180,7 @@ export const {
   setCell,
   setCellsOccupied,
   initializeGridStart,
+  removeFacilityFromGrid,
   syncGridStart,
 } = gridSlice.actions
 

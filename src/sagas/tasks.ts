@@ -2,7 +2,10 @@ import { eventChannel } from "redux-saga"
 import { PayloadAction } from "@reduxjs/toolkit"
 import { call, put, take, cancelled, takeLatest, all } from "redux-saga/effects"
 import { firestore } from "../../firebase.config"
-import { removeTaskFromFacility } from "../slices/facilities"
+import {
+  assignTaskToFacility,
+  removeTaskFromFacility,
+} from "../slices/facilities"
 import {
   arrayRemove,
   collection,
@@ -24,9 +27,14 @@ import {
   setTaskDroppedStart,
   setTaskDropped,
   updateTaskStart,
+  moveTaskStart,
 } from "../slices/tasks"
 import { setToastOpen } from "../slices/toast"
 import { removeCells, setCellsOccupied } from "../slices/grid"
+import {
+  assignTaskToFacilityInFirestore,
+  removeTaskFromFacilityInFirestore,
+} from "./facilities"
 
 const addTaskToFirestore = async (task: Task) => {
   await setDoc(doc(firestore, `tasks/${task.id}`), task)
@@ -98,12 +106,49 @@ export function* setTaskDroppedSaga(
       yield put(
         setCellsOccupied({ rowId, colId, taskId, cellSpan: Number(cellSpan) })
       )
+      yield put(assignTaskToFacility({ facilityId: rowId, taskId }))
+      yield call(assignTaskToFacilityInFirestore, rowId, taskId)
     } else {
       yield put(removeCells({ rowId, colId, cellSpan: Number(cellSpan) }))
+      yield put(removeTaskFromFacility({ facilityId: rowId, taskId }))
+      yield call(removeTaskFromFacilityInFirestore, rowId, taskId)
     }
     yield put(setTaskDropped({ id: taskId, dropped }))
     yield call(updateTaskInFirestore, taskId, { dropped })
     // no need to set the toast here as the toast is displayed on successful grid update
+  } catch (error) {
+    yield put(setToastOpen({ message: "Wystąpił błąd", severity: "error" }))
+  }
+}
+
+export function* moveTaskSaga(
+  action: PayloadAction<{
+    sourceRowId: string
+    sourceColId: string
+    rowId: string
+    colId: string
+    cellSpan: number
+    taskId: string
+  }>
+): Generator<any, void, any> {
+  const { sourceRowId, sourceColId, rowId, colId, cellSpan, taskId } =
+    action.payload
+  try {
+    yield put(
+      removeCells({
+        rowId: sourceRowId,
+        colId: sourceColId,
+        cellSpan,
+      })
+    )
+    yield put(
+      setCellsOccupied({ rowId, colId, taskId, cellSpan: Number(cellSpan) })
+    )
+    yield put(removeTaskFromFacility({ facilityId: sourceRowId, taskId }))
+    yield put(assignTaskToFacility({ facilityId: rowId, taskId }))
+    yield call(assignTaskToFacilityInFirestore, rowId, taskId)
+    yield call(removeTaskFromFacilityInFirestore, sourceRowId, taskId)
+    yield call(updateTaskInFirestore, taskId, { rowId, colId, cellSpan })
   } catch (error) {
     yield put(setToastOpen({ message: "Wystąpił błąd", severity: "error" }))
   }
@@ -167,6 +212,10 @@ function* watchSetTaskDropped() {
   yield takeLatest(setTaskDroppedStart.type, setTaskDroppedSaga)
 }
 
+function* watchMoveTask() {
+  yield takeLatest(moveTaskStart.type, moveTaskSaga)
+}
+
 function* watchSyncTasks() {
   yield takeLatest(syncTasksStart.type, syncTasksSaga)
 }
@@ -177,6 +226,7 @@ export default function* taskSagas() {
     watchDeleteTask(),
     watchSyncTasks(),
     watchSetTaskDropped(),
+    watchMoveTask(),
     watchUpdateTask(),
   ])
 }

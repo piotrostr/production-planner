@@ -22,13 +22,16 @@ import { generateMonthView } from "./generateView"
 
 import {
   initializeGridStart,
-  removeCells,
-  setCellsOccupied,
   syncGridStart,
   updateGridStart,
 } from "./slices/grid"
 
-import { Task, setTaskDroppedStart, syncTasksStart } from "./slices/tasks"
+import {
+  Task,
+  moveTaskStart,
+  setTaskDroppedStart,
+  syncTasksStart,
+} from "./slices/tasks"
 import { useAppDispatch, useAppSelector } from "./hooks"
 import { syncFacilitiesStart } from "./slices/facilities"
 import { setToastClose, setToastOpen } from "./slices/toast"
@@ -128,18 +131,13 @@ function App() {
     const sourceId = active.id as string
     const [sourceRowId, sourceColId] = sourceId.split("-")
     dispatch(
-      removeCells({
-        rowId: sourceRowId,
-        colId: sourceColId,
-        cellSpan: cellSpan,
-      })
-    )
-    dispatch(
-      setCellsOccupied({
+      moveTaskStart({
+        taskId: task.id,
         rowId,
-        colId,
-        taskId: task?.id,
+        colId: colId,
         cellSpan,
+        sourceRowId,
+        sourceColId: Number(sourceColId),
       })
     )
     setIsGridUpdated(true)

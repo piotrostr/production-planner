@@ -1,28 +1,26 @@
-import Divider from "@mui/material/Divider"
-import MenuList from "@mui/material/MenuList"
-import MenuItem from "@mui/material/MenuItem"
-import ListItemText from "@mui/material/ListItemText"
-import ListItemIcon from "@mui/material/ListItemIcon"
-import EditIcon from "@mui/icons-material/Edit"
-import DeleteIcon from "@mui/icons-material/Delete"
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever"
-import AssignmentIcon from "@mui/icons-material/Assignment"
-import { Menu } from "@mui/material"
-import { Task, deleteTaskStart, setTaskDroppedStart } from "../../slices/tasks"
-import { CreateTaskModal } from "../CreateTaskModal"
-import { useEffect, useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../hooks"
-import { updateGridStart } from "../../slices/grid"
-import { setDragDisabled } from "../../slices/drag"
+import Divider from "@mui/material/Divider";
+import MenuList from "@mui/material/MenuList";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import { Menu } from "@mui/material";
+import { Task } from "../../slices/tasks";
+import { CreateTaskModal } from "../CreateTaskModal";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { updateGridStart } from "../../slices/grid";
 
 interface ContextMenuProps {
-  open: boolean
-  onClose: () => void
-  task: Task
-  cursorPosition: { top: number; left: number }
-  rowId: string
-  colId: number
-  cellSpan: number
+  open: boolean;
+  onClose: () => void;
+  modalOpen: string | null;
+  setModalOpen: React.Dispatch<React.SetStateAction<string | null>>;
+  isGridUpdated: boolean;
+  setIsGridUpdated: React.Dispatch<React.SetStateAction<boolean>>;
+  task: Task;
+  cursorPosition: { top: number; left: number };
+  options: { title: string; onClick: () => void; icon: JSX.Element }[];
 }
 
 export function ContextMenu({
@@ -30,21 +28,21 @@ export function ContextMenu({
   onClose,
   task,
   cursorPosition,
-  rowId,
-  colId,
-  cellSpan,
+  options,
+  isGridUpdated,
+  setIsGridUpdated,
+  modalOpen,
+  setModalOpen,
 }: ContextMenuProps) {
-  const [modalOpen, setModalOpen] = useState<string | null>(null)
-  const [isGridUpdated, setIsGridUpdated] = useState(false)
-  const dispatch = useAppDispatch()
-  const grid = useAppSelector((state) => state.grid.grid)
+  const dispatch = useAppDispatch();
+  const grid = useAppSelector((state) => state.grid.grid);
 
   useEffect(() => {
     if (isGridUpdated && grid) {
-      dispatch(updateGridStart(grid))
-      setIsGridUpdated(false)
+      dispatch(updateGridStart(grid));
+      setIsGridUpdated(false);
     }
-  }, [isGridUpdated, dispatch, grid])
+  }, [isGridUpdated, dispatch, setIsGridUpdated, grid]);
 
   return (
     <>
@@ -68,57 +66,12 @@ export function ContextMenu({
             <ListItemText>{task.title}</ListItemText>
           </MenuItem>
           <Divider />
-          <MenuItem
-            onClick={() => {
-              setModalOpen("updateTask")
-              onClose()
-              dispatch(setDragDisabled(true))
-            }}
-          >
-            <ListItemIcon>
-              <EditIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Edytuj</ListItemText>
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              dispatch(
-                setTaskDroppedStart({
-                  taskId: task.id,
-                  dropped: false,
-                  rowId,
-                  colId,
-                  cellSpan,
-                })
-              )
-              setIsGridUpdated(true)
-              onClose()
-            }}
-          >
-            <ListItemIcon>
-              <DeleteIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Usuń z osi czasu</ListItemText>
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              dispatch(
-                deleteTaskStart({
-                  taskId: task.id,
-                  facilityId: rowId,
-                  colId,
-                  cellSpan,
-                })
-              )
-              setIsGridUpdated(true)
-              onClose()
-            }}
-          >
-            <ListItemIcon>
-              <DeleteForeverIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Usuń</ListItemText>
-          </MenuItem>
+          {options.map((option, idx) => (
+            <MenuItem key={idx} onClick={option.onClick}>
+              <ListItemIcon>{option.icon}</ListItemIcon>
+              <ListItemText>{option.title}</ListItemText>
+            </MenuItem>
+          ))}
         </MenuList>
       </Menu>
       <CreateTaskModal
@@ -127,5 +80,5 @@ export function ContextMenu({
         taskId={task.id}
       />
     </>
-  )
+  );
 }

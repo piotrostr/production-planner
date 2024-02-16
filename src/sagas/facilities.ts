@@ -12,21 +12,42 @@ import {
   syncFacilitiesStart,
 } from "../slices/facilities"
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
   getDocs,
   onSnapshot,
   setDoc,
+  updateDoc,
 } from "firebase/firestore"
 import { setToastOpen } from "../slices/toast"
 
-const addFacilityToFirestore = async (facility: Facility) => {
+export const addFacilityToFirestore = async (facility: Facility) => {
   await setDoc(doc(firestore, `facilities/${facility.id}`), facility)
 }
 
-const deleteFacilityFromFirestore = async (facilityId: string) => {
+export const deleteFacilityFromFirestore = async (facilityId: string) => {
   await deleteDoc(doc(firestore, `facilities/${facilityId}`))
+}
+
+export const assignTaskToFacilityInFirestore = async (
+  facilityId: string,
+  taskId: string
+) => {
+  await updateDoc(doc(firestore, `facilities/${facilityId}`), {
+    tasks: arrayUnion(taskId),
+  })
+}
+
+export const removeTaskFromFacilityInFirestore = async (
+  facilityId: string,
+  taskId: string
+) => {
+  await updateDoc(doc(firestore, `facilities/${facilityId}`), {
+    tasks: arrayRemove(taskId),
+  })
 }
 
 export function* addFacilitySaga(action: PayloadAction<Facility>) {

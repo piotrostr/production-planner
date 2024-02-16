@@ -122,6 +122,20 @@ export const tasksSlice = createSlice({
       state.loading = true
       state.error = null
     },
+    moveTaskStart(
+      state,
+      action: PayloadAction<{
+        sourceRowId: string
+        sourceColId: number
+        rowId: string
+        colId: string
+        cellSpan: number
+        taskId: string
+      }>
+    ) {
+      state.loading = true
+      state.error = null
+    },
     deleteTaskStart(
       state,
       action: PayloadAction<{
@@ -166,6 +180,7 @@ export const {
   taskOperationFailed,
   updateTasksStart,
   addTaskStart,
+  moveTaskStart,
   deleteTaskStart,
   updateTaskStart,
   setTaskDroppedStart,

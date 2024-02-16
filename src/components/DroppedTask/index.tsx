@@ -140,7 +140,7 @@ export function DroppedTask({
         open={open}
         cursorPosition={cursorPosition}
         onClose={handleClose}
-        task={task}
+        item={task}
       />
     </Stack>
   );

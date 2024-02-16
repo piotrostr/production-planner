@@ -1,44 +1,53 @@
-import { Stack, Typography } from "@mui/material"
-import { Modal } from "../Modal"
-import { TitleBar } from "../TitleBar"
-import { TextArea } from "../TextArea"
-import { SecondaryButton } from "../SecondaryButton"
-import { PrimaryButton } from "../PrimaryButton"
-import { doc, collection } from "firebase/firestore"
-import { firestore } from "../../../firebase.config"
-import { Form, Formik, FormikHelpers } from "formik"
-import { Dropdown } from "../Dropdown"
-import { ColorField } from "../ColorField"
-import { NumberField } from "../NumberField"
-import { useAppDispatch } from "../../hooks"
-import { addFacilityStart } from "../../slices/facilities"
-import GroupsIcon from "@mui/icons-material/Groups"
+import { Stack, Typography } from "@mui/material";
+import { Modal } from "../Modal";
+import { TitleBar } from "../TitleBar";
+import { TextArea } from "../TextArea";
+import { SecondaryButton } from "../SecondaryButton";
+import { PrimaryButton } from "../PrimaryButton";
+import { doc, collection } from "firebase/firestore";
+import { firestore } from "../../../firebase.config";
+import { Form, Formik, FormikHelpers } from "formik";
+import { Dropdown } from "../Dropdown";
+import { ColorField } from "../ColorField";
+import { NumberField } from "../NumberField";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import {
+  Facility,
+  addFacilityStart,
+  updateFacilityStart,
+} from "../../slices/facilities";
+import GroupsIcon from "@mui/icons-material/Groups";
+import { useEffect, useState } from "react";
 
 interface CreateFacilityModalProps {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<string | null>>
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<string | null>>;
+  facilityId?: string;
 }
 
 interface FormData {
-  location: string
-  activity: string
-  description: string
-  manpower: number
-  bgcolor: string
+  location: string;
+  activity: string;
+  description: string;
+  manpower: number;
+  bgcolor: string;
 }
 
 const initialValues = {
+  id: "",
+  tasks: [],
+  title: "",
   location: "",
   activity: "",
   description: "",
   manpower: 0,
   bgcolor: "",
-}
+};
 
 const locations = [
   { value: "BOP_GA", label: "BOP_GA" },
   { value: "BOP_GD", label: "BOP_GD" },
-]
+];
 
 const activities = [
   { value: "CUTTING", label: "CUTTING" },
@@ -48,7 +57,7 @@ const activities = [
   { value: "QUALITY CONTROL", label: "QUALITY CONTROL" },
   { value: "PAINTING", label: "PAINTING" },
   { value: "INSTALLATION", label: "INSTALLATION" },
-]
+];
 
 const colorOptions = [
   {
@@ -71,49 +80,64 @@ const colorOptions = [
     bgcolor: "#b19cd9",
     color: "#000000",
   },
-]
+];
 
 export function CreateFacilityModal({
   open,
   setOpen,
+  facilityId,
 }: CreateFacilityModalProps) {
-  const dispatch = useAppDispatch()
+  const [facility, setFacility] = useState<Facility>(initialValues);
+  const dispatch = useAppDispatch();
+  const facilities = useAppSelector((state) => state.facilities.facilities);
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: FormikHelpers<FormData>["setFieldValue"]
   ) => {
-    const { name, value } = e.target
-    setFieldValue(name, value)
-  }
+    const { name, value } = e.target;
+    setFieldValue(name, value);
+  };
+
+  useEffect(() => {
+    if (facilityId) {
+      const facility = facilities[facilityId];
+      setFacility(facility);
+    }
+  }, [facilityId, facilities]);
 
   const handleSubmit = async (
     values: FormData,
     resetForm: FormikHelpers<FormData>["resetForm"]
   ) => {
     try {
-      const facilityId = doc(collection(firestore, "facilities")).id
-      dispatch(
-        addFacilityStart({
-          id: facilityId,
-          title: values.location + " " + values.activity,
-          tasks: [],
-          ...values,
-        })
-      )
-      setOpen(null)
-      resetForm()
+      if (!facilityId) {
+        const id = doc(collection(firestore, "facilities")).id;
+        dispatch(
+          addFacilityStart({
+            ...values,
+            id: id,
+            title: values.location + " " + values.activity,
+            tasks: [],
+          })
+        );
+      } else {
+        dispatch(updateFacilityStart({ id: facility.id, data: values }));
+      }
+      setOpen(null);
+      resetForm();
     } catch (error) {
-      resetForm()
+      resetForm();
     }
-  }
+  };
 
   const handleClose = (resetForm: FormikHelpers<FormData>["resetForm"]) => {
-    setOpen(null)
-    resetForm()
-  }
+    setOpen(null);
+    resetForm();
+  };
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={facility}
+      enableReinitialize
       onSubmit={(values: FormData, { resetForm }) =>
         handleSubmit(values, resetForm)
       }
@@ -125,7 +149,9 @@ export function CreateFacilityModal({
               <Stack alignItems="center" justifyContent="center">
                 <TitleBar onClose={() => handleClose(resetForm)} />
                 <Stack p={2} bgcolor="white" width="fit-content" spacing={4}>
-                  <Typography variant="h6">Dodaj stanowisko</Typography>
+                  <Typography variant="h6">
+                    {facilityId ? "Edytuj" : "Dodaj"} stanowisko
+                  </Typography>
                   <Stack spacing={2}>
                     <Stack
                       direction="row"
@@ -221,5 +247,5 @@ export function CreateFacilityModal({
         </>
       )}
     </Formik>
-  )
+  );
 }

@@ -70,7 +70,7 @@ function App() {
         setMonthView({ view: generateMonthView(1000), grid: cellStateMap })
       )
     }
-  }, [dispatch, gridState.grid])
+  }, [dispatch, cellStateMap])
 
   useEffect(() => {
     if (isGridUpdated && gridState.grid) {

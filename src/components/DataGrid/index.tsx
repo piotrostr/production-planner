@@ -11,21 +11,26 @@ interface DataGridProps {
 
 export function DataGrid({ draggedTask }: DataGridProps) {
   const [, setCellWidth] = useState<number>(100)
+  const [sortedFacilities, setSortedFacilities] = useState<Facility[]>([])
   const apiRef = useGridApiRef()
 
   const facilitiesState = useAppSelector((state) => state.facilities)
   const viewState = useAppSelector((state) => state.view)
   const facilities = facilitiesState.facilities
   const view = viewState.view
-  const sortedFacilities = Object.values(facilities).sort((a, b) => {
-    if (a.bgcolor < b.bgcolor) {
-      return -1
-    }
-    if (a.bgcolor > b.bgcolor) {
-      return 1
-    }
-    return 0
-  })
+
+  useEffect(() => {
+    const sortedFacilities = Object.values(facilities).sort((a, b) => {
+      if (a.bgcolor < b.bgcolor) {
+        return -1
+      }
+      if (a.bgcolor > b.bgcolor) {
+        return 1
+      }
+      return 0
+    })
+    setSortedFacilities(sortedFacilities)
+  }, [facilities])
 
   const handleZoom = (event: WheelEvent) => {
     // Check if the "Ctrl" key is pressed
@@ -76,6 +81,9 @@ export function DataGrid({ draggedTask }: DataGridProps) {
         top: [
           {
             id: "0",
+            activity: "",
+            location: "",
+            manpower: 0,
             title: "",
             description: "",
             bgcolor: "",

@@ -121,7 +121,12 @@ export function CreateFacilityModal({
           })
         );
       } else {
-        dispatch(updateFacilityStart({ id: facility.id, data: values }));
+        dispatch(
+          updateFacilityStart({
+            id: facility.id,
+            data: { ...values, title: values.location + " " + values.activity },
+          })
+        );
       }
       setOpen(null);
       resetForm();

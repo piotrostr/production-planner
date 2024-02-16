@@ -68,15 +68,15 @@ export function Task({ task }: TaskProps) {
         {task.title}
       </Typography>
       <ContextMenu
+        open={open}
+        onClose={handleClose}
+        item={task}
+        cursorPosition={cursorPosition}
         options={contextMenuOptions}
-        modalOpen={modalOpen}
-        setModalOpen={setModalOpen}
         isGridUpdated={isGridUpdated}
         setIsGridUpdated={setIsGridUpdated}
-        open={open}
-        cursorPosition={cursorPosition}
-        onClose={handleClose}
-        task={task}
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
       />
     </Stack>
   );

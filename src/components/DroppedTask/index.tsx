@@ -96,52 +96,56 @@ export function DroppedTask({
   ];
 
   return (
-    <Stack
-      onContextMenu={(e) => handleRightClick(e)}
-      key={task.id}
-      width={width ? width : cellWidth * task.duration}
-      height="2rem"
-      justifyContent="center"
-      position="absolute"
-      top="50%"
-      left={left}
-      sx={{
-        zIndex: 20,
-        transform: "translateY(-50%)",
-        boxSizing: "border-box",
-        bgcolor: task.bgcolor,
-        color: "black",
-        borderRadius: 1,
-        border: "1px solid black",
-      }}
-    >
-      {task.title ? (
-        <Typography
-          variant="body2"
-          fontWeight={700}
-          noWrap
+    <>
+      {task ? (
+        <Stack
+          onContextMenu={(e) => handleRightClick(e)}
+          key={task.id}
+          width={width ? width : cellWidth * task.duration}
+          height="2rem"
+          justifyContent="center"
+          position="absolute"
+          top="50%"
+          left={left}
           sx={{
-            maxWidth: "100%",
+            zIndex: 20,
+            transform: "translateY(-50%)",
             boxSizing: "border-box",
-            textOverflow: "ellipsis",
-            overflow: "hidden",
-            px: "min(20px, 10%)",
+            bgcolor: task.bgcolor,
+            color: "black",
+            borderRadius: 1,
+            border: "1px solid black",
           }}
         >
-          {task.title}
-        </Typography>
+          {task.title ? (
+            <Typography
+              variant="body2"
+              fontWeight={700}
+              noWrap
+              sx={{
+                maxWidth: "100%",
+                boxSizing: "border-box",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                px: "min(20px, 10%)",
+              }}
+            >
+              {task.title}
+            </Typography>
+          ) : null}
+          <ContextMenu
+            options={contextMenuOptions}
+            modalOpen={modalOpen}
+            setModalOpen={setModalOpen}
+            isGridUpdated={isGridUpdated}
+            setIsGridUpdated={setIsGridUpdated}
+            open={open}
+            cursorPosition={cursorPosition}
+            onClose={handleClose}
+            item={task}
+          />
+        </Stack>
       ) : null}
-      <ContextMenu
-        options={contextMenuOptions}
-        modalOpen={modalOpen}
-        setModalOpen={setModalOpen}
-        isGridUpdated={isGridUpdated}
-        setIsGridUpdated={setIsGridUpdated}
-        open={open}
-        cursorPosition={cursorPosition}
-        onClose={handleClose}
-        item={task}
-      />
-    </Stack>
+    </>
   );
 }

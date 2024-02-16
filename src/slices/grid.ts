@@ -115,8 +115,7 @@ const gridSlice = createSlice({
       }
       const { facilityId } = action.payload
       Object.keys(state.grid.cells).forEach((cellId) => {
-        const cell = state.grid?.cells[cellId]
-        if (cellId.includes(facilityId) && cell) {
+        if (cellId.includes(facilityId)) {
           delete state.grid?.cells[cellId]
         }
       })

@@ -99,7 +99,7 @@ export const facilitiesSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    deleteFacilityStart(state /*action: PayloadAction<GridType>*/) {
+    deleteFacilityStart(state, action: PayloadAction<Facility>) {
       state.loading = true;
       state.error = null;
     },

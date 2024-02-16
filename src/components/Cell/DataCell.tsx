@@ -28,7 +28,7 @@ export function DataCell({
   const tasks = useAppSelector((state) => state.tasks.tasks)
   const cells = useAppSelector((state) => state.view.view?.cells)
   const facilities = useAppSelector((state) => state.facilities.facilities)
-  const rowIndex = facilities[rowId].index
+  const rowIndex = facilities[rowId]?.index
   const lastIndex = Object.keys(facilities).length - 1
   const cell = cells?.[cellKey]
   const tasksInCell = cell?.tasks

@@ -18,7 +18,7 @@ export const fetchGridFromFirestore = async (): Promise<GridType | null> => {
 }
 
 export const updateGridInFirestore = async (
-  gridData: GridType
+  gridData: GridType,
 ): Promise<void> => {
   const gridRef = doc(firestore, "grid", "first-grid")
   const gridSnapshot = await getDoc(gridRef)
@@ -45,7 +45,7 @@ function* updateGridSaga(action: PayloadAction<GridType>) {
     yield call(updateGridInFirestore, action.payload)
   } catch (error) {
     yield put(
-      setToastOpen({ message: "Grid update failed", severity: "error" })
+      setToastOpen({ message: "Grid update failed", severity: "error" }),
     )
   }
 }

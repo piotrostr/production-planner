@@ -53,14 +53,12 @@ function* updateGridSaga(action: PayloadAction<GridType>) {
 function* initializeGridSaga() {
   try {
     const gridData: GridType | null = yield call(fetchGridFromFirestore)
-
+    // initialize empty grid if it doesn't exist
     if (!gridData) {
       yield put(initializeGrid())
       yield call(updateGridInFirestore, {
         cells: {},
       })
-    } else {
-      console.error("Grid data already exists")
     }
   } catch (error) {
     console.error("Error initializing grid data:", error)

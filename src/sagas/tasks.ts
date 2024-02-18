@@ -15,6 +15,7 @@ import {
   onSnapshot,
   setDoc,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore"
 
 import {
@@ -38,6 +39,17 @@ import {
 
 const addTaskToFirestore = async (task: Task) => {
   await setDoc(doc(firestore, `tasks/${task.id}`), task)
+}
+
+export const undropMultipleTasksInFirestore = async (
+  taskIds: Array<string>,
+) => {
+  const batch = writeBatch(firestore)
+  for (const taskId of taskIds) {
+    const docRef = doc(firestore, `tasks/${taskId}`)
+    batch.update(docRef, { dropped: false })
+  }
+  await batch.commit()
 }
 
 export const updateTaskInFirestore = async (

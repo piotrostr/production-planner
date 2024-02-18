@@ -26,7 +26,7 @@ import {
 import { setToastOpen } from "../slices/toast"
 import { setTaskDropped } from "../slices/tasks"
 import { removeFacilityFromGrid } from "../slices/grid"
-import { updateTaskInFirestore } from "./tasks"
+import { undropMultipleTasksInFirestore } from "./tasks"
 
 export const addFacilityToFirestore = async (facility: Facility) => {
   await setDoc(doc(firestore, `facilities/${facility.id}`), facility)
@@ -104,18 +104,28 @@ export function* deleteFacilitySaga(
   try {
     const facilityId = action.payload.id
     const tasks = action.payload.tasks
+
     yield put(removeFacilityFromGrid({ facilityId }))
-    for (const taskId of tasks) {
-      yield put(
+
+    const undropTaskPromises = tasks.map((taskId) => {
+      put(
         setTaskDropped({
           id: taskId,
           dropped: false,
         }),
       )
-      yield call(updateTaskInFirestore, taskId, { dropped: false })
-    }
+    })
+    yield all(undropTaskPromises)
+    yield call(undropMultipleTasksInFirestore, tasks)
+
     yield put(removeFacility(facilityId))
     yield call(deleteFacilityFromFirestore, facilityId)
+    yield put(
+      setToastOpen({
+        message: "Facility deleted successfully",
+        severity: "success",
+      }),
+    )
   } catch (error) {
     console.error("Error deleting task:", error)
   }
